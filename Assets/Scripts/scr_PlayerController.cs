@@ -28,19 +28,37 @@ public class scr_PlayerController : MonoBehaviour {
 	// Speed modifier for player movement
 	public float jumpForce = 4.0f;
 
-	//booleano se determina se o jogador 
-	private bool isGrounded;
+    //Define se o personagem tem ou vai usar os IKs para movimentar os braços
+    public bool useArmIK = true;
+
+    //Distancia considerada até inverter o personagem
+    public float armOffset;
+
+    //booleano se determina se o jogador 
+    private bool isGrounded;
 
 	//Transform que armazena a posição dos pés
 	private Transform playerFeetPosition;
 
-	//Chamado ao carregar o script, inicializa variáveis
-	void Awake()
+    //Transform do IK do braço direito
+    private Transform rightArmIK;
+
+    //Transform do IK do braço esquerdo
+    private Transform leftArmIK;
+
+
+    //Chamado ao carregar o script, inicializa variáveis
+    void Awake()
 	{
 		isFacingRight = true;
 		playerRigidBody2D = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		playerFeetPosition = this.transform.Find("playerFeetPosition").GetComponent<Transform>(); //PEGAR O COLLIDER CIRCULAR NOS PÉS;
-	}
+        if (useArmIK)
+        {
+            rightArmIK = this.transform.Find("IK").Find("IK_RHand").GetComponent<Transform>();
+            leftArmIK = this.transform.Find("IK").Find("IK_LHand").GetComponent<Transform>();
+        }
+    }
 
 	/**
 	 * Chamado uma vez por frame, usada para gerenciar Rigibody
@@ -68,13 +86,33 @@ public class scr_PlayerController : MonoBehaviour {
 		if (Input.GetKey (KeyCode.Space) && isGrounded )
 			playerRigidBody2D.AddForce(new Vector2(0,jumpForce), ForceMode2D.Impulse);
 
-		//Indo para a direita e virado para a esquerda
-		if (movePlayerVector > 0 && !isFacingRight)
-			Flip();
-		//Indo para a esquerda e virado para a direita
-		else if (movePlayerVector < 0 && isFacingRight)
-			Flip();
-	}
+        if (!useArmIK)
+        {
+            //Indo para a direita e virado para a esquerda
+            if (movePlayerVector > 0 && !isFacingRight)
+                Flip();
+            //Indo para a esquerda e virado para a direita
+            else if (movePlayerVector < 0 && isFacingRight)
+                Flip();
+        }
+
+        if (useArmIK)
+        {
+            //Change arm orientation
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorldPosition.z = transform.position.z;
+
+            rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
+            leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);
+
+            Vector3 relativeMouse = mouseWorldPosition - transform.position;
+            if (relativeMouse.x + armOffset < 0 && isFacingRight)
+                Flip();
+            if (relativeMouse.x - armOffset > 0 && !isFacingRight)
+                Flip();
+        }
+
+    }
 
 	/**
 	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
@@ -109,10 +147,32 @@ public class scr_PlayerController : MonoBehaviour {
 	{
 		//muda a direção que o jogador está encarando
 		isFacingRight = !isFacingRight;
-		//Multiplica a escala por -1
-		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
-		transform.localScale = theScale;
+        if (!useArmIK)
+        {
+            //Multiplica a escala por -1
+            Vector3 theScale = transform.localScale;
+            theScale.x *= -1;
+            transform.localScale = theScale;
+        }
+
+        //Inverte a orientação do esqueleto
+        if (useArmIK)
+        {
+            Transform skeletonTransform = transform.Find("Skeleton");
+            Vector3 theScale = skeletonTransform.localScale;
+            Vector3 ikScale = leftArmIK.localScale;
+            theScale.x *= -1;
+            ikScale.x *= -1;
+            skeletonTransform.localScale = theScale;
+            leftArmIK.localScale = ikScale;
+            rightArmIK.localScale = ikScale;
+            SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+            if (sprite != null) {
+                bool Flip = !sprite.flipX;
+                sprite.flipX = Flip;
+            }
+        }
+
 	}
 
 }
