@@ -9,27 +9,24 @@ public class scr_CameraController : MonoBehaviour {
 	public GameObject player; //Referencia ao jogador
 	private Transform camTrans;
 	private float playerSpeed;
-	private float cameraSpeedUp;
 
 	// Use this for initialization
 	void Start () {
 		camTrans = this.gameObject.transform;
-		playerSpeed = player.GetComponent<scr_PlayerController>().speed;
-		//playerSpeed = player.GetComponent<Rigidbody2D>().velocity.magnitude;
-		//cameraSpeedUp = 1.5f;
+		//playerSpeed = player.GetComponent<scr_PlayerController>().speed;
 	}
 	
 	void Update () {
 		//Deslocamento entre posição da camera e da 
 		Vector2 offset = player.transform.position - camTrans.position;
-
+		playerSpeed = player.GetComponent<Rigidbody2D>().velocity.magnitude;
 
 		if (player.transform.position.x > camTrans.position.x + limitX
 			|| player.transform.position.x < camTrans.position.x - limitX 
 			|| player.transform.position.y > camTrans.position.y + limitY
 			|| player.transform.position.y < camTrans.position.y - limitY) {
 				offset = offset / offset.magnitude;//Deixa com norma 1
-				camTrans.Translate(offset * playerSpeed * cameraSpeedUp * Time.deltaTime);
+				camTrans.Translate(offset * playerSpeed * Time.deltaTime);
 		}
 		/*if( player.transform.position.y < camTrans.position.y - limitY){
 			camTrans.Translate(offset * playerSpeed * cameraSpeedUp * Time.deltaTime);
