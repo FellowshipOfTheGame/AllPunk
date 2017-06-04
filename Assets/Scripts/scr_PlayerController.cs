@@ -40,11 +40,17 @@ public class scr_PlayerController : scr_Entity {
 
     //Transform do IK do braço esquerdo
     private Transform leftArmIK;
-	#endregion variables
+
+    //Distancia de ataque melee
+    public float meleeAtackDistance;
+
+    //Dano do ataque melee
+    public float meleeAtackDamage;
+    #endregion variables
 
 
     //Chamado ao carregar o script, inicializa variáveis
-    void Awake()
+    protected void Awake()
 	{
 		base.Awake ();
 		isFacingRight = true;
@@ -108,13 +114,30 @@ public class scr_PlayerController : scr_Entity {
 
     }
 
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector2 pos = new Vector2(transform.position.x + meleeAtackDistance / 2, transform.position.y);
+
+            Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(meleeAtackDistance / 2,2), 0);
+
+            foreach (Collider2D hit in hits) {
+                if (hit.gameObject.tag == "Enemy") {
+                    scr_Enemy enemy = hit.GetComponent<scr_Enemy>();
+                    enemy.takeDamage(meleeAtackDamage, new Vector2(10, 0));
+                }
+            }
+        }
+    }
 
 
-	/**
+
+    /**
 	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
 	 * @return true		Está tocando o chão
 	 */
-	bool touchesGround(Vector2 pos){
+    bool touchesGround(Vector2 pos){
 		/*Array de todos os colliders que colidem com os pés do jogador.
 		 * recebe de argumento um Vector2, raio do círculo*/
 		bool isGrounded = true;
