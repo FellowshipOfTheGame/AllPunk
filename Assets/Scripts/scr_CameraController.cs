@@ -13,7 +13,6 @@ public class scr_CameraController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		camTrans = this.gameObject.transform;
-		//playerSpeed = player.GetComponent<scr_PlayerController>().speed;
 	}
 	
 	void Update () {
@@ -28,8 +27,5 @@ public class scr_CameraController : MonoBehaviour {
 				offset = offset / offset.magnitude;//Deixa com norma 1
 				camTrans.Translate(offset * playerSpeed * Time.deltaTime);
 		}
-		/*if( player.transform.position.y < camTrans.position.y - limitY){
-			camTrans.Translate(offset * playerSpeed * cameraSpeedUp * Time.deltaTime);
-		}*/
 	}
 }
