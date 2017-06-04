@@ -11,7 +11,7 @@ public class scr_CameraController : MonoBehaviour {
 	private float playerSpeed;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		camTrans = this.gameObject.transform;
 	}
 	

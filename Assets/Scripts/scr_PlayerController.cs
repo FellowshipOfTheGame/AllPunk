@@ -6,15 +6,10 @@ using UnityEngine;
  * Controlador do jogador para o protótipo do ALLPUNK
  * @author João Victor L. da S. Guimarães
  */
-public class scr_PlayerController : MonoBehaviour {
+public class scr_PlayerController : scr_Entity {
 
 
-	// VARIÁVEIS 
-
-
-
-	// RigidBody component instance for the player
-	private Rigidbody2D playerRigidBody2D;
+	#region variables
 
 	//Variable to track how much movement is needed from input
 	private float movePlayerVector;
@@ -45,13 +40,15 @@ public class scr_PlayerController : MonoBehaviour {
 
     //Transform do IK do braço esquerdo
     private Transform leftArmIK;
+	#endregion variables
 
 
     //Chamado ao carregar o script, inicializa variáveis
     void Awake()
 	{
+		base.Awake ();
 		isFacingRight = true;
-		playerRigidBody2D = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
+		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		playerFeetPosition = this.transform.Find("playerFeetPosition").GetComponent<Transform>(); //PEGAR O COLLIDER CIRCULAR NOS PÉS;
         if (useArmIK)
         {
@@ -59,6 +56,8 @@ public class scr_PlayerController : MonoBehaviour {
             leftArmIK = this.transform.Find("IK").Find("IK_LHand").GetComponent<Transform>();
         }
     }
+
+
 
 	/**
 	 * Chamado uma vez por frame, usada para gerenciar Rigibody
@@ -71,20 +70,15 @@ public class scr_PlayerController : MonoBehaviour {
 		isGrounded = touchesGround (playerFeetPosition.position);
 
 		/** 
-		  * Usar playerRigidBody2D.velocity para que o movimento do personagem
+		  * Usar entityRigidBody.velocity para que o movimento do personagem
 		  * sofra a influência da física. Um transform direto poderia quebrar
 		  * A física em parte
 		  */
-		playerRigidBody2D.velocity = new Vector2 (movePlayerVector * speed, playerRigidBody2D.velocity.y);
-		/*if(isGrounded)
-			playerRigidBody2D.velocity = new Vector2(movePlayerVector * speed, playerRigidBody2D.velocity.y);
-		else
-			playerRigidBody2D.velocity = new Vector2(movePlayerVector * speed, playerRigidBody2D.velocity.y);*/
-
+		entityRigidBody.velocity = new Vector2 (movePlayerVector * speed, entityRigidBody.velocity.y);
 
 		//TODO configurar tecla
 		if (Input.GetKey (KeyCode.Space) && isGrounded )
-			playerRigidBody2D.AddForce(new Vector2(0,jumpForce), ForceMode2D.Impulse);
+			entityRigidBody.AddForce(new Vector2(0,jumpForce), ForceMode2D.Impulse);
 
         if (!useArmIK)
         {
@@ -114,6 +108,8 @@ public class scr_PlayerController : MonoBehaviour {
 
     }
 
+
+
 	/**
 	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
 	 * @return true		Está tocando o chão
@@ -134,11 +130,8 @@ public class scr_PlayerController : MonoBehaviour {
 		}
 		return isGrounded;
 	}
+		
 
-
-	// Chamado uma vez por frame
-	void Update () {
-	}
 		
 	/***
 	 * Método que troca o sentido do sprite.
@@ -172,7 +165,11 @@ public class scr_PlayerController : MonoBehaviour {
                 sprite.flipX = Flip;
             }
         }
-
+	}
+		
+	protected override void die(){
+		print ("Morreu");
+		Destroy(this.gameObject);
 	}
 
 }

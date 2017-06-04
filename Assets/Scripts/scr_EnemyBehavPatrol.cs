@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class scr_Enemy_Patrol : MonoBehaviour {
+/***
+ * Script que gerencia o movimento e comportamento para Patrulha.
+ * Vida e Morte são gerenciados por scr_Enemy
+ */
+
+public class scr_EnemyBehavPatrol : MonoBehaviour {
 
     //Velocidade dos inimigos
     public float Speed;
