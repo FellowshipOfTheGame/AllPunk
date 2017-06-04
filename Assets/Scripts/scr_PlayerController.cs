@@ -48,34 +48,27 @@ public class scr_PlayerController : MonoBehaviour {
 		// Pega input horizontal
 		movePlayerVector = Input.GetAxisRaw("Horizontal");
 
-		//Verifica contat com o chão
-		//TODO configurar tecla
-		if (Input.GetKeyDown (KeyCode.Space) && isGrounded ){
-			playerRigidBody2D.AddForce(new Vector2(0,4), ForceMode2D.Impulse);
-			//rigidbody.velocity.y = jumpSpeed;
-		}
-
-		//
-		/*Physics2D.OverlapCircle (playerFeetPosition.position, 
-			0.5f);
-		print(isGrounded);*/
-		//LayerMask.NameToLayer("Ground")
-		Collider2D [] array = Physics2D.OverlapCircleAll (playerFeetPosition.position, 0.25f);
-		foreach (Collider2D obj in array) {
-			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
-				isGrounded = true;
-				print (isGrounded);
-				break;
-			} else {
-				isGrounded = false;
-			}
-		}
+		//Verifica contato com o chão
+		isGrounded = touchesGround ();
+		print ("isG?" + isGrounded);
 		/**
 		  * Usar playerRigidBody2D.velocity para que o movimento do personagem
 		  * sofra a influência da física. Um transform direto poderia quebrar
 		  * A física em parte
 		  */
 		playerRigidBody2D.velocity = new Vector2(movePlayerVector * speed, playerRigidBody2D.velocity.y);
+
+
+		if (Input.GetKeyDown (KeyCode.F)) {
+			print ("wee");
+			playerRigidBody2D.AddForce (new Vector2 (10, 0), ForceMode2D.Impulse);
+		}
+
+		//TODO configurar tecla
+		if (Input.GetKeyDown (KeyCode.Space) && isGrounded ){
+			playerRigidBody2D.AddForce(new Vector2(0,jumpSpeed), ForceMode2D.Impulse);
+			//rigidbody.velocity.y = jumpSpeed;
+		}
 
 
 		//Indo para a direita e virado para a esquerda
@@ -91,12 +84,30 @@ public class scr_PlayerController : MonoBehaviour {
 
 	}
 
+	/**
+	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
+	 * @return true		Está tocando o chão
+	 */
+	bool touchesGround(){
+		/*Array de todos os colliders que colidem com os pés do jogador.
+		 * recebe de argumento um Vector2, raio do círculo
+		*/
+		Collider2D [] array = Physics2D.OverlapCircleAll (playerFeetPosition.position, 0.2f);
+		foreach (Collider2D obj in array) {
+			//Verificação manual da layer
+			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
+				return true;
+			} else {
+				return false;
+			}	
+		}
+		return false;
+	}
+
 
 	// Chamado uma vez por frame
 	void Update () {
 		playerPosition = transform.position;
-		//print (playerPosition);
-		//print(isGrounded);
 	}
 		
 	/***
