@@ -69,7 +69,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
                     break;
 
             }
-            print(nextWall);
+            //print(nextWall);
 
             //Rotaciona o personagem
             if ((!nextFloor || nextWall) && isGrounded)
