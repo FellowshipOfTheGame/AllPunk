@@ -29,10 +29,13 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
     private bool nextFloor;
     //Saber se há parede na frente dele
     private bool nextWall;
+    //Referencia do animator
+    private Animator animator;
 
     void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -61,7 +64,10 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
             }
 
             //Calcula colisão com parede
-            hits = Physics2D.OverlapCircleAll(transform.Find("NextWallCollision").position, 0.2f);
+            //hits = Physics2D.OverlapCircleAll(transform.Find("NextWallCollision").position, 0.2f);
+            float height = (transform.Find("NextWallCollision").position - transform.Find("NextFloorCollision").position).y;
+            hits = Physics2D.OverlapBoxAll(transform.Find("NextWallCollision").position, new Vector2(0.2f, height), 0);
+            print(hits);
             foreach (Collider2D hit in hits)
             {
                 nextWall = (hit.gameObject.layer == LayerMask.NameToLayer("Ground"));
@@ -69,7 +75,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
                     break;
 
             }
-            print(nextWall);
+            //print(nextWall);
 
             //Rotaciona o personagem
             if ((!nextFloor || nextWall) && isGrounded)
@@ -90,6 +96,13 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
             int direction = (isFacingRight) ? 1 : -1;
             rb2D.velocity = new Vector2(direction *
             Speed, rb2D.velocity.y);
+        }
+
+        //Atualiza animação
+        if (animator != null) {
+            animator.SetBool("IsGrounded", isGrounded);
+            animator.SetFloat("HorizontalSpeed", (isFacingRight) ? 1 : -1);
+            animator.SetFloat("VerticalSpeed", rb2D.velocity.y);
         }
 	}
 

@@ -118,14 +118,15 @@ public class scr_PlayerController : scr_Entity {
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector2 pos = new Vector2(transform.position.x + meleeAtackDistance / 2, transform.position.y);
+            int direction = (isFacingRight) ? 1 : -1;
+            Vector2 pos = new Vector2(transform.position.x + direction*meleeAtackDistance / 2, transform.position.y);
 
             Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(meleeAtackDistance / 2,2), 0);
 
             foreach (Collider2D hit in hits) {
                 if (hit.gameObject.tag == "Enemy") {
                     scr_Enemy enemy = hit.GetComponent<scr_Enemy>();
-                    enemy.takeDamage(meleeAtackDamage, new Vector2(10, 0));
+                    enemy.takeDamage(meleeAtackDamage, new Vector2(10*direction,1));
                 }
             }
         }

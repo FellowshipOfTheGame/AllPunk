@@ -27,6 +27,7 @@ abstract public class scr_Entity : MonoBehaviour {
 
 	protected void Awake(){
 		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
+        currentHp = maxHp;
 	}
 		
 	//private ou public?
@@ -45,6 +46,7 @@ abstract public class scr_Entity : MonoBehaviour {
 			this.isDead = true;
 			this.die ();
 		} else {
+            this.transform.position += new Vector3(0, 0.5f, 0);
 			this.entityRigidBody.AddForce (direction * (1-this.poise), ForceMode2D.Impulse);
 		}
 	}
