@@ -16,16 +16,21 @@ public class scr_CameraController : MonoBehaviour {
 	}
 	
 	void Update () {
-		//Deslocamento entre posição da camera e da 
-		Vector2 offset = player.transform.position - camTrans.position;
-		playerSpeed = player.GetComponent<Rigidbody2D>().velocity.magnitude;
 
-		if (player.transform.position.x > camTrans.position.x + limitX
-			|| player.transform.position.x < camTrans.position.x - limitX 
-			|| player.transform.position.y > camTrans.position.y + limitY
-			|| player.transform.position.y < camTrans.position.y - limitY) {
+		if (this.player == null) {
+			camTrans.position = (new Vector3 (0, 0, camTrans.position.z));
+		} else {
+			//Deslocamento entre posição da camera e da 
+			Vector2 offset = player.transform.position - camTrans.position;
+			playerSpeed = player.GetComponent<Rigidbody2D> ().velocity.magnitude;
+
+			if (player.transform.position.x > camTrans.position.x + limitX
+			   || player.transform.position.x < camTrans.position.x - limitX
+			   || player.transform.position.y > camTrans.position.y + limitY
+			   || player.transform.position.y < camTrans.position.y - limitY) {
 				offset = offset / offset.magnitude;//Deixa com norma 1
-				camTrans.Translate(offset * playerSpeed * Time.deltaTime);
+				camTrans.Translate (offset * playerSpeed * Time.deltaTime);
+			}
 		}
 	}
 }
