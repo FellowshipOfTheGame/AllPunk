@@ -17,14 +17,7 @@ using UnityEngine;
 public class scr_PlayerController : scr_Entity {
 
 
-
-
-
 	#region variables
-
-
-
-
 
 	//Velocidade da caminhada do personagem
 
@@ -32,7 +25,7 @@ public class scr_PlayerController : scr_Entity {
 
 	//Velocidade do salto do personagem
 
-	public float jumpSpeed = 4.0f;
+	public float jumpSpeed = 6.0f;
 
 	//Multiplicador da gravidade p/ queda, deixando-a mais rápida
 
@@ -49,24 +42,6 @@ public class scr_PlayerController : scr_Entity {
     //Distancia considerada até inverter o personagem
 
     public float armOffset;
-
-	//Dano do ataque melee
-
-	public float meleeAtackDamage;
-
-	//Raio de distância entre a posição do player e o tiro
-
-	[Range(2,4)]
-
-	public float rangedAttackOffset = 3.0f;
-
-	//Referencia ao projétil para ataque ranged.
-
-	public GameObject projectile;
-
-
-
-
 
 	//booleano se determina se o jogador esta no chão
 
@@ -87,10 +62,6 @@ public class scr_PlayerController : scr_Entity {
     //Transform do IK do braço esquerdo
 
     private Transform leftArmIK;
-
-    //Distancia de ataque melee
-
-    public float meleeAtackDistance;
 
 	//Variable to track how much movement is needed from input
 
@@ -113,7 +84,6 @@ public class scr_PlayerController : scr_Entity {
 
 
 	#region MonoBehaviour methods
-
 
 
 
@@ -146,10 +116,6 @@ public class scr_PlayerController : scr_Entity {
 
 
 
-
-
-
-
 	/**
 
 	 * Chamado uma vez por frame, usada para gerenciar Rigibody
@@ -158,6 +124,13 @@ public class scr_PlayerController : scr_Entity {
 
 	void FixedUpdate(){
 
+    }
+
+
+
+    private void Update()
+
+    {
 
 
 		//Verifica contato com o chão
@@ -184,88 +157,55 @@ public class scr_PlayerController : scr_Entity {
 
 
 
+		if (!useArmIK)
 
+		{
 
-        if (!useArmIK)
+			//Indo para a direita e virado para a esquerda
 
-        {
+			if (movePlayerVector > 0 && !isFacingRight)
 
-            //Indo para a direita e virado para a esquerda
+				Flip();
 
-            if (movePlayerVector > 0 && !isFacingRight)
+			//Indo para a esquerda e virado para a direita
 
-                Flip();
+			else if (movePlayerVector < 0 && isFacingRight)
 
-            //Indo para a esquerda e virado para a direita
+				Flip();
 
-            else if (movePlayerVector < 0 && isFacingRight)
-
-                Flip();
-
-        }
-
-
-
-        if (useArmIK)
-
-        {
-
-            //Change arm orientation
-
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            mouseWorldPosition.z = transform.position.z;
+		}
 
 
 
-            rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
+		if (useArmIK)
 
-            leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);
+		{
 
+			//Change arm orientation
 
+			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            Vector3 relativeMouse = mouseWorldPosition - transform.position;
-
-            if (relativeMouse.x + armOffset < 0 && isFacingRight)
-
-                Flip();
-
-            if (relativeMouse.x - armOffset > 0 && !isFacingRight)
-
-                Flip();
-
-        }
+			mouseWorldPosition.z = transform.position.z;
 
 
 
-    }
+			rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
+
+			leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);
 
 
 
-    private void Update()
+			Vector3 relativeMouse = mouseWorldPosition - transform.position;
 
-    {
+			if (relativeMouse.x + armOffset < 0 && isFacingRight)
 
-		/*
+				Flip();
 
-		 * OBSERVAÇÃO SOBRE O ATAQUE:
+			if (relativeMouse.x - armOffset > 0 && !isFacingRight)
 
-		 * Futuramente seria interessante os botoes de ataque invocarem metodos dos scripts das
+				Flip();
 
-		 * P.A.s que ativam seus efeitos. Para principios de prototipacao, os efeitos ficarao
-
-		 * no controlador do player
-
-		 */
-
-		if (Input.GetButtonDown("Fire1"))
-
-			meleeAttack ();
-
-		if (Input.GetButtonDown("Fire2")) 
-
-			rangedAttack();
-
+		}
 	}
 
 
@@ -383,68 +323,6 @@ public class scr_PlayerController : scr_Entity {
 		rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime;
 
 	}
-
-
-
-
-
-	void meleeAttack(){
-
-		//Posiçao do centro do collider melee a ser usado
-
-		Vector2 pos = new Vector2(transform.position.x + meleeAtackDistance / 2, transform.position.y);
-
-
-
-		Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(meleeAtackDistance / 2,2), 0);
-
-
-
-		foreach (Collider2D hit in hits) {
-
-			if (hit.gameObject.tag == "Enemy") {
-
-				scr_Enemy enemy = hit.GetComponent<scr_Enemy>();
-
-				enemy.takeDamage(meleeAtackDamage, new Vector2(10, 0));
-
-			}
-
-		}
-
-	}
-
-
-
-	void rangedAttack(){
-
-		Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-		mouseWorldPosition.z = transform.position.z;
-
-
-
-		Vector3 gunDirection = mouseWorldPosition - transform.position;
-
-
-
-		Vector3 gunPosition = gunDirection.normalized * rangedAttackOffset + transform.position;
-
-
-
-		GameObject projectileClone = Instantiate (projectile, gunPosition, transform.rotation) as GameObject;
-
-		scr_Projectile projScr = projectileClone.GetComponent<scr_Projectile>();
-
-		projScr.Fire (gunDirection);
-
-	}
-
-
-
-
-
-
 
 	#endregion Control methods
 
