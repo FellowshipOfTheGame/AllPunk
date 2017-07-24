@@ -14,7 +14,7 @@ using UnityEngine;
 
  */
 
-public class scr_PlayerController : scr_Entity {
+public class scr_PlayerController : MonoBehaviour {
 
 
 	#region variables
@@ -100,8 +100,6 @@ public class scr_PlayerController : scr_Entity {
 	{
 		currentJumpIncTime = maxJumpIncTime; //1s
 
-		base.Awake ();//Awake da classe pai
-
 		isFacingRight = true;
 
 		rb = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
@@ -153,15 +151,11 @@ public class scr_PlayerController : scr_Entity {
 			Fall ();
 
 		if (rb.velocity.y > 0 && !Input.GetButton("Jump") && !isGrounded)
-
 			lowJump();*/
 
 
 		if (Input.GetButtonDown ("Jump") && isGrounded)
 			Jump ();
-
-		/*if (rb.velocity.y < 0 && !isGrounded)
-			Fall ();*/
 
 		if (rb.velocity.y > 0 && Input.GetButton("Jump") && !isGrounded)
 			addJumpSpeed();
@@ -327,7 +321,7 @@ public class scr_PlayerController : scr_Entity {
 	void addJumpSpeed(){
 		print ("addJumpSpeed");
 		if (currentJumpIncTime > 0) {
-			rb.velocity -= Vector2.up * -(10 * Time.deltaTime);
+			rb.velocity -= Vector2.up * -(5 * Time.deltaTime);
 
 			currentJumpIncTime-= Time.deltaTime;
 			//print ("jit: " + jumpIncTime);
@@ -337,24 +331,8 @@ public class scr_PlayerController : scr_Entity {
 
 	#endregion Control methods
 
-
-
-
-
-	protected override void die(){
-
-		print ("Morreu");
-
-		Destroy(this.gameObject);
-
-	}
-
-
-
 	/***
-
 	 * Método que troca o sentido do sprite.
-
 	 */
 
 	void Flip()
@@ -416,10 +394,6 @@ public class scr_PlayerController : scr_Entity {
 		}
 
 	}
-
-
-
-
 
 }
 

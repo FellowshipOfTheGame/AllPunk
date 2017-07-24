@@ -8,6 +8,7 @@ public class scr_Projectile : MonoBehaviour {
 	public float speed = 10.0f;
 	public Vector2 direction = new Vector2 (-1, 0);
 	public float damage = 10;
+	public float timeToLive = 10; //em Segundos
 
 	private Rigidbody2D entityRigidBody;
 
@@ -23,29 +24,26 @@ public class scr_Projectile : MonoBehaviour {
 		this.entityRigidBody.velocity = this.direction.normalized * speed;
 	}
 
+	public void Update(){
+		if (timeToLive <= 0)
+			Die ();
+		else
+			timeToLive -= Time.deltaTime;
+	}
+
 	void Die(){
 		Destroy (this.gameObject);
 		Destroy (this);
 	}
 
 	void OnCollisionEnter2D(Collision2D col){
-		/**
-		 * QUESTIONAMENTO: Dependendo de como ficará a ideia da classe abstrata entity
-		 * em algo mais voltado a unity, simplesmente fazer a verificação 
-		 * col.gameObject é do tipo entity? Aplica dano
-		 */
-		switch (col.gameObject.tag){
-		case "Enemy":
-			scr_Enemy enemy = col.gameObject.GetComponent<scr_Enemy> ();
-			enemy.takeDamage (this.damage, new Vector2 (10, 0));
+		//Entidade "danificável"
+		scr_HealthController entity = col.gameObject.GetComponent<scr_HealthController> ();
+		if (entity != null) {
+			entity.takeDamage (this.damage, new Vector2 (10, 0));
 			Die ();
-			break;
-		case "Player":
-			scr_PlayerController player = col.gameObject.GetComponent<scr_PlayerController> ();
-			//player.takeDamage (this.damage, new Vector2 (10, 0));
-			Die ();
-			break;		
 		}
+		
 		if (col.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 			Die ();
 		}
