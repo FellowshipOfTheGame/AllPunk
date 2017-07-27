@@ -19,8 +19,8 @@ public class scr_PlayerController : MonoBehaviour {
 
 	#region variables
 
-	//Tempo maximo aumento para veloicdade do salto
-	public float maxJumpIncTime;
+	//Tempo maximo para salto alto
+	public float maxHighJumpTime = 0.25f;
 
 	//Velocidade da caminhada do personagem
 
@@ -78,8 +78,8 @@ public class scr_PlayerController : MonoBehaviour {
 
 	private Rigidbody2D rb;
 
-	//Tempo de aumento para veloicdade do salto
-	private float currentJumpIncTime;
+	//Tempo atual de salto alto
+	private float currHighJumpTime;
 
 
     #endregion variables
@@ -98,7 +98,7 @@ public class scr_PlayerController : MonoBehaviour {
     protected void Awake()
 
 	{
-		currentJumpIncTime = maxJumpIncTime; //1s
+		currHighJumpTime = maxHighJumpTime; //1s
 
 		isFacingRight = true;
 
@@ -158,7 +158,7 @@ public class scr_PlayerController : MonoBehaviour {
 			Jump ();
 
 		if (rb.velocity.y > 0 && Input.GetButton("Jump") && !isGrounded)
-			addJumpSpeed();
+			highJump();
 
 
 
@@ -256,7 +256,7 @@ public class scr_PlayerController : MonoBehaviour {
 
 		bool isGrounded = true;
 
-		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.2f);
+		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.3f);
 
 		foreach (Collider2D obj in array) {
 
@@ -265,7 +265,7 @@ public class scr_PlayerController : MonoBehaviour {
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 
 				isGrounded = true;
-				currentJumpIncTime = maxJumpIncTime;
+				currHighJumpTime = maxHighJumpTime;
 				break;
 
 			} else {
@@ -295,7 +295,7 @@ public class scr_PlayerController : MonoBehaviour {
 	}
 
 
-
+	/**
 	//Método para Salto curto, ocorre quando o botão de salto é solto logo após saltar
 
 	void lowJump (){
@@ -304,27 +304,27 @@ public class scr_PlayerController : MonoBehaviour {
 
 	}
 
-	/**
+
 
 	* Método responsável por fazer com que a queda do jogador seja mais rápida
 	* Isso deixa um controle de salto mais aprimorado e próprio para platformer
-	*/
+
 
 	void Fall (){
 		print ("fall");
 		rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime;
+	}*/
 
-	}
+
+
 	/**
-	 * Adiciona velocidade ao salto enquanto estiver caindo.
+	 * Mantém a velocidade em Y constante enquanto o botão estiver pressionado
 	 */
-	void addJumpSpeed(){
-		print ("addJumpSpeed");
-		if (currentJumpIncTime > 0) {
-			rb.velocity -= Vector2.up * -(5 * Time.deltaTime);
-
-			currentJumpIncTime-= Time.deltaTime;
-			//print ("jit: " + jumpIncTime);
+	void highJump(){
+		print ("highJump");
+		if (currHighJumpTime > 0) {
+			rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
+			currHighJumpTime-= Time.deltaTime;
 		}
 	}
 
