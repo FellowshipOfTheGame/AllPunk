@@ -63,7 +63,14 @@ abstract public class scr_Weapon : MonoBehaviour {
             noAnimation = animator.GetCurrentAnimatorStateInfo(animLayer).IsName("Moving");
             if (noAnimation)
             {
-                animator.SetBool("Attack", false);
+                if (rightHand)
+                {
+                    animator.SetBool("R_Attack", false);
+                }
+                else
+                {
+                    animator.SetBool("L_Attack", false);
+                }
             }
         }
 
@@ -93,23 +100,30 @@ abstract public class scr_Weapon : MonoBehaviour {
     public void setAnimator(Animator animator)
     {
         this.animator = animator;
-
+        string name;
+        if (rightHand)
+            name = "R_";
+        else
+            name = "L_";
         //Seleciona qual animação vai ser utilizada
         switch (attackType)
         {
             case AttackType.UpAttack:
-                animator.SetBool("UpAttack", true);
+
+                name = name + "UpAttack";
                 break;
             case AttackType.ThrustAttack:
 
                 break;
             case AttackType.RangedAttack:
-                animator.SetBool("GunRecoil", true);
+                name = name + "GunRecoil";
                 break;
             default:
 
                 break;
         }
+        animator.SetBool(name, true);
+
     }
 
     public void setRightHand(bool RightHand) {
@@ -130,5 +144,15 @@ abstract public class scr_Weapon : MonoBehaviour {
             sprite.sortingLayerID = frontLayer;
         else
             sprite.sortingLayerID = backLayer;
+    }
+
+    protected void StartAttackAnimation() {
+        if (animator == null)
+            return;
+        if (rightHand) 
+            animator.SetBool("R_Attack", true);
+        else
+            animator.SetBool("L_Attack", true);
+        
     }
 }

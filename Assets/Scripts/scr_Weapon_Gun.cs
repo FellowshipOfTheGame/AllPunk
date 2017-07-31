@@ -15,8 +15,7 @@ public class scr_Weapon_Gun : scr_Weapon
 
     override protected void AttackAction(bool noAnimation) {
         if (noAnimation && clicked) {
-            if (animator != null)
-                animator.SetBool("Attack", true);
+            StartAttackAnimation();
 
             //Spawn bullet
             GameObject bullet = GameObject.Instantiate(projectilePrefab, spawnPosition.position, spawnPosition.rotation);

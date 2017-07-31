@@ -12,8 +12,7 @@ public class scr_Weapon_Sword : scr_Weapon {
     {
         if (clicked && noAnimation)
         {
-            if (animator != null)
-                animator.SetBool("Attack", true);
+            StartAttackAnimation();
             print("Atacou");
         }
         //Verify sword collider for hits
