@@ -23,6 +23,7 @@ abstract public class scr_Weapon : MonoBehaviour {
     public bool followMouse;
     //Como é o ataque utilizado
     public AttackType attackType;
+    public int armVariation = 0;
 
     protected GameObject ik;
     protected Animator animator;
@@ -65,11 +66,11 @@ abstract public class scr_Weapon : MonoBehaviour {
             {
                 if (rightHand)
                 {
-                    animator.SetBool("R_Attack", false);
+                    animator.ResetTrigger("R_Attack");
                 }
                 else
                 {
-                    animator.SetBool("L_Attack", false);
+                    animator.ResetTrigger("L_Attack");
                 }
             }
         }
@@ -149,10 +150,10 @@ abstract public class scr_Weapon : MonoBehaviour {
     protected void StartAttackAnimation() {
         if (animator == null)
             return;
-        if (rightHand) 
-            animator.SetBool("R_Attack", true);
+        if (rightHand)
+            animator.SetTrigger("R_Attack");
         else
-            animator.SetBool("L_Attack", true);
+            animator.SetTrigger("L_Attack");
         
     }
 }
