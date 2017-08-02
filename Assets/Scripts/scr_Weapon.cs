@@ -32,6 +32,7 @@ abstract public class scr_Weapon : MonoBehaviour {
     protected int backLayer;
     protected bool clicked;
     protected bool holding;
+    protected bool flipped;
 
     #endregion Variables
 
@@ -134,6 +135,13 @@ abstract public class scr_Weapon : MonoBehaviour {
     public void setSpriteLayer(int frontLayer, int backLayer) {
         this.frontLayer = frontLayer;
         this.backLayer = backLayer;
+        if (sprite != null)
+        {
+            if (!flipped)
+                sprite.sortingOrder = frontLayer;
+            else
+                sprite.sortingOrder = backLayer;
+        }
     }
 
     /**
@@ -141,10 +149,14 @@ abstract public class scr_Weapon : MonoBehaviour {
      */
     public void flipHand()
     {
-        if (sprite.sortingLayerID == backLayer)
-            sprite.sortingLayerID = frontLayer;
-        else
-            sprite.sortingLayerID = backLayer;
+        flipped = !flipped;
+        if (sprite != null)
+        {
+            if (!flipped)
+                sprite.sortingOrder = frontLayer;
+            else
+                sprite.sortingOrder = backLayer;
+        }
     }
 
     protected void StartAttackAnimation() {

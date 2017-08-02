@@ -10,6 +10,7 @@ public class scr_Weapon_Gun : scr_Weapon
 
     private void Awake()
     {
+        base.Awake();
         spawnPosition = transform.Find("SpawnPosition");
     }
 

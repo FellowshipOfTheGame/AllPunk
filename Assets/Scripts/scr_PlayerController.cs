@@ -75,7 +75,7 @@ public class scr_PlayerController : scr_Entity {
 
 	private Rigidbody2D rb;
 
-
+    private scr_PA_Manager paManager;
 
     #endregion variables
 
@@ -111,6 +111,8 @@ public class scr_PlayerController : scr_Entity {
             leftArmIK = this.transform.Find("IK").Find("IK_L_Hand").GetComponent<Transform>();
 
         }
+
+        paManager = GetComponent<scr_PA_Manager>();
 
     }
 
@@ -403,6 +405,10 @@ public class scr_PlayerController : scr_Entity {
 			}
 
 		}
+
+        if (paManager != null)
+            paManager.Flip();
+
 
 	}
 
