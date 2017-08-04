@@ -13,7 +13,6 @@ public class scr_Weapon_Sword : scr_Weapon {
         if (clicked && noAnimation)
         {
             StartAttackAnimation();
-            print("Atacou");
         }
         //Verify sword collider for hits
         if (!noAnimation)

@@ -12,26 +12,37 @@ abstract public class scr_Weapon : MonoBehaviour {
     {
         UpAttack,
         ThrustAttack,
-        RangedAttack
+        RangedAttack,
+        None
     };
 
     #region Variables
 
+    //Se essa é ou não a mão direita
     [HideInInspector]
     public bool rightHand;
     //A arma deve seguir o mouse
     public bool followMouse;
     //Como é o ataque utilizado
     public AttackType attackType;
+    //Qual variação de sprite vai ser utilizado no braço
     public int armVariation = 0;
 
+    //A IK que vai ser usado para mover o braço
     protected GameObject ik;
+    //O animador do personagem
     protected Animator animator;
+    //Sprite da arma
     protected SpriteRenderer sprite;
+    //A ordem do sprite a ser utilizado quando no sentido normal
     protected int frontLayer;
+    //A ordem do sprite a ser utilizado quando inverte
     protected int backLayer;
+    //Se o botão do ataque foi clicado
     protected bool clicked;
+    //Se o botão de ataque foi segurado
     protected bool holding;
+    //Se a arma foi invertido
     protected bool flipped;
 
     #endregion Variables
@@ -90,8 +101,8 @@ abstract public class scr_Weapon : MonoBehaviour {
 
     /**
      * Função específica de cada arma. Recebe como parâmetro um booleano indicando se
-     * tem alguma animação sendo realizada ou não
-     * 
+     * tem alguma animação sendo realizada ou não.
+     * É chamada toda função de update
      */
     abstract protected void AttackAction(bool noAnimation);
 
@@ -99,6 +110,10 @@ abstract public class scr_Weapon : MonoBehaviour {
         this.ik = ik;
     }
 
+    /**
+     * Define o animador a ser utilizado pela arma
+     * 
+     */
     public void setAnimator(Animator animator)
     {
         this.animator = animator;
@@ -120,6 +135,8 @@ abstract public class scr_Weapon : MonoBehaviour {
             case AttackType.RangedAttack:
                 name = name + "GunRecoil";
                 break;
+            case AttackType.None:
+                break;
             default:
 
                 break;
@@ -128,10 +145,16 @@ abstract public class scr_Weapon : MonoBehaviour {
 
     }
 
+    /**
+     * Define se está utilizando o braço esquerdo ou direito
+     */
     public void setRightHand(bool RightHand) {
         this.rightHand = RightHand;
     }
 
+    /**
+     * Define a ordem dos sprites
+     */
     public void setSpriteLayer(int frontLayer, int backLayer) {
         this.frontLayer = frontLayer;
         this.backLayer = backLayer;
@@ -145,7 +168,7 @@ abstract public class scr_Weapon : MonoBehaviour {
     }
 
     /**
-     * Troca os sprites a serem usados
+     * Troca a ordem dos sprites a serem usados
      */
     public void flipHand()
     {
@@ -159,6 +182,9 @@ abstract public class scr_Weapon : MonoBehaviour {
         }
     }
 
+    /**
+     * Começa animação de ataque
+     */
     protected void StartAttackAnimation() {
         if (animator == null)
             return;
