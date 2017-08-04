@@ -14,10 +14,13 @@ using UnityEngine;
 
  */
 
-public class scr_PlayerController : scr_Entity {
+public class scr_PlayerController : MonoBehaviour {
 
 
 	#region variables
+
+	//Tempo maximo para salto alto
+	public float maxHighJumpTime = 0.25f;
 
 	//Velocidade da caminhada do personagem
 
@@ -75,6 +78,8 @@ public class scr_PlayerController : scr_Entity {
 
 	private Rigidbody2D rb;
 
+	//Tempo atual de salto alto
+	private float currHighJumpTime;
 
 
     #endregion variables
@@ -93,8 +98,7 @@ public class scr_PlayerController : scr_Entity {
     protected void Awake()
 
 	{
-
-		base.Awake ();//Awake da classe pai
+		currHighJumpTime = maxHighJumpTime; //1s
 
 		isFacingRight = true;
 
@@ -132,33 +136,33 @@ public class scr_PlayerController : scr_Entity {
 
     {
 
-
 		//Verifica contato com o chão
 
 		isGrounded = touchesGround (playerFeetPosition.position);
 
 
-
 		playerHorizontalMove ();
 
 
-
-		if (Input.GetButtonDown ("Jump") && isGrounded)
-
+		/*if (Input.GetButtonDown ("Jump") && isGrounded)
 			Jump ();
 
 		if (rb.velocity.y < 0 && !isGrounded)
-
 			Fall ();
 
 		if (rb.velocity.y > 0 && !Input.GetButton("Jump") && !isGrounded)
+			lowJump();*/
 
-			lowJump();
+
+		if (Input.GetButtonDown ("Jump") && isGrounded)
+			Jump ();
+
+		if (rb.velocity.y > 0 && Input.GetButton("Jump") && !isGrounded)
+			highJump();
 
 
 
 		if (!useArmIK)
-
 		{
 
 			//Indo para a direita e virado para a esquerda
@@ -225,11 +229,8 @@ public class scr_PlayerController : scr_Entity {
 		/** 
 
 		  * Usar rb.velocity para que o movimento do personagem
-
 		  * sofra a influência da física. Um transform direto poderia quebrar
-
 		  * A física em parte
-
 		  */
 
 		// Pega input horizontal
@@ -243,11 +244,8 @@ public class scr_PlayerController : scr_Entity {
 
 
     /**
-
 	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
-
 	 * @return true		Está tocando o chão
-
 	 */
 
     bool touchesGround(Vector2 pos){
@@ -258,7 +256,7 @@ public class scr_PlayerController : scr_Entity {
 
 		bool isGrounded = true;
 
-		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.2f);
+		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.3f);
 
 		foreach (Collider2D obj in array) {
 
@@ -267,7 +265,7 @@ public class scr_PlayerController : scr_Entity {
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 
 				isGrounded = true;
-
+				currHighJumpTime = maxHighJumpTime;
 				break;
 
 			} else {
@@ -297,53 +295,44 @@ public class scr_PlayerController : scr_Entity {
 	}
 
 
-
+	/**
 	//Método para Salto curto, ocorre quando o botão de salto é solto logo após saltar
 
 	void lowJump (){
-
 		print ("LJ");
-
 		rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier) * Time.deltaTime;
 
 	}
 
-	/**
+
 
 	* Método responsável por fazer com que a queda do jogador seja mais rápida
-
 	* Isso deixa um controle de salto mais aprimorado e próprio para platformer
 
-	*/
 
 	void Fall (){
-
 		print ("fall");
-
 		rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime;
+	}*/
 
+
+
+	/**
+	 * Mantém a velocidade em Y constante enquanto o botão estiver pressionado
+	 */
+	void highJump(){
+		print ("highJump");
+		if (currHighJumpTime > 0) {
+			rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
+			currHighJumpTime-= Time.deltaTime;
+		}
 	}
+
 
 	#endregion Control methods
 
-
-
-
-
-	protected override void die(){
-
-		print ("Morreu");
-
-		Destroy(this.gameObject);
-
-	}
-
-
-
 	/***
-
 	 * Método que troca o sentido do sprite.
-
 	 */
 
 	void Flip()
@@ -405,10 +394,6 @@ public class scr_PlayerController : scr_Entity {
 		}
 
 	}
-
-
-
-
 
 }
 

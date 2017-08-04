@@ -53,7 +53,7 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
                     print(isAtacking);
                     if (isAtacking)
                     {
-                        scr_PlayerController player = hit.GetComponent<scr_PlayerController>();
+						scr_HealthController player = hit.GetComponent<scr_HealthController>();
                         player.takeDamage(attackDamage, new Vector2(attackDirection.x * direction, attackDirection.y));
                         isAtacking = false;
                         counter = attackCooldown;
