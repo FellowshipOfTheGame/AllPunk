@@ -36,6 +36,9 @@ public class scr_HealthController : MonoBehaviour {
 	 * Método usado para tomar dano.
 	 * O HP é alterado subtraindo damage - ou / defense
 	 * O knockback é aplicado * 1-poise 
+	 * 
+	 * @param	damage	quantidade de dano a ser tomado
+	 * @param	direction	Vetor de direção e intensidade do knockback
 	 */
 	public void takeDamage(float damage, Vector2 direction){
 

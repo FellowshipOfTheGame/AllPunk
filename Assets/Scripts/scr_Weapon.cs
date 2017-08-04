@@ -86,13 +86,10 @@ abstract public class scr_Weapon : MonoBehaviour {
                 }
             }
         }
-
-
-        //Define se está havendo algum input
-        int mouseIndex = (rightHand) ? 1 : 0;
-        clicked = Input.GetMouseButtonDown(mouseIndex);
-        holding = Input.GetMouseButton(mouseIndex);
-
+			
+		string fireButton = (rightHand) ? "Fire1" : "Fire2";
+		clicked = Input.GetButtonDown(fireButton);
+		holding = Input.GetButton(fireButton);
         //Chama a função específica de cada arma
         AttackAction(noAnimation);
 

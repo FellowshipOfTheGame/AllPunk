@@ -289,9 +289,7 @@ public class scr_PlayerController : MonoBehaviour {
 	//Método para Salto, adiciona velocidade no eixo Y
 
 	void Jump (){
-
-		print ("jump");
-
+		//print ("jump");
 		rb.velocity += new Vector2  (0, jumpSpeed);
 
 	}
@@ -323,7 +321,7 @@ public class scr_PlayerController : MonoBehaviour {
 	 * Mantém a velocidade em Y constante enquanto o botão estiver pressionado
 	 */
 	void highJump(){
-		print ("highJump");
+		//print ("highJump");
 		if (currHighJumpTime > 0) {
 			rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
 			currHighJumpTime-= Time.deltaTime;
