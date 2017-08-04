@@ -80,7 +80,7 @@ public class scr_PlayerController : MonoBehaviour {
 
 	//Tempo atual de salto alto
 	private float currHighJumpTime;
-
+    private scr_PA_Manager paManager;
 
     #endregion variables
 
@@ -115,6 +115,8 @@ public class scr_PlayerController : MonoBehaviour {
             leftArmIK = this.transform.Find("IK").Find("IK_L_Hand").GetComponent<Transform>();
 
         }
+
+        paManager = GetComponent<scr_PA_Manager>();
 
     }
 
@@ -392,6 +394,10 @@ public class scr_PlayerController : MonoBehaviour {
 			}
 
 		}
+
+        if (paManager != null)
+            paManager.Flip();
+
 
 	}
 
