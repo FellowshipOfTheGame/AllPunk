@@ -23,7 +23,7 @@ public class scr_Weapon_Gun : scr_Weapon
             scr_Projectile proj = bullet.GetComponent<scr_Projectile>();
             Vector3 direction = spawnPosition.position - transform.position;
             direction = direction.normalized * intensity;
-            proj.Fire(direction);
+            proj.Fire(direction, "Player");
         }
     }
 }

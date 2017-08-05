@@ -12,8 +12,8 @@ public class scr_Projectile : MonoBehaviour {
 
 	private Rigidbody2D entityRigidBody;
 
-	//Referencia ao objeto que instanciou o tiro para eliminar a existência de friendly fire
-	//private GameObject owner;
+	//Nome da Tag do dono para impedir friendly Fire
+	private string ownerTag;
 
 
 	void Awake(){
@@ -22,7 +22,8 @@ public class scr_Projectile : MonoBehaviour {
 	}
 		
 
-	public void Fire (Vector2 fireDirection){
+	public void Fire (Vector2 fireDirection, string ownerTag){
+		this.ownerTag = ownerTag;
 		this.direction = fireDirection;
 		this.entityRigidBody.velocity = this.direction.normalized * speed;
 	}
@@ -42,13 +43,13 @@ public class scr_Projectile : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D col){
 		//Entidade "danificável"
 		scr_HealthController entity = col.gameObject.GetComponent<scr_HealthController> ();
-		if (entity != null) {
-			entity.takeDamage (this.damage, new Vector2 (10, 0));
-			Die ();
+		if (entity != null && entity.tag != ownerTag) {
+			entity.takeDamage (this.damage, this.direction.normalized);
 		}
-		
-		if (col.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
+		Die ();
+
+		/*if (col.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 			Die ();
-		}
+		}*/
 	}
 }

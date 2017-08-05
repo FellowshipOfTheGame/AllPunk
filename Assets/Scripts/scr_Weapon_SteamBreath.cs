@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class scr_Weapon_SteamBreath : scr_Weapon {
 
-	public float meleeAtackDistance = 10.0f;
-	public float knockbackIntensity = 200.0f;
+	public float meleeAtackDistance = 3.0f;
+	public float knockbackIntensity = 4.0f;
 
 	public float overlapBoxWidth = 4.0f;
 	public float overlapBoxHeight = 4.0f;
 
 	public GameObject pointPrefab;
-	//private Transform spawnPosition;//Posição para spawnar hitbox
+	private Transform spawnPosition;//Posição para spawnar hitbox
 
 	private void Awake()
 	{
@@ -27,14 +27,13 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	 */
 		if (noAnimation && clicked) {
 
+			spawnPosition = transform.Find("SpawnPosition");
+
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Vector2 weaponDirection = mouseWorldPosition - transform.position; 
+			Vector2 weaponDirection = mouseWorldPosition - spawnPosition.position; 
+			Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x * meleeAtackDistance,
+				              spawnPosition.position.y + weaponDirection.normalized.y * meleeAtackDistance);
 
-			weaponDirection = weaponDirection.normalized;
-
-			Vector2 pos = mouseWorldPosition;
-
-			//Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(meleeAtackDistance / 2, 4), 0);
 			Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(overlapBoxWidth , overlapBoxWidth), 0);
 
 			GameObject ponto = GameObject.Instantiate(pointPrefab, pos, transform.rotation);
@@ -50,11 +49,8 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 					entity.takeDamage (0, weaponDirection * knockbackIntensity);
 
 				}
-
 			}
-
 			//StartAttackAnimation();
 		}
 	}
-
 }

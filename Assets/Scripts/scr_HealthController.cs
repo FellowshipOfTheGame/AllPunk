@@ -50,7 +50,8 @@ public class scr_HealthController : MonoBehaviour {
 			this.isDead = true;
 			this.die ();
 		} else {
-			this.transform.position += new Vector3 (0, 0.5f, 0); //levemente levanta do chao
+			//this.transform.position += new Vector3 (0, 0.5f, 0); //levemente levanta do chao
+			this.transform.position += new Vector3 (0, 1f, 0); //levemente levanta do chao
 			this.entityRigidBody.AddForce (direction * (1-this.poise), ForceMode2D.Impulse);
 		}
 	}
