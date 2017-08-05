@@ -29,7 +29,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 		base.Update ();
 		if (currentTimeToFire > 0) {
 			currentTimeToFire -= Time.deltaTime;
-			print ("~ " + currentTimeToFire);
+			//print ("~ " + currentTimeToFire);
 			if (currentTimeToFire <= 0)
 				currentTimeToFire = 0;
 		}
