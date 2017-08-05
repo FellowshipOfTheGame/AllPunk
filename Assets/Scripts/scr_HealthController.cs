@@ -56,6 +56,14 @@ public class scr_HealthController : MonoBehaviour {
 		}
 	}
 
+	public float getMaxHealth(){
+		return this.maxHp;
+	}
+
+	public float getCurrentHealth(){
+		return this.currentHp;
+	}
+
 	/**
 	 * Método para ma		tar a entidade.
 	 * Deve ser overwriten para efeitos de morte específicos

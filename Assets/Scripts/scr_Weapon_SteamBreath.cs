@@ -43,7 +43,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 		if (currentTimeToFire == 0 && clicked) {
 			
 			currentTimeToFire = timeToFire;
-			print ("~~ " + currentTimeToFire);
+			//print ("~~ " + currentTimeToFire);
 			//StartCoroutine (fireTimer(this.timeToFire));
 
 			spawnPosition = transform.Find("SpawnPosition");
