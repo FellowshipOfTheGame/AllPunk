@@ -41,7 +41,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 			foreach (Collider2D hit in hits) {
 
 				scr_HealthController entity = hit.GetComponent<scr_HealthController> ();
-				if (entity != null) {
+				if (entity != null && entity.tag != "Player") {
 					print (entity);
 					//entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);new Vector2 (weaponDirection.x, weaponDirection.y)
 					print("VecWDir " + weaponDirection);
