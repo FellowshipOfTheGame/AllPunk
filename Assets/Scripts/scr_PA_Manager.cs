@@ -96,13 +96,23 @@ public class scr_PA_Manager : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(2))
-        {
-            currentWeapon++;
-            if (currentWeapon >= weaponsPrefabs.Length)
-                currentWeapon = 0;
-            instanciateWeapon(TEST_ARM, currentWeapon);
-        }
+		
+		if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+		{
+			currentWeapon++;
+			if (currentWeapon >= weaponsPrefabs.Length)
+				currentWeapon = 0;
+			instanciateWeapon(TEST_ARM, currentWeapon);
+		}
+		else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+		{
+			currentWeapon--;
+			if (currentWeapon < 0)
+				currentWeapon = weaponsPrefabs.Length-1;
+			instanciateWeapon(TEST_ARM, currentWeapon);
+		}
+
+
         /*
         if (Input.GetKeyDown(KeyCode.R))
         {

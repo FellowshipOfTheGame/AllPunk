@@ -114,7 +114,7 @@ public class scr_PlayerCombatController : MonoBehaviour {
 
 		scr_Projectile projScr = projectileClone.GetComponent<scr_Projectile>();
 
-		projScr.Fire (gunDirection);
+		projScr.Fire (gunDirection, this.tag);
 
 	}
 

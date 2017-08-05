@@ -49,7 +49,7 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
             {
                 if (counter <= 0)
                 {
-                    print("Achei");
+                    //print("Achei");
                     print(isAtacking);
                     if (isAtacking)
                     {

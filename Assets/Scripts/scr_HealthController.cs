@@ -36,6 +36,9 @@ public class scr_HealthController : MonoBehaviour {
 	 * Método usado para tomar dano.
 	 * O HP é alterado subtraindo damage - ou / defense
 	 * O knockback é aplicado * 1-poise 
+	 * 
+	 * @param	damage	quantidade de dano a ser tomado
+	 * @param	direction	Vetor de direção e intensidade do knockback
 	 */
 	public void takeDamage(float damage, Vector2 direction){
 
@@ -47,13 +50,14 @@ public class scr_HealthController : MonoBehaviour {
 			this.isDead = true;
 			this.die ();
 		} else {
-			this.transform.position += new Vector3(0, 0.5f, 0);
+			//this.transform.position += new Vector3 (0, 0.5f, 0); //levemente levanta do chao
+			this.transform.position += new Vector3 (0, 1f, 0); //levemente levanta do chao
 			this.entityRigidBody.AddForce (direction * (1-this.poise), ForceMode2D.Impulse);
 		}
 	}
 
 	/**
-	 * Método para matar a entidade.
+	 * Método para ma		tar a entidade.
 	 * Deve ser overwriten para efeitos de morte específicos
 	 * @param void
 	 * @return void
