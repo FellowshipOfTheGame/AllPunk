@@ -12,6 +12,9 @@ public class scr_Projectile : MonoBehaviour {
 
 	private Rigidbody2D entityRigidBody;
 
+	//Referencia ao objeto que instanciou o tiro para eliminar a existência de friendly fire
+	//private GameObject owner;
+
 
 	void Awake(){
 		this.entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));

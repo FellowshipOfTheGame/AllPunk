@@ -67,7 +67,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
             //hits = Physics2D.OverlapCircleAll(transform.Find("NextWallCollision").position, 0.2f);
             float height = (transform.Find("NextWallCollision").position - transform.Find("NextFloorCollision").position).y;
             hits = Physics2D.OverlapBoxAll(transform.Find("NextWallCollision").position, new Vector2(0.2f, height), 0);
-            print(hits);
+            //print(hits);
             foreach (Collider2D hit in hits)
             {
                 nextWall = (hit.gameObject.layer == LayerMask.NameToLayer("Ground"));
