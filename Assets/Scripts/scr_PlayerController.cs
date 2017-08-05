@@ -80,7 +80,12 @@ public class scr_PlayerController : MonoBehaviour {
 
 	//Tempo atual de salto alto
 	private float currHighJumpTime;
+
+    //Referência para o gerenciador de PA's
     private scr_PA_Manager paManager;
+
+    //Referência para o animator
+    private Animator animator;
 
     #endregion variables
 
@@ -117,6 +122,8 @@ public class scr_PlayerController : MonoBehaviour {
         }
 
         paManager = GetComponent<scr_PA_Manager>();
+
+        animator = GetComponent<Animator>();
 
     }
 
@@ -212,6 +219,12 @@ public class scr_PlayerController : MonoBehaviour {
 				Flip();
 
 		}
+
+        if (animator != null) {
+            animator.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
+            animator.SetFloat("VerSpeed", rb.velocity.y);
+            animator.SetBool("IsGrounded", isGrounded);
+        }
 	}
 
 
