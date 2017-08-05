@@ -4,39 +4,62 @@ using UnityEngine;
 
 public class scr_Weapon_SteamBreath : scr_Weapon {
 
-	public float meleeAtackDistance = 3.0f;
-	public float knockbackIntensity = 4.0f;
+	public float meleeAtackDistance = 1.0f;
+	public float knockbackIntensity = 10.0f;
+	public float timeToFire = 1.0f;
+	public GameObject smokePrefab;//Usado para instanciar a fumaça
 
-	public float overlapBoxWidth = 4.0f;
-	public float overlapBoxHeight = 4.0f;
-
-	public GameObject pointPrefab;
 	private Transform spawnPosition;//Posição para spawnar hitbox
+	private float currentTimeToFire;
+
+	/*IEnumerator fireTimer(float timeToFire){
+		//yield return new WaitForSeconds (this.timeToFire);
+		yield return new WaitForSeconds (1.0f);
+		currentTimeToFire = 0;
+	}*/
 
 	private void Awake()
 	{
 		base.Awake();
-		//spawnPosition = transform.Find("SpawnPosition");
+		currentTimeToFire = 0;
+
 	}
 
+	private void Update(){
+		base.Update ();
+		if (currentTimeToFire > 0) {
+			currentTimeToFire -= Time.deltaTime;
+			//print ("~ " + currentTimeToFire);
+			if (currentTimeToFire <= 0)
+				currentTimeToFire = 0;
+		}
+	}
 
 	override protected void AttackAction(bool noAnimation) {
 	/**
 	 * Para o steam breath, projetar uma Hitbox que realizará dano
 	 * zero e dará knockback em um vetor na direção mirada
 	 */
-		if (noAnimation && clicked) {
+		if (currentTimeToFire == 0 && clicked) {
+			
+			currentTimeToFire = timeToFire;
+			print ("~~ " + currentTimeToFire);
+			//StartCoroutine (fireTimer(this.timeToFire));
 
 			spawnPosition = transform.Find("SpawnPosition");
 
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Vector2 weaponDirection = mouseWorldPosition - spawnPosition.position; 
-			Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x * meleeAtackDistance,
-				              spawnPosition.position.y + weaponDirection.normalized.y * meleeAtackDistance);
 
-			Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(overlapBoxWidth , overlapBoxWidth), 0);
+			Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x,
+				              spawnPosition.position.y + weaponDirection.normalized.y);
 
-			GameObject ponto = GameObject.Instantiate(pointPrefab, pos, transform.rotation);
+			Collider2D[] hits = new Collider2D[10];
+			PolygonCollider2D collider = GetComponent<PolygonCollider2D>();//Referencia para o collider 
+			ContactFilter2D ct2D = new ContactFilter2D();
+			collider.OverlapCollider(ct2D, hits);
+
+			GameObject ponto = GameObject.Instantiate(smokePrefab, pos, transform.rotation);
 
 			foreach (Collider2D hit in hits) {
 
@@ -44,8 +67,8 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 				if (entity != null && entity.tag != "Player") {
 					print (entity);
 					//entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);new Vector2 (weaponDirection.x, weaponDirection.y)
-					print("VecWDir " + weaponDirection);
-					print("VecKnock " + weaponDirection * knockbackIntensity);
+					//print("VecWDir " + weaponDirection);
+					//print("VecKnock " + weaponDirection * knockbackIntensity * knockbackIntensity);
 					entity.takeDamage (0, weaponDirection * knockbackIntensity);
 
 				}
