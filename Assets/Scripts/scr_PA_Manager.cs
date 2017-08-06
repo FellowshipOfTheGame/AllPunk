@@ -20,6 +20,12 @@ public class scr_PA_Manager : MonoBehaviour {
 
     private GameObject leftWeapon;
     private GameObject rightWeapon;
+
+	private float leftCooldown;
+	private float rightCooldown;
+	private float leftCurrCooldown;
+	private float rightCurrCooldown;
+
     private Animator animator;
     private bool flipped = false;
 
@@ -37,6 +43,12 @@ public class scr_PA_Manager : MonoBehaviour {
 
     private void Awake()
     {
+		rightCooldown = 0;
+		rightCurrCooldown = 0;
+		leftCooldown = 0;
+		leftCurrCooldown = 0;
+
+
         animator = GetComponent<Animator>();
         Transform meshTransform = transform.Find("Mesh");
         animRUpperArm = meshTransform.Find("R.UpperArm").GetComponent<SpriteMeshAnimation>();
@@ -113,7 +125,24 @@ public class scr_PA_Manager : MonoBehaviour {
 		}
 
 
-        /*
+		/**
+		 * Verifica se alguma arma está em cooldown, se estiver, manda para o player e o player manda para o HUD
+		 */
+		if (rightWeapon != null) {
+			scr_Weapon rscr = rightWeapon.GetComponent<scr_Weapon> ();
+			rightCooldown = rscr.getCooldownTimer ();
+			rightCurrCooldown = rscr.getCurrentCooldownTimer ();
+
+			//print ("Cooldown " + rightCooldown);
+		}
+		if (leftWeapon != null) {
+			scr_Weapon lscr = leftWeapon.GetComponent<scr_Weapon> ();
+			leftCooldown = lscr.getCooldownTimer ();
+			leftCurrCooldown = lscr.getCurrentCooldownTimer ();
+
+			//print ("Cooldown " + leftCooldown);
+		}
+		/*
         if (Input.GetKeyDown(KeyCode.R))
         {
             Flip();
@@ -183,4 +212,16 @@ public class scr_PA_Manager : MonoBehaviour {
         rightArm.transform.localPosition = leftArm.transform.localPosition;
         leftArm.transform.localPosition = newPosition;
     }
+
+	/***
+	 * Método que retorna os timers das armas
+	 * X = Direito
+	 * Y = Direito Atual
+	 * Z = Esquerdo
+	 * W = Esquerdo Atual
+	 */
+	public Vector4 getCountdownTimers(){
+		Vector4 timers = new Vector4 (rightCurrCooldown, rightCooldown, leftCurrCooldown, leftCooldown);
+		return timers;
+	}
 }

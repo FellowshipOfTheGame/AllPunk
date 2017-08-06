@@ -25,6 +25,11 @@ public class scr_HealthController : MonoBehaviour {
 	private Rigidbody2D entityRigidBody;
 	//Verificando se o objeto está morto
 	private bool isDead;
+
+	/* //Variáveis para stun
+	private float stunTime = 2;
+	private float currStunTime = 0;
+	*/
     //Referencia ao animator da entidade
     private Animator animator;
     #endregion variables
@@ -62,6 +67,24 @@ public class scr_HealthController : MonoBehaviour {
                 print("Ai");
             }
 		}
+	}
+
+	/* //TENTATIVA DE STUN
+	public void Update(){
+		if (currStunTime > 0) {
+			this.entityRigidBody.velocity = new Vector2 (0f, 0f);
+			currStunTime -= Time.deltaTime;
+			if (currStunTime < 0)
+				currStunTime = 0;
+		}
+	}*/
+
+	public float getMaxHealth(){
+		return this.maxHp;
+	}
+
+	public float getCurrentHealth(){
+		return this.currentHp;
 	}
 
 	/**
