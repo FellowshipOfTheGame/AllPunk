@@ -27,6 +27,8 @@ abstract public class scr_Weapon : MonoBehaviour {
     public AttackType attackType;
     //Qual variação de sprite vai ser utilizado no braço
     public int armVariation = 0;
+	//Tempo entre ativações da arma
+	public float cooldownTime;
 
     //A IK que vai ser usado para mover o braço
     protected GameObject ik;
@@ -44,7 +46,8 @@ abstract public class scr_Weapon : MonoBehaviour {
     protected bool holding;
     //Se a arma foi invertido
     protected bool flipped;
-
+	//Tempo atual de cooldown, se é zero ela pode disparar
+	protected float currCooldownTime;
     #endregion Variables
 
     /**
@@ -55,10 +58,18 @@ abstract public class scr_Weapon : MonoBehaviour {
         this.sprite = GetComponent<SpriteRenderer>();
         ik = null;
         animator = null;
+		currCooldownTime = 0;
     }
 
     protected void Update()
     {
+		if (currCooldownTime > 0) {
+			currCooldownTime -= Time.deltaTime;
+			//print ("~ " + currentTimeToFire);
+			if (currCooldownTime <= 0)
+				currCooldownTime = 0;
+		}
+
         //Move o IK para a posição do mouse    
         if (followMouse && ik != null) {
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -91,7 +102,10 @@ abstract public class scr_Weapon : MonoBehaviour {
 		clicked = Input.GetButtonDown(fireButton);
 		holding = Input.GetButton(fireButton);
         //Chama a função específica de cada arma
-        AttackAction(noAnimation);
+		if (clicked && currCooldownTime == 0) {
+			currCooldownTime = cooldownTime;
+			AttackAction (noAnimation);
+		}
 
     }
 

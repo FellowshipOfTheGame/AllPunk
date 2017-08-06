@@ -6,8 +6,14 @@ using UnityEngine.UI;
 public class scr_HUDController : MonoBehaviour {
 
 	public GameObject player;
+
 	public Text healthText;
 	public Slider healthSlider;
+
+	public Text energyText;
+	public Slider energySlider;
+
+	public Text rightWeaponText;
 
 	private scr_HealthController playerHealthScr;
 
