@@ -28,7 +28,7 @@ abstract public class scr_Weapon : MonoBehaviour {
     //Qual variação de sprite vai ser utilizado no braço
     public int armVariation = 0;
 	//Tempo entre ativações da arma
-	public float cooldownTime;
+	public float cooldownTime = 0;
 
     //A IK que vai ser usado para mover o braço
     protected GameObject ik;
@@ -205,4 +205,12 @@ abstract public class scr_Weapon : MonoBehaviour {
             animator.SetTrigger("L_Attack");
         
     }
+
+	public float getCooldownTimer(){
+		return cooldownTime;
+	}
+
+	public float getCurrentCooldownTimer(){
+		return currCooldownTime;
+	}
 }
