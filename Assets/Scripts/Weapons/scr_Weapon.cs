@@ -51,6 +51,8 @@ abstract public class scr_Weapon : MonoBehaviour {
     protected bool flipped;
 	//Tempo atual de cooldown, se é zero ela pode disparar
 	protected float currCooldownTime;
+    //Se está ou não tocando a animação
+    protected bool playingAnimation;
     #endregion Variables
 
     /**
@@ -118,7 +120,8 @@ abstract public class scr_Weapon : MonoBehaviour {
                 }
             }
         }
-			
+
+        playingAnimation = !noAnimation;
 		string fireButton = (rightHand) ? "Fire1" : "Fire2";
 		clicked = Input.GetButtonDown(fireButton);
 		holding = Input.GetButton(fireButton);

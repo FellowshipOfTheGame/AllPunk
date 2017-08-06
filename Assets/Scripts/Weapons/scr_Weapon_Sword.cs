@@ -7,16 +7,10 @@ public class scr_Weapon_Sword : scr_Weapon {
     public float damage;
     public float attackImpulse;
 
-    //Update function for UpAttack
-    override protected void AttackAction(bool noAnimation)
+    private void Update()
     {
-        if (clicked && noAnimation)
-        {
-            StartAttackAnimation();
-        }
-        //Verify sword collider for hits
-        if (!noAnimation)
-        {
+        base.Update();
+        if (playingAnimation) {
             Collider2D[] hits = new Collider2D[10];
             Collider2D collider = GetComponent<Collider2D>();
             ContactFilter2D ct2D = new ContactFilter2D();
@@ -27,7 +21,7 @@ public class scr_Weapon_Sword : scr_Weapon {
                     continue;
                 if (col.gameObject.tag == "Player")
                     continue;
-                scr_Entity entity = col.GetComponent<scr_Entity>();
+                scr_HealthController entity = col.GetComponent<scr_HealthController>();
                 if (entity != null)
                 {
                     float xComponent = ((col.transform.position - transform.position).x > 0) ? 1 : -1;
@@ -36,5 +30,16 @@ public class scr_Weapon_Sword : scr_Weapon {
                 }
             }
         }
+    }
+
+    //Update function for UpAttack
+    override protected void AttackAction(bool noAnimation)
+    {
+        print(noAnimation);
+        if (clicked && noAnimation)
+        {
+            StartAttackAnimation();
+        }
+
     }
 }

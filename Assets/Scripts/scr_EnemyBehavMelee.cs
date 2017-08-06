@@ -75,7 +75,7 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
         //Calcula colisão
         int direction = ((transform.Find("NextWallCollision").position - transform.position).x > 0) ? 1 : -1;
         float height = (transform.Find("NextWallCollision").position - transform.Find("NextFloorCollision").position).y;
-        Vector2 pos = new Vector2(transform.Find("NextWallCollision").position.x - direction * attackDistance / 2, transform.position.y);
+        Vector2 pos = new Vector2(transform.Find("NextWallCollision").position.x + direction * attackDistance / 2, transform.position.y);
 
         Collider2D[] hits = Physics2D.OverlapBoxAll(pos, new Vector2(attackDistance, height), 0);
 
