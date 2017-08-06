@@ -154,6 +154,10 @@ abstract public class scr_Weapon : MonoBehaviour {
             name = "R_";
         else
             name = "L_";
+        //Resetar as variaveis
+        animator.SetBool(name + "UpAttack",false);
+        animator.SetBool(name + "ThrustAttack",false);
+        animator.SetBool(name + "GunRecoil",false);
         //Seleciona qual animação vai ser utilizada
         switch (attackType)
         {
@@ -162,7 +166,7 @@ abstract public class scr_Weapon : MonoBehaviour {
                 name = name + "UpAttack";
                 break;
             case AttackType.ThrustAttack:
-
+                name = name + "ThrustAttack";
                 break;
             case AttackType.RangedAttack:
                 name = name + "GunRecoil";
