@@ -31,7 +31,8 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
     private bool nextWall;
     //Referencia do animator
     private Animator animator;
-
+    //Pode mover ou não
+    private bool cantMove;
     void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
@@ -92,7 +93,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
         }
 
         //Atualiza velocidade
-        if (isGrounded) {
+        if (isGrounded && !cantMove) {
             int direction = (isFacingRight) ? 1 : -1;
             rb2D.velocity = new Vector2(direction *
             Speed, rb2D.velocity.y);
@@ -101,9 +102,10 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
         //Atualiza animação
         if (animator != null) {
             animator.SetBool("IsGrounded", isGrounded);
-            animator.SetFloat("HorizontalSpeed", (isFacingRight) ? 1 : -1);
+            animator.SetFloat("HorizontalSpeed", Mathf.Abs(rb2D.velocity.x));
             animator.SetFloat("VerticalSpeed", rb2D.velocity.y);
         }
+        
 	}
 
     void Flip()
@@ -116,5 +118,12 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
         transform.localScale = theScale;
     }
 
+    void StopMoving() {
+        cantMove = true;
+    }
+
+    void ResumeMoviment() {
+        cantMove = false;
+    }
 
 }
