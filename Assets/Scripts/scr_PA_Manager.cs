@@ -213,6 +213,11 @@ public class scr_PA_Manager : MonoBehaviour {
         leftArm.transform.localPosition = newPosition;
     }
 
+	/*private float calculateArmLimit(){
+		//Acessa barços e calcula o tamanho deles
+	}*/
+
+
 	/***
 	 * Método que retorna os timers das armas
 	 * X = Direito
@@ -223,5 +228,15 @@ public class scr_PA_Manager : MonoBehaviour {
 	public Vector4 getCountdownTimers(){
 		Vector4 timers = new Vector4 (rightCurrCooldown, rightCooldown, leftCurrCooldown, leftCooldown);
 		return timers;
+	}
+
+	/**
+	 * Método usado no pause do jogo, para o script das armas
+	 */
+	public void pauseWeaponScripts(bool isPause){
+		if(rightWeapon != null)
+			rightWeapon.GetComponent<scr_Weapon> ().enabled = isPause;
+		if(leftWeapon != null)
+			leftWeapon.GetComponent<scr_Weapon> ().enabled = isPause;
 	}
 }

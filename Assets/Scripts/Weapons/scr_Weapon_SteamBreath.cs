@@ -21,7 +21,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	}*/
 	#endregion variables
 
-	private void Awake()
+	public void Awake()
 	{
 		base.Awake();
 		//currentTimeToFire = 0;
@@ -50,7 +50,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 			spawnPosition = transform.Find("SpawnPosition");
 
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Vector2 weaponDirection = mouseWorldPosition - spawnPosition.position; 
+			Vector2 weaponDirection = mouseWorldPosition - upperArm.position; 
 
 			Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x,
 				              spawnPosition.position.y + weaponDirection.normalized.y);
@@ -60,7 +60,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 			ContactFilter2D ct2D = new ContactFilter2D();
 			collider.OverlapCollider(ct2D, hits);
 
-			GameObject ponto = GameObject.Instantiate(smokePrefab, pos, transform.rotation);
+			GameObject.Instantiate(smokePrefab, pos, transform.rotation);
 
 			foreach (Collider2D hit in hits) {
 

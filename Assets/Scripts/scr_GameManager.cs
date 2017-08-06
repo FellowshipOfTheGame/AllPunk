@@ -19,9 +19,11 @@ public class scr_GameManager : MonoBehaviour {
 		}
 
 		if (Input.GetButtonDown ("Cancel")) {
-			print ("pause");
 			isPause = !isPause;
 			Time.timeScale = System.Convert.ToSingle(isPause);
+
+			player.GetComponent<scr_PlayerController> ().enabled = isPause;
+			player.GetComponent<scr_PA_Manager> ().pauseWeaponScripts(isPause);
 		}
 	}
 }
