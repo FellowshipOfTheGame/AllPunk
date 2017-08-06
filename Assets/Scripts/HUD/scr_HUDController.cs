@@ -14,6 +14,7 @@ public class scr_HUDController : MonoBehaviour {
 	public Slider energySlider;
 
 	public Text rightWeaponText;
+	public Slider rightWeaponSlider;
 
 	private scr_HealthController playerHealthScr;
 
@@ -21,10 +22,18 @@ public class scr_HUDController : MonoBehaviour {
 	void updateWeaponTimers(){
 		Vector4 timers = player.GetComponent<scr_PA_Manager>().getCountdownTimers();
 		if (timers.x != 0 && timers.y != 0) {
-			float dirTime = timers.x / timers.y;// Tempo atual:total
-			rightWeaponText.text = "RCountDown" + dirTime.ToString ("F2");
-		} else
+			rightWeaponSlider.GetComponentInParent<CanvasGroup> ().alpha = 1;
+
+			float rightTime = timers.x / timers.y;// Tempo atual:total
+			rightWeaponText.text = "RCountDown" + rightTime.ToString ("F2");
+			rightWeaponSlider.value = rightTime;
+		} else {
+
 			rightWeaponText.text = "";
+			rightWeaponSlider.value = 0;
+
+			rightWeaponSlider.GetComponentInParent<CanvasGroup> ().alpha = 0;
+		}
 
 		if (timers.z != 0 && timers.w != 0) {
 			float dirTime = timers.z / timers.w;// Tempo atual:total
