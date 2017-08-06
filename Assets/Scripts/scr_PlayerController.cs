@@ -378,7 +378,7 @@ public class scr_PlayerController : MonoBehaviour {
 
 		{
 
-			Transform skeletonTransform = transform.Find("Skeleton");
+			Transform skeletonTransform = transform.Find("Bones");
 
 			Vector3 theScale = skeletonTransform.localScale;
 

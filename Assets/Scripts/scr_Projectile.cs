@@ -27,7 +27,7 @@ public class scr_Projectile : MonoBehaviour {
 		this.direction = fireDirection;
 		this.entityRigidBody.velocity = this.direction.normalized * speed;
 	}
-
+		
 	public void Update(){
 		if (timeToLive <= 0)
 			Die ();

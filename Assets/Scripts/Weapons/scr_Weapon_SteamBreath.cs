@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class scr_Weapon_SteamBreath : scr_Weapon {
 
+	#region variables
+
 	public float meleeAtackDistance = 1.0f;
-	public float knockbackIntensity = 10.0f;
+	public float knockbackIntensity;
 	public float timeToFire = 1.0f;
 	public GameObject smokePrefab;//Usado para instanciar a fumaça
 
@@ -17,6 +19,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 		yield return new WaitForSeconds (1.0f);
 		currentTimeToFire = 0;
 	}*/
+	#endregion variables
 
 	private void Awake()
 	{
@@ -67,8 +70,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 					//entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);new Vector2 (weaponDirection.x, weaponDirection.y)
 					//print("VecWDir " + weaponDirection);
 					//print("VecKnock " + weaponDirection * knockbackIntensity * knockbackIntensity);
-					entity.takeDamage (0, weaponDirection * knockbackIntensity);
-
+					entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);
 				}
 			}
 			//StartAttackAnimation();
