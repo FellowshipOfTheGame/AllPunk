@@ -200,13 +200,9 @@ public class scr_PlayerController : MonoBehaviour {
 
 			mouseWorldPosition.z = transform.position.z;
 
+			/*rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
 
-
-			rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
-
-			leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);
-
-
+			leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);*/
 
 			Vector3 relativeMouse = mouseWorldPosition - transform.position;
 
@@ -236,9 +232,6 @@ public class scr_PlayerController : MonoBehaviour {
 	#region Control methods
 
 
-
-
-
 	void playerHorizontalMove(){
 
 		/** 
@@ -266,9 +259,7 @@ public class scr_PlayerController : MonoBehaviour {
     bool touchesGround(Vector2 pos){
 
 		/*Array de todos os colliders que colidem com os pés do jogador.
-
 		 * recebe de argumento um Vector2, raio do círculo*/
-
 		bool isGrounded = true;
 
 		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.3f);
@@ -276,21 +267,15 @@ public class scr_PlayerController : MonoBehaviour {
 		foreach (Collider2D obj in array) {
 
 			//Verificação manual da layer
-
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
-
 				isGrounded = true;
 				currHighJumpTime = maxHighJumpTime;
 				break;
-
 			} else {
 
 				isGrounded = false;
-
 			}	
-
 		}
-
 		return isGrounded;
 
 	}
@@ -356,55 +341,16 @@ public class scr_PlayerController : MonoBehaviour {
 
 		isFacingRight = !isFacingRight;
 
-		if (!useArmIK)
-
-		{
-
-			//Multiplica a escala por -1
-
-			Vector3 theScale = transform.localScale;
-
-			theScale.x *= -1;
-
-			transform.localScale = theScale;
-
-		}
 
 
+		//Multiplica a escala por -1
 
-		//Inverte a orientação do esqueleto
+		Vector3 theScale = transform.localScale;
 
-		if (useArmIK)
+		theScale.x *= -1;
 
-		{
+		transform.localScale = theScale;
 
-			Transform skeletonTransform = transform.Find("Bones");
-
-			Vector3 theScale = skeletonTransform.localScale;
-
-			Vector3 ikScale = leftArmIK.localScale;
-
-			theScale.x *= -1;
-
-			ikScale.x *= -1;
-
-			skeletonTransform.localScale = theScale;
-
-			leftArmIK.localScale = ikScale;
-
-			rightArmIK.localScale = ikScale;
-
-			SpriteRenderer sprite = GetComponent<SpriteRenderer>();
-
-			if (sprite != null) {
-
-				bool Flip = !sprite.flipX;
-
-				sprite.flipX = Flip;
-
-			}
-
-		}
 
         if (paManager != null)
             paManager.Flip();

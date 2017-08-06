@@ -36,8 +36,7 @@ public class scr_HUDController : MonoBehaviour {
 		}
 
 		if (timers.z != 0 && timers.w != 0) {
-			float dirTime = timers.z / timers.w;// Tempo atual:total
-			//rightWeaponText.text = "RCountDown" + dirTime.ToString ("F2");
+			//float leftTime = timers.z / timers.w;// Tempo atual:total
 		}
 	}
 
@@ -48,15 +47,18 @@ public class scr_HUDController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		updateWeaponTimers ();
+		//Se o player não morreu
+		if (player != null) {
+			updateWeaponTimers ();
 
-		float playerMaxHp = playerHealthScr.getMaxHealth ();
-		float playerCurrentHp = playerHealthScr.getCurrentHealth ();
+			float playerMaxHp = playerHealthScr.getMaxHealth ();
+			float playerCurrentHp = playerHealthScr.getCurrentHealth ();
 			
-		healthText.text = "Integrity " + 
-			(playerCurrentHp/playerMaxHp)*100 + "%";
+			healthText.text = "Integrity " +
+			(playerCurrentHp / playerMaxHp) * 100 + "%";
 
-		healthSlider.value = playerCurrentHp / playerMaxHp;
+			healthSlider.value = playerCurrentHp / playerMaxHp;
+		}
 
 	}
 }
