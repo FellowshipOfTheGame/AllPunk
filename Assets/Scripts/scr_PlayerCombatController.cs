@@ -82,7 +82,7 @@ public class scr_PlayerCombatController : MonoBehaviour {
 
 			if (hit.gameObject.tag == "Enemy") {
 
-				scr_Enemy enemy = hit.GetComponent<scr_Enemy>();
+				scr_HealthController enemy = hit.GetComponent<scr_HealthController>();
 
 				enemy.takeDamage(meleeAtackDamage, new Vector2(10, 0));
 

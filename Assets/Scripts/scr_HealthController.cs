@@ -25,11 +25,14 @@ public class scr_HealthController : MonoBehaviour {
 	private Rigidbody2D entityRigidBody;
 	//Verificando se o objeto está morto
 	private bool isDead;
-	#endregion variables
+    //Referencia ao animator da entidade
+    private Animator animator;
+    #endregion variables
 
 	private void Awake(){
 		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		currentHp = maxHp;
+        animator = GetComponent<Animator>();
 	}
 
 	/**
@@ -53,6 +56,11 @@ public class scr_HealthController : MonoBehaviour {
 			//this.transform.position += new Vector3 (0, 0.5f, 0); //levemente levanta do chao
 			this.transform.position += new Vector3 (0, 1f, 0); //levemente levanta do chao
 			this.entityRigidBody.AddForce (direction * (1-this.poise), ForceMode2D.Impulse);
+            if (animator != null)
+            {
+                animator.SetTrigger("Hurt");
+                print("Ai");
+            }
 		}
 	}
 
