@@ -5,6 +5,7 @@ using UnityEngine;
 public class scr_GameManager : MonoBehaviour {
 
 	public GameObject player;
+	public GameObject door;
 
 	private bool isPause;
 
@@ -25,5 +26,7 @@ public class scr_GameManager : MonoBehaviour {
 			player.GetComponent<scr_PlayerController> ().enabled = isPause;
 			player.GetComponent<scr_PA_Manager> ().pauseWeaponScripts(isPause);
 		}
+
+		
 	}
 }
