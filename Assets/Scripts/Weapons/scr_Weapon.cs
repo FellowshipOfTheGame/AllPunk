@@ -31,11 +31,8 @@ abstract public class scr_Weapon : MonoBehaviour {
 	public float cooldownTime = 0;
 
 
-	protected float deadzoneRadius = 2.0f;
 	//Referência ao transform do braço
-	protected Transform upperArm;
-
-
+	protected Transform lowerArm;
     //A IK que vai ser usado para mover o braço
     protected GameObject ik;
     //O animador do personagem
@@ -67,7 +64,7 @@ abstract public class scr_Weapon : MonoBehaviour {
 		currCooldownTime = 0;
 
 		Transform parentTransform = GetComponentInParent<Rigidbody2D> ().transform;
-		upperArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm");
+		lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
     }
 
     protected void Update()
@@ -85,20 +82,20 @@ abstract public class scr_Weapon : MonoBehaviour {
             mouseWorldPosition.z = transform.position.z;
 
 
+			ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
 
-			Vector3 aux = (mouseWorldPosition - upperArm.position);
 
 			/*Vector3 aux = (mouseWorldPosition - 
 				this.transform.position);*/
 
 			//Se maior do que o limite
-			if (aux.magnitude > deadzoneRadius) {
+			/*if (aux.magnitude > deadzoneRadius) {
 				print ("ok");
 				ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
 			} else {
 				ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
 				print ("nope");
-			}
+			}*/
 
         }
 

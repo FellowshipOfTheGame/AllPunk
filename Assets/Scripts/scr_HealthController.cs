@@ -60,7 +60,10 @@ public class scr_HealthController : MonoBehaviour {
 		} else {
 			//this.transform.position += new Vector3 (0, 0.5f, 0); //levemente levanta do chao
 			this.transform.position += new Vector3 (0, 1f, 0); //levemente levanta do chao
-			this.entityRigidBody.AddForce (direction * (1-this.poise), ForceMode2D.Impulse);
+			print("dir1 " + direction);
+			direction = direction * (1 - poise);//Poise para reduzir knockback
+			print("dir2 " + direction);
+			this.entityRigidBody.AddForce (direction, ForceMode2D.Impulse);
             if (animator != null)
             {
                 animator.SetTrigger("Hurt");

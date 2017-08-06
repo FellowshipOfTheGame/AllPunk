@@ -25,6 +25,10 @@ public class scr_Projectile : MonoBehaviour {
 	public void Fire (Vector2 fireDirection, string ownerTag){
 		this.ownerTag = ownerTag;
 		this.direction = fireDirection;
+
+		if (this.direction.x < 1)
+			GetComponent<SpriteRenderer> ().flipX = true;
+
 		this.entityRigidBody.velocity = this.direction.normalized * speed;
 	}
 		
@@ -41,6 +45,12 @@ public class scr_Projectile : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D col){
+
+		if (col.gameObject.tag == ownerTag) {
+			Physics2D.IgnoreCollision (col.gameObject.GetComponent<Collider2D> (), 
+				this.gameObject.GetComponent<Collider2D> (), true);
+		}
+
 		//Entidade "danificável"
 		scr_HealthController entity = col.gameObject.GetComponent<scr_HealthController> ();
 		if (entity != null && entity.tag != ownerTag) {

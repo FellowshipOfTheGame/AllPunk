@@ -50,7 +50,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 			spawnPosition = transform.Find("SpawnPosition");
 
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Vector2 weaponDirection = mouseWorldPosition - upperArm.position; 
+			Vector2 weaponDirection = mouseWorldPosition - lowerArm.position; 
 
 			Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x,
 				              spawnPosition.position.y + weaponDirection.normalized.y);
@@ -63,7 +63,9 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 			GameObject.Instantiate(smokePrefab, pos, transform.rotation);
 
 			foreach (Collider2D hit in hits) {
-
+				if (hit == null)
+						continue;
+			
 				scr_HealthController entity = hit.GetComponent<scr_HealthController> ();
 				if (entity != null && entity.tag != "Player") {
 					print (entity);
