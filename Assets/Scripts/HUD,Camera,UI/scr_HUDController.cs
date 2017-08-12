@@ -18,6 +18,14 @@ public class scr_HUDController : MonoBehaviour {
 
 	private scr_HealthController playerHealthScr;
 
+	public void displayEndGameScreen(){
+		foreach (Transform child in transform) {
+			child.gameObject.SetActive(false);
+		}
+
+		transform.Find ("endGameText").gameObject.SetActive(true);
+	}
+
 
 	void updateWeaponTimers(){
 		Vector4 timers = player.GetComponent<scr_PA_Manager>().getCountdownTimers();
