@@ -118,11 +118,11 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
         transform.localScale = theScale;
     }
 
-    void StopMoving() {
+    public void StopMoving() {
         cantMove = true;
     }
 
-    void ResumeMoviment() {
+    public void ResumeMoviment() {
         cantMove = false;
     }
 
