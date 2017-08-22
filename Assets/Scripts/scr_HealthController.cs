@@ -49,7 +49,7 @@ public class scr_HealthController : MonoBehaviour {
 	 * @param	direction	Vetor de direção e intensidade do knockback
 	 */
 	public void takeDamage(float damage, Vector2 direction){
-
+		print (this.gameObject.name + " took dmg");
 		float netDamage = damage - this.defense;
 		if(netDamage > 0)
 			this.currentHp -= netDamage;
@@ -67,7 +67,7 @@ public class scr_HealthController : MonoBehaviour {
             if (animator != null)
             {
                 animator.SetTrigger("Hurt");
-                print("Ai");
+                //print("Ai");
             }
 		}
 	}

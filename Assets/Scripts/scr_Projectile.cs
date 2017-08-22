@@ -25,7 +25,7 @@ public class scr_Projectile : MonoBehaviour {
 	public void Fire (Vector2 fireDirection, string ownerTag){
 		this.ownerTag = ownerTag;
 		this.direction = fireDirection;
-		print ("" + direction);
+		//print ("" + direction);
 
 		if (this.direction.x < 1)
 			GetComponent<SpriteRenderer> ().flipX = true;
