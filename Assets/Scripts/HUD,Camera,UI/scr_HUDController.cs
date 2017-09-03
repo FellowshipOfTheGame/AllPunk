@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class scr_HUDController : MonoBehaviour {
 
+	#region variables
 	public GameObject player;
 
 	public Text healthText;
@@ -16,7 +17,16 @@ public class scr_HUDController : MonoBehaviour {
 	public Text rightWeaponText;
 	public Slider rightWeaponSlider;
 
-	private scr_HealthController playerHealthScr;
+	private scr_HealthController playerHealth;
+	protected scr_PlayerEnergyController playerEnergy;
+	#endregion
+
+
+	void Awake () {
+		playerHealth = player.GetComponent<scr_HealthController> ();
+		playerEnergy = player.GetComponent<scr_PlayerEnergyController>();
+
+	}
 
 	public void displayEndGameScreen(){
 		foreach (Transform child in transform) {
@@ -48,24 +58,34 @@ public class scr_HUDController : MonoBehaviour {
 		}
 	}
 
-	void Awake () {
-		playerHealthScr = player.GetComponent<scr_HealthController> ();
+	void updatePlayerBars(){
 
+		float playerMaxHp = playerHealth.getMaxHealth ();
+		float playerCurrentHp = playerHealth.getCurrentHealth ();
+
+		healthText.text = "Integrity " +
+			((playerCurrentHp / playerMaxHp) * 100).ToString ("0.#") + "%";
+
+		healthSlider.value = playerCurrentHp / playerMaxHp;
+
+
+		float playerMaxEnergy = playerEnergy.getMaxEnergy ();
+		float playerCurrentEnergy = playerEnergy.getCurrentEnergy ();
+
+		energyText.text = "Energy " +
+		((playerCurrentEnergy / playerMaxEnergy) * 100).ToString ("0.#") + "%";
+
+		energySlider.value = playerCurrentEnergy / playerMaxEnergy;
 	}
-	
+
+
+
 	// Update is called once per frame
 	void Update () {
 		//Se o player não morreu
 		if (player != null) {
 			updateWeaponTimers ();
-
-			float playerMaxHp = playerHealthScr.getMaxHealth ();
-			float playerCurrentHp = playerHealthScr.getCurrentHealth ();
-			
-			healthText.text = "Integrity " +
-			(playerCurrentHp / playerMaxHp) * 100 + "%";
-
-			healthSlider.value = playerCurrentHp / playerMaxHp;
+			updatePlayerBars ();
 		}
 
 	}

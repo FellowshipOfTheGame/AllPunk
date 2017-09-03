@@ -86,13 +86,14 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 				lineRen.endColor = Color.red;
 				lineRen.startColor = Color.red;
 
+				Vector3 direction = lineRen.GetPosition (1) - lineRen.GetPosition (0);
+
 				GameObject projectile = GameObject.Instantiate (projectilePrefab,
-					                       this.gameObject.transform.position,
+					this.gameObject.transform.position+direction.normalized*3,
 					                       this.gameObject.transform.rotation);
 
 				scr_Projectile projectileScr = projectile.GetComponent<scr_Projectile> ();
 
-				Vector3 direction = lineRen.GetPosition (1) - lineRen.GetPosition (0);
 				projectileScr.Fire (direction, this.tag);
 
 				//reseta tempo para atirar

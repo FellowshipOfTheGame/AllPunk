@@ -29,8 +29,11 @@ abstract public class scr_Weapon : MonoBehaviour {
     public int armVariation = 0;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
+	//Custo de energia para ativar
+	public float energyDrain;
 
 
+	protected scr_PlayerEnergyController playerEnergy;
 	//Referência ao transform do braço
 	protected Transform lowerArm;
     //A IK que vai ser usado para mover o braço
@@ -65,6 +68,7 @@ abstract public class scr_Weapon : MonoBehaviour {
 
 		Transform parentTransform = GetComponentInParent<Rigidbody2D> ().transform;
 		lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
+		playerEnergy = GetComponentInParent<scr_PlayerEnergyController>();
     }
 
     protected void Update()
@@ -122,8 +126,13 @@ abstract public class scr_Weapon : MonoBehaviour {
 		string fireButton = (rightHand) ? "Fire1" : "Fire2";
 		clicked = Input.GetButtonDown(fireButton);
 		holding = Input.GetButton(fireButton);
-        //Chama a função específica de cada arma
-		if (clicked && currCooldownTime == 0) {
+
+		/*Condições para ativar a arma: 
+		 * Clicado, cooldown = 0 e player tem energia suficiente
+		 */
+		if (clicked && currCooldownTime == 0 && playerEnergy.getCurrentEnergy() >= energyDrain) {
+			//Chama a função específica de cada arma, decrementa energia
+			playerEnergy.drainEnergy(energyDrain);
 			currCooldownTime = cooldownTime;
 			AttackAction (noAnimation);
 		}
