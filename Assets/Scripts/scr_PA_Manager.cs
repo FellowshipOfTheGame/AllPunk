@@ -5,28 +5,43 @@ using Anima2D;
 
 public class scr_PA_Manager : MonoBehaviour {
 
+    //Armas disponiveis
     public GameObject[] weaponsPrefabs;
-    public int leftWeaponID = 0;
+    //ID da arma na mão esquerda
+    public int leftWeaponID = -1;
+    //ID da arma na mão direita
     public int rightWeaponID = -1;
+    //Referencia para os IKs da mão esquerda e direita
     public GameObject leftIK;
     public GameObject rightIK;
+    //Referencia para o transform das mãos
     public GameObject leftSocket;
     public GameObject rightSocket;
+    //Layer de visibilidade do sprite da arma para quando está à frente
+    //do jogador e atrás dele
     public int weaponFrontLayer = 8;
     public int weaponBackLayer = -4;
 
+    //Debbug variables
     public bool TEST_ARM;
+    public bool canChangeWeapons;
+    private List<int> unlockedWeapons;
+    public int testWeapon = 0;
+    private int currentWeapon = 0;
 
-
+    //Armas possuidas pelo jogador
     private GameObject leftWeapon;
     private GameObject rightWeapon;
 
+    //Contadores de cooldown
 	private float leftCooldown;
 	private float rightCooldown;
 	private float leftCurrCooldown;
 	private float rightCurrCooldown;
 
+    //Referêcia para o animador
     private Animator animator;
+    //O personagem está virado ou não
     private bool flipped = false;
 
     //MeshAnimators: Used to switch mesh
@@ -36,10 +51,6 @@ public class scr_PA_Manager : MonoBehaviour {
     private SpriteMeshAnimation animLLowerArm;
     private SpriteMeshAnimation animRHand;
     private SpriteMeshAnimation animLHand;
-
-
-    //Teste
-    private int currentWeapon = 0;
 
     private void Awake()
     {
@@ -61,7 +72,9 @@ public class scr_PA_Manager : MonoBehaviour {
 
     private void Start()
     {
-        instanciateWeapon(TEST_ARM, currentWeapon);
+        currentWeapon = testWeapon;
+        //instanciateWeapon(TEST_ARM, testWeapon);
+        unlockedWeapons = new List<int>();
     }
 
     private void instanciateWeapon(bool right, int ID) {
@@ -72,6 +85,7 @@ public class scr_PA_Manager : MonoBehaviour {
                 if(rightWeapon != null)
                     Destroy(rightWeapon);
                 rightWeapon = GameObject.Instantiate(weaponsPrefabs[ID], rightSocket.transform);
+                rightWeaponID = ID;
                 weapon = rightWeapon.GetComponent<scr_Weapon>();
                 weapon.setIK(rightIK);
                 weapon.setSpriteLayer(weaponFrontLayer, weaponBackLayer);
@@ -88,6 +102,7 @@ public class scr_PA_Manager : MonoBehaviour {
                 if (leftWeapon != null)
                     Destroy(leftWeapon);
                 leftWeapon = GameObject.Instantiate(weaponsPrefabs[ID], leftSocket.transform);
+                leftWeaponID = ID;
                 weapon = leftWeapon.GetComponent<scr_Weapon>();
                 weapon.setIK(leftIK);
                 weapon.setSpriteLayer(weaponBackLayer, weaponFrontLayer);
@@ -108,22 +123,23 @@ public class scr_PA_Manager : MonoBehaviour {
 
     private void Update()
     {
-		
-		if (Input.GetAxis("Mouse ScrollWheel") > 0f)
-		{
-			currentWeapon++;
-			if (currentWeapon >= weaponsPrefabs.Length)
-				currentWeapon = 0;
-			instanciateWeapon(TEST_ARM, currentWeapon);
-		}
-		else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
-		{
-			currentWeapon--;
-			if (currentWeapon < 0)
-				currentWeapon = weaponsPrefabs.Length-1;
-			instanciateWeapon(TEST_ARM, currentWeapon);
-		}
-
+        if (canChangeWeapons)
+        {
+            if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+            {
+                currentWeapon++;
+                if (currentWeapon >= weaponsPrefabs.Length)
+                    currentWeapon = 0;
+                instanciateWeapon(TEST_ARM, currentWeapon);
+            }
+            else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+            {
+                currentWeapon--;
+                if (currentWeapon < 0)
+                    currentWeapon = weaponsPrefabs.Length - 1;
+                instanciateWeapon(TEST_ARM, currentWeapon);
+            }
+        }
 
 		/**
 		 * Verifica se alguma arma está em cooldown, se estiver, manda para o player e o player manda para o HUD
@@ -239,4 +255,30 @@ public class scr_PA_Manager : MonoBehaviour {
 		if(leftWeapon != null)
 			leftWeapon.GetComponent<scr_Weapon> ().enabled = isPause;
 	}
+
+    /**
+     *  ID da arma para equipar, a variavel arm pode ser:
+     *  -1: Don't care
+     *  0: No braço direito
+     *  1: No braço esquerdo
+     */
+    public void equipWeapon(int weaponID, int armToEquip) {
+        if (!unlockedWeapons.Contains(weaponID))
+            unlockedWeapons.Add(weaponID);
+        if (armToEquip == -1)
+        {
+            if (rightWeaponID == -1)
+            {
+                instanciateWeapon(true, weaponID);
+            }
+            else if (leftWeaponID == -1)
+            {
+                instanciateWeapon(false, weaponID);
+            }
+        }
+        else if (armToEquip == 0)
+            instanciateWeapon(true, weaponID);
+        else if (armToEquip == 1)
+            instanciateWeapon(false, weaponID);
+    }
 }
