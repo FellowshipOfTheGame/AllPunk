@@ -26,9 +26,13 @@ public class scr_PlayerController : MonoBehaviour {
 
 	public float speed = 4.0f;
 
-	//Velocidade do salto do personagem
+    //Velocidade da caminhada do personagem de costas
 
-	public float jumpSpeed = 6.0f;
+    public float backwardSpeed = 2.0f;
+
+    //Velocidade do salto do personagem
+
+    public float jumpSpeed = 6.0f;
 
 	//Multiplicador da gravidade p/ queda, deixando-a mais rápida
 
@@ -45,6 +49,10 @@ public class scr_PlayerController : MonoBehaviour {
     //Distancia considerada até inverter o personagem
 
     public float armOffset;
+
+    //Facilidade de movimento no ar
+    [Range(0,1)]
+    public float airControl = 1f;
 
 	//booleano se determina se o jogador esta no chão
 
@@ -216,11 +224,7 @@ public class scr_PlayerController : MonoBehaviour {
 
 		}
 
-        if (animator != null) {
-            animator.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
-            animator.SetFloat("VerSpeed", rb.velocity.y);
-            animator.SetBool("IsGrounded", isGrounded);
-        }
+        UpdateAnimation();
 	}
 
 
@@ -245,9 +249,21 @@ public class scr_PlayerController : MonoBehaviour {
 
 		movePlayerVector = Input.GetAxisRaw("Horizontal");
 
-		rb.velocity = new Vector2 (movePlayerVector * speed, rb.velocity.y);
+        float localSpeed = backwardSpeed;
 
-	}
+        if ((movePlayerVector > 0 && isFacingRight) || movePlayerVector < 0 && !isFacingRight)
+            localSpeed = speed;
+        if (!isGrounded)
+            localSpeed = speed;
+
+        if (isGrounded)
+		    rb.velocity = new Vector2 (movePlayerVector * localSpeed, rb.velocity.y);
+        else
+        {
+            rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);
+        }
+
+    }
 
 
 
@@ -357,6 +373,17 @@ public class scr_PlayerController : MonoBehaviour {
 
 
 	}
+
+    void UpdateAnimation()
+    {
+        if (animator != null)
+        {
+            int inversion = (isFacingRight) ? 1 : -1;
+            animator.SetFloat("HorSpeed", rb.velocity.x * inversion);
+            animator.SetFloat("VerSpeed", rb.velocity.y);
+            animator.SetBool("IsGrounded", isGrounded);
+        }
+    }
 
 }
 

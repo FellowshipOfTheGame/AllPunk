@@ -17,7 +17,9 @@ public class scr_HealthController : MonoBehaviour {
 	private float currentHp;
 	//Defesa, usada para diminuir dano
 	public float defense;
-	//Medida de equilíbrio em que 0 é pouco equilibrado e 1 muito equilibrado
+    //Tempo de invencibilidade
+    public float invicibilityTime;
+    //Medida de equilíbrio em que 0 é pouco equilibrado e 1 muito equilibrado
 	//Usada para reduzir a força do knockback
 	[Range(0,1)]
 	public float poise;
@@ -25,6 +27,8 @@ public class scr_HealthController : MonoBehaviour {
 	private Rigidbody2D entityRigidBody;
 	//Verificando se o objeto está morto
 	private bool isDead;
+    //Verifica se o personagem pode ou não levar dano
+    private bool canBeHurt;
 
 	/* //Variáveis para stun
 	private float stunTime = 2;
@@ -38,6 +42,7 @@ public class scr_HealthController : MonoBehaviour {
 		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		currentHp = maxHp;
         animator = GetComponent<Animator>();
+        canBeHurt = true;
 	}
 
 	/**
@@ -49,10 +54,17 @@ public class scr_HealthController : MonoBehaviour {
 	 * @param	direction	Vetor de direção e intensidade do knockback
 	 */
 	public void takeDamage(float damage, Vector2 direction){
-		print (this.gameObject.name + " took dmg");
-		float netDamage = damage - this.defense;
-		if(netDamage > 0)
-			this.currentHp -= netDamage;
+
+        if (canBeHurt)
+        {
+            float netDamage = damage - this.defense;
+            if (netDamage > 0)
+                this.currentHp -= netDamage;
+            StartCoroutine(waitInvinciTime());
+        }
+        else
+            return;
+
 
 		if (this.currentHp <= 0) {
 			this.isDead = true;
@@ -99,5 +111,13 @@ public class scr_HealthController : MonoBehaviour {
 	private void die (){
 		Destroy(this.gameObject);
 	}
+
+    private IEnumerator waitInvinciTime() {
+        print("Começou");
+        canBeHurt = false;
+        yield return new WaitForSeconds(invicibilityTime);
+        print("Parou");
+        canBeHurt = true;
+    }
 
 }

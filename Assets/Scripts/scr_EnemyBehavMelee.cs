@@ -23,46 +23,93 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
     private float counter = 0;
     //Referencia para o animator
     private Animator animator;
-    private bool animationIsPlaying;
+    //Está atacando
+    private bool isAttacking;
+    //A animação de ataque está acontecendo
+    private bool animationStarted;
+    //Referencia para o movimento
+    private scr_EnemyBehavPatrol movementScript;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        movementScript = GetComponent<scr_EnemyBehavPatrol>();
     }
 
     private void Update()
     {
-        if (animationIsPlaying)
-        {
-            //if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attacking"))
-            //{
-            //    animationIsPlaying = false;
-            //    isAtacking = false;
-            //}
-            if (isAtacking)
+        if (isAtacking) {
+            bool correctAnimation = animator.GetCurrentAnimatorStateInfo(0).IsName("Attacking");
+            if (!animationStarted && correctAnimation)
             {
-                foreach (Collider2D hitCollider in attackColliders)
+                animationStarted = true;
+                movementScript.StopMoving();
+            }
+            if (animationStarted) {
+                if (!correctAnimation)
                 {
-                    if (!hitCollider.isActiveAndEnabled)
-                        continue;
-                    Collider2D[] colHits = new Collider2D[10];
-                    ContactFilter2D ct2D = new ContactFilter2D();
-                    hitCollider.OverlapCollider(ct2D, colHits);
-                    foreach (Collider2D col in colHits)
+                    isAtacking = false;
+                    animationStarted = false;
+                    movementScript.ResumeMoviment();
+                    foreach (Collider2D collider in attackColliders)
+                        collider.enabled = false;
+                }
+                else
+                {
+                    foreach (Collider2D hitCollider in attackColliders)
                     {
-                        if (col == null)
-                            break;
-
-                        scr_HealthController life = col.GetComponent<scr_HealthController>();
-                        if (life != null && col.tag != "Enemy")
+                        if (!hitCollider.isActiveAndEnabled)
+                            continue;
+                        Collider2D[] colHits = new Collider2D[10];
+                        ContactFilter2D ct2D = new ContactFilter2D();
+                        hitCollider.OverlapCollider(ct2D, colHits);
+                        foreach (Collider2D col in colHits)
                         {
-                            Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
-                            life.takeDamage(attackDamage, attackDir);
+                            if (col == null)
+                                break;
+
+                            scr_HealthController life = col.GetComponent<scr_HealthController>();
+                            if (life != null && col.tag != "Enemy")
+                            {
+                                Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
+                                life.takeDamage(attackDamage, attackDir);
+                            }
                         }
                     }
                 }
             }
         }
+        //if (animationIsPlaying)
+        //{
+        //    //if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attacking"))
+        //    //{
+        //    //    animationIsPlaying = false;
+        //    //    isAtacking = false;
+        //    //}
+        //    if (isAtacking)
+        //    {
+        //        foreach (Collider2D hitCollider in attackColliders)
+        //        {
+        //            if (!hitCollider.isActiveAndEnabled)
+        //                continue;
+        //            Collider2D[] colHits = new Collider2D[10];
+        //            ContactFilter2D ct2D = new ContactFilter2D();
+        //            hitCollider.OverlapCollider(ct2D, colHits);
+        //            foreach (Collider2D col in colHits)
+        //            {
+        //                if (col == null)
+        //                    break;
+
+        //                scr_HealthController life = col.GetComponent<scr_HealthController>();
+        //                if (life != null && col.tag != "Enemy")
+        //                {
+        //                    Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
+        //                    life.takeDamage(attackDamage, attackDir);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
 
     private void FixedUpdate()
@@ -83,55 +130,14 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
         {
             if (hit.gameObject.tag == "Player")
             {
-                if (animator == null)
+                if (!isAtacking)
                 {
-                    if (counter <= 0)
-                    {
-                        //print("Achei");
-                        print(isAtacking);
-                        if (isAtacking)
-                        {
-                            scr_HealthController player = hit.GetComponent<scr_HealthController>();
-                            player.takeDamage(attackDamage, new Vector2(attackDirection.x * direction, attackDirection.y));
-                            isAtacking = false;
-                            counter = attackCooldown;
-                        }
-                        else
-                        {
-                            isAtacking = true;
-                            counter = attackDelay;
-                        }
-                    }
-                }
-                else
-                {
-                    if (!animationIsPlaying)
-                    {
-                        animator.SetTrigger("Attack");
-                        isAtacking = true;
-                        animationIsPlaying = true;
-                        //print("Aqui");
-                        break;
-                    }
+                    isAtacking = true;
+                    animator.SetTrigger("Attack");
                 }
             }
         }
         
     }
 
-    public void animationBeginNotify()
-    {
-        animationIsPlaying = true;
-        isAtacking = true;
-    }
-
-    public void animationEndNotify() {
-        print("Ta notificando");
-        animationIsPlaying = false;
-        isAtacking = false;
-    }
-
-    public void beginCollisionCheck() {
-        isAtacking = true;
-    }
 }
