@@ -30,10 +30,14 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		print ("en: " + currentEnergy + "/" + maxEnergy);
+
+		if (currentEnergy > maxEnergy)
+			currentEnergy = maxEnergy;
+
+		//print ("en: " + currentEnergy + "/" + maxEnergy);
 		if (currentEnergy + rechargeRate < maxEnergy)
-			currentEnergy += rechargeRate;
-		else
-			currentEnergy += maxEnergy-currentEnergy;
+			currentEnergy += rechargeRate*Time.timeScale;
+		else if (currentEnergy < maxEnergy)
+			currentEnergy += maxEnergy-currentEnergy*Time.timeScale;
 	}
 }

@@ -18,7 +18,8 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 	private float currSetUpTime;
 
 	public GameObject projectilePrefab;
-
+	//Child object do cano da arma
+	private GameObject barrel;
 	#endregion
 	/***
 	 * Função genérica para decrementar um timer
@@ -43,9 +44,11 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		lineRen = GetComponent<LineRenderer> ();
 		triggerZone = GetComponent<BoxCollider2D> ();
 
+		barrel = this.gameObject.transform.GetChild (0).gameObject;
+
 		//Posição original do laser é a própria torreta
-		lineRen.SetPosition (0, gameObject.transform.position);
-		lineRen.SetPosition (1, gameObject.transform.position);
+		lineRen.SetPosition (0, barrel.transform.position);
+		lineRen.SetPosition (1, barrel.transform.position);
 	}
 
 	void OnTriggerEnter2D(Collider2D col){
@@ -57,7 +60,7 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 	void OnTriggerExit2D(Collider2D col){
 		if (col.gameObject.tag == "Player") {//Player que entrou
 			target = null;
-			lineRen.SetPosition(1, gameObject.transform.position);
+			lineRen.SetPosition(1, barrel.transform.position);
 			//currSetUpTime = setUpTime;
 			resetTimer(ref currSetUpTime, setUpTime);
 		}
@@ -74,23 +77,30 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		if (target != null) {
 			lineRen.SetPosition (1, target.transform.position);
 
+			Vector3 direction = lineRen.GetPosition (1) - lineRen.GetPosition (0);
+
+
+			//Altera a rotação do cano
+			barrel.transform.rotation = Quaternion.LookRotation(direction.normalized);
+			//Hack para que o sprite não saia do plano XY
+			barrel.transform.right = direction;
+
 			//Decrementa timer de setup
 			if (currSetUpTime != 0) {
 				decrementTimer (ref currSetUpTime);
-				lineRen.endColor = Color.yellow;
-				lineRen.startColor = Color.yellow;
+				//lineRen.endColor = Color.green;
+				lineRen.startColor = Color.green;
+				lineRen.material.color = new Color(1f,1f,1f,0.5f);
 			}
 
 			//Setup pronto, pode atirar
 			if (currSetUpTime == 0 && currTimeToFire == 0) {
-				lineRen.endColor = Color.red;
+				//lineRen.endColor = Color.red;
 				lineRen.startColor = Color.red;
-
-				Vector3 direction = lineRen.GetPosition (1) - lineRen.GetPosition (0);
-
+				
 				GameObject projectile = GameObject.Instantiate (projectilePrefab,
-					this.gameObject.transform.position+direction.normalized*3,
-					                       this.gameObject.transform.rotation);
+								barrel.transform.position+direction.normalized*3,
+								barrel.transform.rotation);
 
 				scr_Projectile projectileScr = projectile.GetComponent<scr_Projectile> ();
 
