@@ -71,10 +71,10 @@ public class scr_HealthController : MonoBehaviour {
 			this.die ();
 		} else {
 			
-			print("dir1 " + direction);
+			//print("dir1 " + direction);
 			direction = direction * (1 - poise);//Poise para reduzir knockback
 			this.transform.position += new Vector3 (0, direction.x, 0); //levemente levanta do chao
-			print("dir2 " + direction);
+			//print("dir2 " + direction);
 			this.entityRigidBody.AddForce (direction, ForceMode2D.Impulse);
             if (animator != null)
             {
