@@ -21,14 +21,18 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 	//Child object do cano da arma
 	private GameObject barrel;
 
-	/**Game object vazio que armazena a posição do fim do laser. Usado para fazer a translação suave entre
+	/**DESABILITADO PARA DEMO
+	 * Game object vazio que armazena a posição do fim do laser. Usado para fazer a translação suave entre
 	 *a posição do fim laser e a posição do alvo. 
 	 */
 	private GameObject aimFocus;
+
 	//Direção do projétil
 	private Vector3 direction;
 
 	#endregion
+
+	#region timer functions
 	/***
 	 * Função genérica para decrementar um timer
 	 * @timer = referencia (ponteiro) para o timer a ser decrementado
@@ -43,11 +47,12 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 	void resetTimer(ref float timer, float timeToReset){
 		timer = timeToReset;
 	}
+	#endregion
 
 	// Use this for initialization
 	void Awake () {
 		currSetUpTime = setUpTime;
-		currTimeToFire = 0;//Se ela fez o setup, estará pronta para atirar
+		currTimeToFire = rateOfFire;
 
 		lineRen = GetComponentInChildren<LineRenderer>();
 		triggerZone = GetComponent<BoxCollider2D> ();
@@ -62,40 +67,50 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		direction = Vector3.zero;
 	}
 
+	/**
+	 * ALVO ENTROU NA KILLZONE
+	 * Setar alvo, alterar posição do Line renderer
+	 */
 	void OnTriggerEnter2D(Collider2D col){
 		if (col.gameObject.tag == "Player") {//Player que entrou
+			lineRen.SetPosition(1, barrel.transform.position);
 			target = col.gameObject;
 		}
 	}
 
-	//Alvo saiu da área de tiro
+	/**
+	 * ALVO SAIU DA KILLZONE
+	 * Deixar alvo como nulo, resetar o line renderer e resetar timers
+	 */
 	void OnTriggerExit2D(Collider2D col){
 		if (col.gameObject.tag == "Player") {//Player que entrou
 			target = null;
+
 			lineRen.SetPosition(1, barrel.transform.position);
+			lineRen.widthMultiplier = 1;
+
 			resetTimer(ref currSetUpTime, setUpTime);
+			resetTimer (ref currTimeToFire, rateOfFire);
 		}
 	}
 
-	// Update is called once per frame
 	void Update () {
-		
-		if (currTimeToFire != 0) {
-			decrementTimer (ref currTimeToFire);
-			lineRen.widthMultiplier = currTimeToFire / rateOfFire;
-		}
+
+		//print ("S: " + currSetUpTime  + " F: " + currTimeToFire);
 
 		//Torreta tem um alvo válido
 		if (target != null) {
 
-			//Se a mira não está encima do alvo, mova a mira -- COMENTADO PARA A DEMO --
+			/* COMENTADO PARA A DEMO --
+			//Se a mira não está encima do alvo, mova a mira 
 			/*if (aimFocus.transform.position != target.transform.position) {
 				//print ("a: " + aimFocus.transform.position + " t: " + target.transform.position + " diff: " + Vector3.Normalize(target.transform.position - aimFocus.transform.position));
 				//aimFocus.transform.Translate(Vector3.Normalize(-target.transform.position + aimFocus.transform.position) * 1 * Time.deltaTime);
 				aimFocus.transform.position = target.transform.position;
 			}*/
+			//lineRen.SetPosition (1, aimFocus.transform.position); //COMENTADO PELA DEMO*/
 
-			//lineRen.SetPosition (1, aimFocus.transform.position); //COMENTADO PELA DEMO
+
 			lineRen.SetPosition(1, target.transform.position);
 			direction = lineRen.GetPosition (1) - lineRen.GetPosition (0);
 			//direction = aimFocus.transform.position - this.gameObject.transform.position;
@@ -106,18 +121,25 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 			barrel.transform.right = direction;
 
 			//Decrementa timer de setup
-			if (currSetUpTime != 0) {
+			if (currSetUpTime > 0) {
 				decrementTimer (ref currSetUpTime);
 				//lineRen.endColor = Color.green;
 				lineRen.startColor = Color.green;
 				lineRen.material.color = new Color(1f,1f,1f,0f);
 			}
 
-			if(currSetUpTime == 0)
+			//Setup finalizado , pronto para disparar
+			if(currSetUpTime <= 0)
 				lineRen.startColor = Color.red;
 
+			//Setup feito mas projetil "recarregando"
+			if (currTimeToFire > 0 && currSetUpTime <=0) {
+				decrementTimer (ref currTimeToFire);
+				lineRen.widthMultiplier = currTimeToFire / rateOfFire;
+			}
+
 			//Setup pronto, pode atirar
-			if (currSetUpTime == 0 && currTimeToFire == 0) {
+			if (currSetUpTime <= 0 && currTimeToFire <= 0) {
 
 				GameObject projectile = GameObject.Instantiate (projectilePrefab,
 								barrel.transform.position+direction.normalized*3,

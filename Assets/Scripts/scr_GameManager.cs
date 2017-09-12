@@ -48,7 +48,7 @@ public class scr_GameManager : MonoBehaviour {
 			}
 
 
-		} 
+		}
 
 		else {
 			if(Input.anyKeyDown)
