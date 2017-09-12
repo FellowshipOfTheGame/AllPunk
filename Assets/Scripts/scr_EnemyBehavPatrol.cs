@@ -26,7 +26,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
     //Saber se está no chão
     private bool isGrounded;
     //Saber se há chão na frente dele
-    private bool nextFloor;
+    public bool nextFloor;
     //Saber se há parede na frente dele
     private bool nextWall;
     //Referencia do animator
@@ -55,7 +55,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
         {
 
             //Calcula se acabou a plataforma
-            hits = Physics2D.OverlapCircleAll(transform.Find("NextFloorCollision").position, 0.2f);
+            hits = Physics2D.OverlapCircleAll(transform.Find("NextFloorCollision").position, 0.1f);
             foreach (Collider2D hit in hits)
             {
                 nextFloor = (hit.gameObject.layer == LayerMask.NameToLayer("Ground"));
@@ -63,6 +63,8 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
                     break;
 
             }
+            if (hits.Length < 1)
+                nextFloor = false;  
 
             //Calcula colisão com parede
             //hits = Physics2D.OverlapCircleAll(transform.Find("NextWallCollision").position, 0.2f);
@@ -71,7 +73,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
             //print(hits);
             foreach (Collider2D hit in hits)
             {
-                nextWall = (hit.gameObject.layer == LayerMask.NameToLayer("Ground"));
+                nextWall = ((hit.gameObject.layer == LayerMask.NameToLayer("Ground")) || (hit.gameObject.layer == LayerMask.NameToLayer("Entity")));
                 if (nextWall == true)
                     break;
 
