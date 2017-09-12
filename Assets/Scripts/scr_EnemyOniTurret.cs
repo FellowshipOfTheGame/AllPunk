@@ -49,14 +49,13 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		currSetUpTime = setUpTime;
 		currTimeToFire = 0;//Se ela fez o setup, estará pronta para atirar
 
-		//lineRen = GetComponent<LineRenderer> ();
 		lineRen = GetComponentInChildren<LineRenderer>();
 		triggerZone = GetComponent<BoxCollider2D> ();
 
 		barrel = this.gameObject.transform.GetChild (0).gameObject;
-		aimFocus = this.gameObject.transform.GetChild (0).GetChild(0).gameObject;
+		//aimFocus = this.gameObject.transform.GetChild (0).GetChild(0).gameObject;	//TENTATIVA
 
-		//Posição original do laser é a própria torreta
+		//Posição original do laser é a própria torreta----
 		lineRen.SetPosition (0, barrel.transform.position);
 		lineRen.SetPosition (1, barrel.transform.position);
 
@@ -74,7 +73,6 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		if (col.gameObject.tag == "Player") {//Player que entrou
 			target = null;
 			lineRen.SetPosition(1, barrel.transform.position);
-			//currSetUpTime = setUpTime;
 			resetTimer(ref currSetUpTime, setUpTime);
 		}
 	}
@@ -90,16 +88,17 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		//Torreta tem um alvo válido
 		if (target != null) {
 
-			//Se a mira não está encima do alvo, mova a mira
-			if (aimFocus.transform.position != target.transform.position) {
+			//Se a mira não está encima do alvo, mova a mira -- COMENTADO PARA A DEMO --
+			/*if (aimFocus.transform.position != target.transform.position) {
 				//print ("a: " + aimFocus.transform.position + " t: " + target.transform.position + " diff: " + Vector3.Normalize(target.transform.position - aimFocus.transform.position));
 				//aimFocus.transform.Translate(Vector3.Normalize(-target.transform.position + aimFocus.transform.position) * 1 * Time.deltaTime);
 				aimFocus.transform.position = target.transform.position;
-			}
+			}*/
 
-			lineRen.SetPosition (1, aimFocus.transform.position);
+			//lineRen.SetPosition (1, aimFocus.transform.position); //COMENTADO PELA DEMO
+			lineRen.SetPosition(1, target.transform.position);
 			direction = lineRen.GetPosition (1) - lineRen.GetPosition (0);
-			//direction = aimFocus.tra			nsform.position - this.gameObject.transform.position;
+			//direction = aimFocus.transform.position - this.gameObject.transform.position;
 
 			//Altera a rotação do cano
 			barrel.transform.rotation = Quaternion.LookRotation(direction.normalized);
@@ -111,7 +110,7 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 				decrementTimer (ref currSetUpTime);
 				//lineRen.endColor = Color.green;
 				lineRen.startColor = Color.green;
-				lineRen.material.color = new Color(1f,1f,1f,0.5f);
+				lineRen.material.color = new Color(1f,1f,1f,0f);
 			}
 
 			if(currSetUpTime == 0)
