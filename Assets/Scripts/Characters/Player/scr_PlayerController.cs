@@ -17,7 +17,12 @@ using UnityEngine;
 public class scr_PlayerController : MonoBehaviour {
 
 
-	#region variables
+    #region variables
+
+    //Número máximo de saltos
+    public int maxNumberJumps = 1;
+    //Atual número de pulos
+    private int currentNumberJumps = 0;
 
 	//Tempo maximo para salto alto
 	public float maxHighJumpTime = 0.25f;
@@ -89,6 +94,9 @@ public class scr_PlayerController : MonoBehaviour {
 	//Tempo atual de salto alto
 	private float currHighJumpTime;
 
+    //Verifica se o botão estava sendo segurado
+    private bool isHoldingJump = false;
+
     //Referência para o gerenciador de PA's
     private scr_PA_Manager paManager;
 
@@ -157,11 +165,14 @@ public class scr_PlayerController : MonoBehaviour {
 
 		isGrounded = touchesGround (playerFeetPosition.position);
 
+        if (isGrounded)
+            currentNumberJumps = maxNumberJumps;
+
 
 		playerHorizontalMove ();
 
 
-		/*if (Input.GetButtonDown ("Jump") && isGrounded)
+        /*if (Input.GetButtonDown ("Jump") && isGrounded)
 			Jump ();
 
 		if (rb.velocity.y < 0 && !isGrounded)
@@ -171,10 +182,21 @@ public class scr_PlayerController : MonoBehaviour {
 			lowJump();*/
 
 
-		if (Input.GetButtonDown ("Jump") && isGrounded)
-			Jump ();
+        if (Input.GetButtonDown("Jump") && currentNumberJumps > 0 && !isHoldingJump)
+        {
+            Jump();
+            isHoldingJump = true;
+            currHighJumpTime = maxHighJumpTime;
+        }
 
-		if (rb.velocity.y > 0 && Input.GetButton("Jump") && !isGrounded)
+        if (Input.GetButtonUp("Jump"))
+        {
+            isHoldingJump = false;
+            currentNumberJumps--;
+        }
+
+
+		if (isHoldingJump && !isGrounded && rb.velocity.y > 0)
 			highJump();
 
 
@@ -249,6 +271,7 @@ public class scr_PlayerController : MonoBehaviour {
 
 		movePlayerVector = Input.GetAxisRaw("Horizontal");
 
+        //Decide se usa a velocidade pra frente ou pra traz
         float localSpeed = backwardSpeed;
 
         if ((movePlayerVector > 0 && isFacingRight) || movePlayerVector < 0 && !isFacingRight)
@@ -256,6 +279,7 @@ public class scr_PlayerController : MonoBehaviour {
         if (!isGrounded)
             localSpeed = speed;
 
+        //Interpola a velocidade no ar, o que controla o fator de movimento aerio do personagem
         if (isGrounded)
 		    rb.velocity = new Vector2 (movePlayerVector * localSpeed, rb.velocity.y);
         else
