@@ -53,7 +53,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
 
         if (!UseLimits)
         {
-
+            nextFloor = false;
             //Calcula se acabou a plataforma
             hits = Physics2D.OverlapCircleAll(transform.Find("NextFloorCollision").position, 0.1f);
             foreach (Collider2D hit in hits)
@@ -63,17 +63,18 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
                     break;
 
             }
-            if (hits.Length < 1)
-                nextFloor = false;  
 
             //Calcula colisão com parede
             //hits = Physics2D.OverlapCircleAll(transform.Find("NextWallCollision").position, 0.2f);
             float height = (transform.Find("NextWallCollision").position - transform.Find("NextFloorCollision").position).y;
             hits = Physics2D.OverlapBoxAll(transform.Find("NextWallCollision").position, new Vector2(0.2f, height), 0);
             //print(hits);
+            nextWall = false;
             foreach (Collider2D hit in hits)
             {
                 nextWall = ((hit.gameObject.layer == LayerMask.NameToLayer("Ground")) || (hit.gameObject.layer == LayerMask.NameToLayer("Entity")));
+                if (hit.isTrigger)
+                    nextWall = false;
                 if (nextWall == true)
                     break;
 
