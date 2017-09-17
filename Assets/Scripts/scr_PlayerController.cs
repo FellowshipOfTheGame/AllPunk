@@ -219,13 +219,10 @@ public class scr_PlayerController : MonoBehaviour {
 			Vector3 relativeMouse = mouseWorldPosition - transform.position;
 
 			if (relativeMouse.x + armOffset < 0 && isFacingRight)
-
 				Flip();
 
 			if (relativeMouse.x - armOffset > 0 && !isFacingRight)
-
 				Flip();
-
 		}
 
         UpdateAnimation();
@@ -300,10 +297,6 @@ public class scr_PlayerController : MonoBehaviour {
 
 	}
 
-
-
-
-
 	//Método para Salto, adiciona velocidade no eixo Y
 
 	void Jump (){
@@ -321,17 +314,13 @@ public class scr_PlayerController : MonoBehaviour {
 
 	}
 
-
-
 	* Método responsável por fazer com que a queda do jogador seja mais rápida
 	* Isso deixa um controle de salto mais aprimorado e próprio para platformer
-
 
 	void Fall (){
 		print ("fall");
 		rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime;
 	}*/
-
 
 
 	/**
@@ -359,9 +348,6 @@ public class scr_PlayerController : MonoBehaviour {
 		//muda a direção que o jogador está encarando
 
 		isFacingRight = !isFacingRight;
-
-
-
 		//Multiplica a escala por -1
 
 		Vector3 theScale = transform.localScale;
@@ -373,9 +359,7 @@ public class scr_PlayerController : MonoBehaviour {
 
         if (paManager != null)
             paManager.Flip();
-
-
-	}
+		}
 
     void UpdateAnimation()
     {
