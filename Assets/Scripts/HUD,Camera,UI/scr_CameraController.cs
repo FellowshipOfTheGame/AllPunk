@@ -26,7 +26,6 @@ public class scr_CameraController : MonoBehaviour {
 	void Update () {
 
 		//ZOOM+
-
 		if (Input.GetButton("EnableZoom") && Input.GetAxis ("Mouse ScrollWheel") < 0f){
 			if (camComp.orthographicSize < 12) {
 				camComp.orthographicSize++;
@@ -39,27 +38,26 @@ public class scr_CameraController : MonoBehaviour {
 			}
 		}
 
-
+		//PAN MANUAL
 		if (Input.GetButtonDown ("EnablePan")) {
 			isPanning = true;
 			lastCamPos = camTrans.position;
 		}
-
 		if (Input.GetButton ("EnablePan")) {
 			mouseRelativeToPlayer = Camera.main.ScreenToWorldPoint(Input.mousePosition) - player.transform.position;
-			Vector3 mouseDirection = mouseRelativeToPlayer.normalized;
+			Vector2 mouseDirection = mouseRelativeToPlayer.normalized;
 			Vector2 offset = camTrans.position - player.transform.position;
 
 			/*Vector3 newCamPos = camTrans.position + mouseDirection*5;
 			camTrans.Translate (newCamPos * Time.deltaTime);*/
 			//camTrans.pos + (mouseGlobal - camTransPos) - camTransPos
 			if( offset.magnitude < 5){
-				camTrans.Translate (mouseDirection * 60 * Time.deltaTime);
+				//camTrans.Translate (mouseDirection * 60 * Time.deltaTime);
+				camTrans.Translate (mouseDirection * 60 * Time.deltaTime, player.transform);
 			}
 
-			print ( lastCamPos + "|||" + mouseDirection + "|||");
+			//print ( lastCamPos + "|||" + mouseDirection + "|||" + offset);
 		}
-
 		if (Input.GetButtonUp ("EnablePan")) {
 			isPanning = false;
 			Vector2 backVector = lastCamPos - camTrans.position;
@@ -73,15 +71,18 @@ public class scr_CameraController : MonoBehaviour {
 		} else {
 			//Deslocamento entre posição da camera e da 
 			Vector2 offset = player.transform.position - camTrans.position;
-			//playerSpeed = player.GetComponent<Rigidbody2D> ().velocity.magnitude;
 			playerSpeed = player.GetComponent<scr_PlayerController>().speed;
 
 			if (!isPanning && (player.transform.position.x > camTrans.position.x + limitX
-			   || player.transform.position.x < camTrans.position.x - limitX
-			   || player.transform.position.y > camTrans.position.y + limitY
-			   || player.transform.position.y < camTrans.position.y - limitY)) {
-					offset = offset / offset.magnitude;//Deixa com norma 1
-					camTrans.Translate (offset * playerSpeed * Time.deltaTime);
+			    || player.transform.position.x < camTrans.position.x - limitX
+			    || player.transform.position.y > camTrans.position.y + limitY
+			    || player.transform.position.y < camTrans.position.y - limitY)) {
+				offset = offset / offset.magnitude;//Deixa com norma 1
+				camTrans.Translate (offset * playerSpeed * Time.deltaTime);
+			} 
+			else if (isPanning) {
+				//Está fazendo panning manual, translada pelo vetor velocidade do player para a camera acompanhar
+				camTrans.Translate (player.GetComponent<scr_PlayerController> ().getVelocity () * Time.deltaTime);
 			}
 		}
 	}

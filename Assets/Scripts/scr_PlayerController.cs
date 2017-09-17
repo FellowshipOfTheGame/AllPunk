@@ -98,7 +98,11 @@ public class scr_PlayerController : MonoBehaviour {
     #endregion variables
 
 
-
+	#region getters
+	public Vector2 getVelocity(){
+		return rb.velocity;
+	}
+	#endregion
 
 
 	#region MonoBehaviour methods
@@ -259,7 +263,7 @@ public class scr_PlayerController : MonoBehaviour {
         if (isGrounded)
 		    rb.velocity = new Vector2 (movePlayerVector * localSpeed, rb.velocity.y);
         else
-        {
+        {//Movimento no ar
             rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);
         }
 
@@ -305,7 +309,6 @@ public class scr_PlayerController : MonoBehaviour {
 	void Jump (){
 		//print ("jump");
 		rb.velocity += new Vector2  (0, jumpSpeed);
-
 	}
 
 
