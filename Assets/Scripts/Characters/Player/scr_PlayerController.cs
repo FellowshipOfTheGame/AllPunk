@@ -105,11 +105,16 @@ public class scr_PlayerController : MonoBehaviour {
 
     #endregion variables
 
+    #region getters
+    public Vector2 getVelocity()
+    {
+        return rb.velocity;
+    }
+    #endregion
 
 
 
-
-	#region MonoBehaviour methods
+    #region MonoBehaviour methods
 
 
 
