@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class scr_SteamWall : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	/*Quantidade de alpha que é adicionado à textura de condensação na tela, por frame*/
+	public float condensationDelta = 1f;
+
+	void OnTriggerEnter2D(Collider2D col){
+		if (col.tag == "Player") {
+			scr_HUDController.hudController.setPlayerInSteam (true, condensationDelta);
+			print ("pis");
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	void OnTriggerExit2D(Collider2D col){
+		if (col.tag == "Player") {
+			scr_HUDController.hudController.setPlayerInSteam (false, condensationDelta);
+			print ("pnis");
+		}
 	}
 }
