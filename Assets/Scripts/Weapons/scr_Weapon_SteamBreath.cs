@@ -9,7 +9,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	public float meleeAtackDistance = 1.0f;
 	public float knockbackIntensity;
 	public float timeToFire = 1.0f;
-	public ParticleSystem particlePlayer; //Filho que deve ter o ParticleSystem
+	public GameObject particlePlayer; //Filho que deve ter o ParticleSystem
 
 	//private Transform spawnPosition;//Posição para spawnar hitbox
 	/*private float currentTimeToFire;*/
@@ -20,8 +20,6 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	{
 		base.Awake();
 		//currentTimeToFire = 0;
-		if (particlePlayer == null)
-			particlePlayer = GetComponentInChildren<ParticleSystem> ();
 	}
 		
 
@@ -45,8 +43,11 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 			ContactFilter2D ct2D = new ContactFilter2D();
 			collider.OverlapCollider(ct2D, hits);
 
-			//ATIVAR PARTICLE SYSTEM
-			particlePlayer.Play();
+			//Instancia particleplayer
+			if (particlePlayer != null) {
+				GameObject o = GameObject.Instantiate(particlePlayer, this.transform, false);
+				o.transform.SetParent (null);	
+			}
 
 			foreach (Collider2D hit in hits) {
 				if (hit == null)

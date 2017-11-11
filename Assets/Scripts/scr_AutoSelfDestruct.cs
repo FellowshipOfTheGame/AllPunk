@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class scr_DebugPoint : MonoBehaviour {
+public class scr_AutoSelfDestruct : MonoBehaviour {
 	public float timeToLive = 10; //em Segundos
 
 	public void Update(){
