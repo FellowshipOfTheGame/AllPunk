@@ -9,34 +9,21 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	public float meleeAtackDistance = 1.0f;
 	public float knockbackIntensity;
 	public float timeToFire = 1.0f;
-	public GameObject smokePrefab;//Usado para instanciar a fumaça
+	public ParticleSystem particlePlayer; //Filho que deve ter o ParticleSystem
 
-	private Transform spawnPosition;//Posição para spawnar hitbox
+	//private Transform spawnPosition;//Posição para spawnar hitbox
 	/*private float currentTimeToFire;*/
 
-	/*IEnumerator fireTimer(float timeToFire){
-		//yield return new WaitForSeconds (this.timeToFire);
-		yield return new WaitForSeconds (1.0f);
-		currentTimeToFire = 0;
-	}*/
 	#endregion variables
 
 	public void Awake()
 	{
 		base.Awake();
 		//currentTimeToFire = 0;
-
+		if (particlePlayer == null)
+			particlePlayer = GetComponentInChildren<ParticleSystem> ();
 	}
-
-	/*private void Update(){
-		base.Update ();
-		if (currentTimeToFire > 0) {
-			currentTimeToFire -= Time.deltaTime;
-			//print ("~ " + currentTimeToFire);
-			if (currentTimeToFire <= 0)
-				currentTimeToFire = 0;
-		}
-	}*/
+		
 
 	override protected void AttackAction(bool noAnimation) {
 	/**
@@ -45,22 +32,21 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	 */
 		if (clicked) {
 			
-			//StartCoroutine (fireTimer(this.timeToFire));
-
-			spawnPosition = transform.Find("SpawnPosition");
+			//spawnPosition = particlePlayer.transform;
 
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Vector2 weaponDirection = mouseWorldPosition - lowerArm.position; 
 
-			Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x,
-				              spawnPosition.position.y + weaponDirection.normalized.y);
+			/*Vector2 pos = new Vector2 (spawnPosition.position.x + weaponDirection.normalized.x,
+				              spawnPosition.position.y + weaponDirection.normalized.y);*/
 
 			Collider2D[] hits = new Collider2D[10];
 			PolygonCollider2D collider = GetComponent<PolygonCollider2D>();//Referencia para o collider 
 			ContactFilter2D ct2D = new ContactFilter2D();
 			collider.OverlapCollider(ct2D, hits);
 
-			GameObject.Instantiate(smokePrefab, pos, transform.rotation);
+			//ATIVAR PARTICLE SYSTEM
+			particlePlayer.Play();
 
 			foreach (Collider2D hit in hits) {
 				if (hit == null)
@@ -69,9 +55,6 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 				scr_HealthController entity = hit.GetComponent<scr_HealthController> ();
 				if (entity != null && entity.tag != "Player") {
 					print (entity);
-					//entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);new Vector2 (weaponDirection.x, weaponDirection.y)
-					//print("VecWDir " + weaponDirection);
-					//print("VecKnock " + weaponDirection * knockbackIntensity * knockbackIntensity);
 					entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);
 				}
 			}
