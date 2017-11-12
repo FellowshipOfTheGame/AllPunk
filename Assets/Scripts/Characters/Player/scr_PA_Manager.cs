@@ -85,6 +85,7 @@ public class scr_PA_Manager : MonoBehaviour {
                 if(rightWeapon != null)
                     Destroy(rightWeapon);
                 rightWeapon = GameObject.Instantiate(weaponsPrefabs[ID], rightSocket.transform);
+			
                 rightWeaponID = ID;
                 weapon = rightWeapon.GetComponent<scr_Weapon>();
                 weapon.setIK(rightIK);

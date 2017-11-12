@@ -6,7 +6,19 @@ using UnityEngine.UI;
 public class scr_HUDController : MonoBehaviour {
 
 	#region variables
+	public static scr_HUDController hudController;
+
+	[Header("Player")]
+
 	public GameObject player;
+	//Incremento ou decremento no alfa da condensação
+	private float condensationDelta = 0.001f;
+
+	private scr_HealthController playerHealth;
+	protected scr_PlayerEnergyController playerEnergy;
+	private bool playerInSteam;
+
+	[Header("Sliders and Text")]
 
 	public Text healthText;
 	public Slider healthSlider;
@@ -17,14 +29,24 @@ public class scr_HUDController : MonoBehaviour {
 	public Text rightWeaponText;
 	public Slider rightWeaponSlider;
 
-	private scr_HealthController playerHealth;
-	protected scr_PlayerEnergyController playerEnergy;
+	[Header("Images")]
+	public Image condensationImg;
+
 	#endregion
 
 
 	void Awake () {
-		playerHealth = player.GetComponent<scr_HealthController> ();
-		playerEnergy = player.GetComponent<scr_PlayerEnergyController>();
+		if (hudController == null) {
+			hudController = this;
+			playerHealth = player.GetComponent<scr_HealthController> ();
+			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
+			playerInSteam = false;
+
+			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
+			//condensationImg.transform.SetParent (player.transform);
+		} else if (hudController != this) {
+			Destroy (this.gameObject);
+		}
 
 	}
 
@@ -88,5 +110,23 @@ public class scr_HUDController : MonoBehaviour {
 			updatePlayerBars ();
 		}
 
+		if (playerInSteam && condensationImg.color.a < 1) {
+			print ("Inc-ing");
+			Color c = condensationImg.color;
+			c.a+= condensationDelta * Time.deltaTime;
+			condensationImg.color = c;
+
+
+		} else if (!playerInSteam && condensationImg.color.a > 0) {
+			print ("Dec-ing");
+			Color c = condensationImg.color;
+			c.a-= condensationDelta * Time.deltaTime;
+			condensationImg.color = c;
+		}
+	}
+		
+	public void setPlayerInSteam(bool inSteam, float condensationDelta){
+		playerInSteam = inSteam;
+		this.condensationDelta = condensationDelta;
 	}
 }

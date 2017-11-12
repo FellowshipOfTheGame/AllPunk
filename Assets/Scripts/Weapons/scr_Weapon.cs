@@ -69,8 +69,12 @@ abstract public class scr_Weapon : MonoBehaviour {
 		currCooldownTime = 0;
 
 		Transform parentTransform = GetComponentInParent<Rigidbody2D> ().transform;
-		lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
 		playerEnergy = GetComponentInParent<scr_PlayerEnergyController>();
+
+		if(rightHand)
+			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
+		else
+			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("L.UpperArm").Find("L.LowerArm");
     }
 
     protected void Update()
