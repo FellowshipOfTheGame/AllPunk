@@ -41,6 +41,9 @@ public class scr_HUDController : MonoBehaviour {
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
 			playerInSteam = false;
+
+			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
+			//condensationImg.transform.SetParent (player.transform);
 		} else if (hudController != this) {
 			Destroy (this.gameObject);
 		}
