@@ -22,6 +22,11 @@ public class scr_PA_Manager : MonoBehaviour {
     public int weaponFrontLayer = 8;
     public int weaponBackLayer = -4;
 
+    //IDs das partes do corpo
+    public int bodyID = 0;
+    public int headID = 0;
+    public int legsID = 0;
+
     //Debbug variables
     public bool TEST_ARM;
     public bool canChangeWeapons;
@@ -281,4 +286,57 @@ public class scr_PA_Manager : MonoBehaviour {
         else if (armToEquip == 1)
             instanciateWeapon(false, weaponID);
     }
+
+    /**
+     *  ID da arma para desequipar, a variavel arm pode ser:
+     *  0: No braço direito
+     *  1: No braço esquerdo
+     */
+    public void removeWeapon(int armToEquip) {
+        if (armToEquip == 0)
+        {
+            if (rightWeapon != null)
+                Destroy(rightWeapon);
+            rightWeapon = null;
+            rightWeaponID = -1;
+        }
+        else if (armToEquip == 1) {
+            if (leftWeapon != null)
+                Destroy(leftWeapon);
+            leftWeapon = null;
+            leftWeaponID = -1;
+        }
+    }
+
+    public void equipBody(int bodyToEquip) {
+        Transform bodyTrans = transform.Find("Mesh").Find("Body");
+        SpriteMeshAnimation meshAnim = bodyTrans.GetComponent<SpriteMeshAnimation>();
+
+        meshAnim.frame = bodyToEquip;
+        bodyID = bodyToEquip;
+    }
+
+    public void equipHead(int headToEquip)
+    {
+        Transform headTrans = transform.Find("Mesh").Find("Head");
+        SpriteMeshAnimation meshAnim = headTrans.GetComponent<SpriteMeshAnimation>();
+
+        meshAnim.frame = headToEquip;
+        headID = headToEquip;
+    }
+
+    public void equipLegs(int legsToEquip)
+    {
+        string[] parts = new string[] { "R.UpperLeg", "R.LowerLeg", "R.Foot", "L.UpperLeg", "L.LowerLeg", "L.Foot" };
+
+        Transform meshRoot = transform.Find("Mesh");
+        foreach (string part in parts) {
+            Transform partTrans = meshRoot.Find(part);
+            SpriteMeshAnimation meshAnim = partTrans.GetComponent<SpriteMeshAnimation>();
+            meshAnim.frame = legsToEquip;
+        }
+
+        legsID = legsToEquip;
+    }
+
 }

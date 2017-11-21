@@ -32,7 +32,7 @@ public class scr_Interactor : MonoBehaviour {
         }
     }
 
-    //Interact with the last interactable on list
+    //Interact with the last interactable on lists
     void Update () {
         if (canInteract) {
             if (Input.GetKeyDown(KeyCode.F)) {
