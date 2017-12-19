@@ -45,8 +45,10 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 
 			//Instancia particleplayer
 			if (particlePlayer != null) {
-				GameObject o = GameObject.Instantiate(particlePlayer, this.transform, false);
-				o.transform.SetParent (null);	
+				///Abaixo está o jeito antigo de instanciar um ParticlePlayer na posição
+				//GameObject o = GameObject.Instantiate(particlePlayer, this.transform, false);
+				//o.transform.SetParent (null);	
+				particlePlayer.GetComponent<ParticleSystem>().Play();
 			}
 
 			foreach (Collider2D hit in hits) {
