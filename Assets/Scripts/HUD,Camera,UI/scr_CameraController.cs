@@ -14,6 +14,7 @@ public class scr_CameraController : MonoBehaviour {
 	public int _maxCameraZoom = 12;
 
 	public float _maxCameraDist = 7.5f;
+	public float _camPanSpeed = 10.0f;
 
 	private Transform camTrans;
 	private Camera camComp;//Componente de câmera 
@@ -64,12 +65,13 @@ public class scr_CameraController : MonoBehaviour {
 			Vector2 mouseDirection = mouseRelativeToPlayer.normalized;
 			//Vector3 offset = camTrans.position - player.transform.position;
 
-			camTrans.Translate (mouseDirection * 15 * Time.deltaTime);
+			camTrans.Translate (mouseDirection * _camPanSpeed * Time.deltaTime);
+			//camTrans.position = Vector2.SmoothDamp (camTrans.position, mouseDirection * 15, , 1f, 2f, 5f);
 		}
 		if (Input.GetButtonUp ("EnablePan")) {
 			isPanning = false;
 			Vector2 backVector = lastCamPos - camTrans.position;
-			camTrans.Translate (backVector.normalized * 15 * Time.deltaTime);
+			camTrans.Translate (backVector.normalized * _camPanSpeed*2 * Time.deltaTime);
 		}
 	}
 

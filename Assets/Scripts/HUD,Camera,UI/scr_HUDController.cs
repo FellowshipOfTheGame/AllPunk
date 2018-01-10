@@ -126,6 +126,9 @@ public class scr_HUDController : MonoBehaviour {
 	}
 		
 	public void setPlayerInSteam(bool inSteam, float condensationDelta){
+
+		//Verificação de equipamento, se tiver os goggles, sempre falso
+
 		playerInSteam = inSteam;
 		this.condensationDelta = condensationDelta;
 	}
