@@ -23,6 +23,10 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	}
 		
 
+	void OnDrawGizmos(){
+		Gizmos.DrawLine (Camera.main.ScreenToWorldPoint (Input.mousePosition), lowerArm.position);
+	}
+
 	override protected void AttackAction(bool noAnimation) {
 	/**
 	 * Para o steam breath, projetar uma Hitbox que realizará dano
@@ -45,10 +49,9 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 
 			//Instancia particleplayer
 			if (particlePlayer != null) {
-				///Abaixo está o jeito antigo de instanciar um ParticlePlayer na posição
-				//GameObject o = GameObject.Instantiate(particlePlayer, this.transform, false);
-				//o.transform.SetParent (null);	
-				particlePlayer.GetComponent<ParticleSystem>().Play();
+				GameObject o = GameObject.Instantiate (particlePlayer, transform.position, Quaternion.FromToRotation(Vector2.right, weaponDirection), null);
+				o.GetComponent<ParticleSystem>().Play();
+				GameObject.Destroy (o, 3.0f);
 			}
 
 			foreach (Collider2D hit in hits) {

@@ -32,14 +32,14 @@ public class scr_CameraController : MonoBehaviour {
 	}
 
 	void OnDrawGizmos(){
-
+		/*
 		//Mouse Relative to Player
 		Gizmos.DrawLine (player.transform.position, Camera.main.ScreenToWorldPoint (Input.mousePosition));
 
 		Gizmos.color = Color.red;
-
 		//Offset
-		Gizmos.DrawLine(player.transform.position, camTrans.position);
+		if(camTrans != null)
+			Gizmos.DrawLine(player.transform.position, camTrans.position);*/
 	}
 
 
