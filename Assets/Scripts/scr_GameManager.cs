@@ -24,6 +24,7 @@ public class scr_GameManager : MonoBehaviour {
 
 	//Variaveis salvadas
 	public scr_Player_Stats playerStats;
+	#endregion
 
 	public void endGame(){		
 		GetComponentInChildren<scr_HUDController> ().displayEndGameScreen ();

@@ -107,6 +107,11 @@ public enum PartType
     private SpriteMeshAnimation animRHand;
     private SpriteMeshAnimation animLHand;
 
+
+	private Transform upperBody;
+	private Transform rightArm;
+	private Transform leftArm;
+
 #endregion Variables
 
     private void Awake()
@@ -143,6 +148,10 @@ public enum PartType
             equipWeapon(((int) playerStats.rightWeaponEquiped)-1, 0);
         if(playerStats.leftWeaponEquiped != WeaponPart.None)
             equipWeapon(((int) playerStats.leftWeaponEquiped)-1, 1);
+
+		Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
+		Transform rightArm = upperBody.Find("R.UpperArm");
+		Transform leftArm = upperBody.Find("L.UpperArm");
     }
 
     /// <summary>
@@ -294,9 +303,9 @@ public enum PartType
         leftSprite.sortingOrder = auxLayer;
 
         //Find arm transform
-        Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
-        Transform rightArm = upperBody.Find("R.UpperArm");
-        Transform leftArm = upperBody.Find("L.UpperArm");
+        //Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
+        //Transform rightArm = upperBody.Find("R.UpperArm");
+        //Transform leftArm = upperBody.Find("L.UpperArm");
 
         //Change Arm position
         Vector3 newPosition = rightArm.transform.localPosition;

@@ -35,7 +35,7 @@ abstract public class scr_Weapon : MonoBehaviour {
     //Distancia máxima que o braço fica esticado, encontrado empiricamente
     protected float maxDistance = 1.5f;
     //Distancia que a mão fica do ombro quando o braço está em segundo plano. Encontrado empiricamente
-    protected float lowerDistance = 1.2f;
+    protected float lowerDistance = 1.5f;
 
 	protected scr_PlayerEnergyController playerEnergy;
 	//Referência ao transform do braço
@@ -88,95 +88,146 @@ abstract public class scr_Weapon : MonoBehaviour {
 			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("L.UpperArm").Find("L.LowerArm");
     }
 
-    protected void Update()
-    {
+	protected void Update()
+
+	{
+
 		if (currCooldownTime > 0) {
 			currCooldownTime -= Time.deltaTime;
+
 			//print ("~ " + currentTimeToFire);
+
 			if (currCooldownTime <= 0)
 				currCooldownTime = 0;
+
 		}
 
-        //Move o IK para a posição do mouse    
-        if (followMouse && ik != null) {
-            //Pegar posição do mouse
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPosition.z = transform.position.z;
+		//Move o IK para a posição do mouse    
 
-            //Pegar inicio do ombro
-            Transform bone = transform.parent.parent.parent;
-            Vector3 direction = mouseWorldPosition - bone.position;
+		if (followMouse && ik != null) {
 
-            float distance = maxDistance;
+			//Pegar posição do mouse
+			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			mouseWorldPosition.z = transform.position.z;
 
-            //Logica para saber se o braço utilizado é o que fica por trás, caso seja, fica mais próximo do
-            //corpo
-            if(!(rightHand ^ flipped))
-                distance = lowerDistance;
+			//Pegar inicio do ombro
 
-            //Atualiza o angulo que o offset deveria ter, calculando o angulo e depois rotacionando o offset
-            float alphaAngle;
-            if(!flipped)
-                alphaAngle = Mathf.Atan2(direction.y, direction.x);
-            else
-                alphaAngle = Mathf.Atan2(-direction.y, -direction.x);
-            alphaAngle *= Mathf.Rad2Deg; //Conversao para grau
-            //Rotaciona o vetor no eixo z
-            Vector3 correctOffset =  Quaternion.AngleAxis(alphaAngle, new Vector3(0,0,1)) * currentOffset;
+			Transform bone = transform.parent.parent.parent;
 
-            //Faz com que o IK fique na circunferência do braço essticado
-            ik.transform.SetPositionAndRotation(bone.position + direction.normalized * distance + correctOffset, 
-            ik.transform.rotation);
-			/*Vector3 aux = (mouseWorldPosition - 
-				this.transform.position);*/
+			Vector3 direction = mouseWorldPosition - bone.position;
 
-			//Se maior do que o limite
-			/*if (aux.magnitude > deadzoneRadius) {
-				print ("ok");
-				ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
-			} else {
-				ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
-				print ("nope");
-			}*/
+			//if(direction.magnitude < maxDistance) {
+			if(true){//PLACEHOLDER
+				ik.transform.SetPositionAndRotation(mouseWorldPosition, ik.transform.rotation);
+			}
 
-        }
+			else {
 
+				float distance = maxDistance;
+				//Logica para saber se o braço utilizado é o que fica por trás, caso seja, fica mais próximo do
+				//corpo
 
-        //Verifica se está sendo realizado alguma animação de ataque
-        bool noAnimation = false;
-        if (animator != null)
-        {
-            int animLayer = (rightHand) ? 1 : 2;
-            noAnimation = animator.GetCurrentAnimatorStateInfo(animLayer).IsName("Moving");
-            if (noAnimation)
-            {
-                if (rightHand)
-                {
-                    animator.ResetTrigger("R_Attack");
-                }
-                else
-                {
-                    animator.ResetTrigger("L_Attack");
-                }
-            }
-        }
+				if(!(rightHand ^ flipped))
+					distance = lowerDistance;
 
-        playingAnimation = !noAnimation;
+				//Atualiza o angulo que o offset deveria ter, calculando o angulo e depois rotacionando o offset
+
+				float alphaAngle;
+
+				if(!flipped)
+					alphaAngle = Mathf.Atan2(direction.y, direction.x);
+
+				else
+					alphaAngle = Mathf.Atan2(-direction.y, -direction.x);
+
+				alphaAngle *= Mathf.Rad2Deg; //Conversao para grau
+
+				//Rotaciona o vetor no eixo z
+				Vector3 correctOffset =  Quaternion.AngleAxis(alphaAngle, new Vector3(0,0,1)) * currentOffset;
+
+				//Faz com que o IK fique na circunferência do braço essticado
+				ik.transform.SetPositionAndRotation(bone.position + direction.normalized * distance + correctOffset, 
+					ik.transform.rotation);
+
+				/*Vector3 aux = (mouseWorldPosition - 
+                this.transform.position);*/
+				//Se maior do que o limite
+				/*if (aux.magnitude > deadzoneRadius) {
+                print ("ok");
+                ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
+            } else {
+                ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
+
+                print ("nope");
+            }*/
+
+			}
+
+		}
+
+		//Verifica se está sendo realizado alguma animação de ataque
+
+		bool noAnimation = false;
+
+		if (animator != null)
+
+		{
+
+			int animLayer = (rightHand) ? 1 : 2;
+
+			noAnimation = animator.GetCurrentAnimatorStateInfo(animLayer).IsName("Moving");
+
+			if (noAnimation)
+
+			{
+
+				if (rightHand)
+
+				{
+
+					animator.ResetTrigger("R_Attack");
+
+				}
+
+				else
+
+				{
+
+					animator.ResetTrigger("L_Attack");
+
+				}
+
+			}
+
+		}
+
+		playingAnimation = !noAnimation;
+
 		string fireButton = (rightHand) ? "Fire1" : "Fire2";
+
 		clicked = Input.GetButtonDown(fireButton);
+
 		holding = Input.GetButton(fireButton);
 
 		/*Condições para ativar a arma: 
-		 * Clicado, cooldown = 0 e player tem energia suficiente
-		 */
+
+         * Clicado, cooldown = 0 e player tem energia suficiente
+
+         */
+
 		if (clicked && currCooldownTime == 0 && playerEnergy.getCurrentEnergy() >= energyDrain) {
+
 			//Chama a função específica de cada arma, decrementa energia
+
 			playerEnergy.drainEnergy(energyDrain);
+
 			currCooldownTime = cooldownTime;
+
 			AttackAction (noAnimation);
+
 		}
 
-    }
+	}
 
 
     /**
