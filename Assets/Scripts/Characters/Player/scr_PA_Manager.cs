@@ -75,6 +75,9 @@ public enum PartType
     //Partes desbloqueadas e equipadas
     public scr_Player_Stats playerStats;
 
+    //Offset que a mão esquerda deve possuir
+    public Vector2 leftHandOffset = new Vector2 (0,0);
+
     //Debbug variables
     public bool TEST_ARM;
     public bool canChangeWeapons;
@@ -186,6 +189,7 @@ public enum PartType
             }
             weapon.setRightHand(right);
             weapon.setAnimator(animator);
+            weapon.setHandOffset(leftHandOffset);
             if (flipped)
                 weapon.flipHand();
             updateSave();

@@ -56,6 +56,13 @@ abstract public class scr_Weapon : MonoBehaviour {
 	protected float currCooldownTime;
     //Se está ou não tocando a animação
     protected bool playingAnimation;
+    //Variavel dizendo qual o offset que a mão tem que ter quando é a mão secundaria
+    protected Vector3 offsetSecondary = new Vector3(0,0,0);
+    //Variavel dizendo qual o offset que a mão tem que ter quando é a mão primária
+    protected Vector3 offsetPrincipal = new Vector3(0,0,0);
+    //Qual o offset atual da mao
+    protected Vector3 currentOffset;
+
     #endregion Variables
 
     /**
@@ -86,6 +93,7 @@ abstract public class scr_Weapon : MonoBehaviour {
         if (followMouse && ik != null) {
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPosition.z = transform.position.z;
+            mouseWorldPosition += currentOffset;
 
 
 			ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
@@ -228,6 +236,16 @@ abstract public class scr_Weapon : MonoBehaviour {
             else
                 sprite.sortingOrder = backLayer;
         }
+
+        //Logica de offset
+        if(!flipped && rightHand)
+            currentOffset = offsetPrincipal;
+        else if (!flipped && !rightHand)
+            currentOffset = offsetSecondary;
+        else if (flipped && rightHand)
+            currentOffset = offsetSecondary;
+        else if (flipped && !rightHand)
+            currentOffset = offsetPrincipal;
     }
 
     /**
@@ -250,4 +268,15 @@ abstract public class scr_Weapon : MonoBehaviour {
 	public float getCurrentCooldownTimer(){
 		return currCooldownTime;
 	}
+
+    public void setHandOffset(Vector2 newOffset) {
+        offsetSecondary = newOffset;
+        if(!flipped && !rightHand)
+            currentOffset = offsetSecondary;
+        else if (flipped && rightHand) {
+            offsetSecondary *= -1;
+            currentOffset = offsetSecondary;
+        } else
+            currentOffset = offsetPrincipal;
+    }
 }
