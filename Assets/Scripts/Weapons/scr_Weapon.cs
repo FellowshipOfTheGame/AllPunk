@@ -32,6 +32,10 @@ abstract public class scr_Weapon : MonoBehaviour {
 	//Custo de energia para ativar
 	public float energyDrain;
 
+    //Distancia máxima que o braço fica esticado, encontrado empiricamente
+    protected float maxDistance = 1.5f;
+    //Distancia que a mão fica do ombro quando o braço está em segundo plano. Encontrado empiricamente
+    protected float lowerDistance = 1.2f;
 
 	protected scr_PlayerEnergyController playerEnergy;
 	//Referência ao transform do braço
@@ -56,6 +60,13 @@ abstract public class scr_Weapon : MonoBehaviour {
 	protected float currCooldownTime;
     //Se está ou não tocando a animação
     protected bool playingAnimation;
+    //Variavel dizendo qual o offset que a mão tem que ter quando é a mão secundaria
+    protected Vector3 offsetSecondary = new Vector3(0,0,0);
+    //Variavel dizendo qual o offset que a mão tem que ter quando é a mão primária
+    protected Vector3 offsetPrincipal = new Vector3(0,0,0);
+    //Qual o offset atual da mao
+    protected Vector3 currentOffset;
+
     #endregion Variables
 
     /**
@@ -88,13 +99,34 @@ abstract public class scr_Weapon : MonoBehaviour {
 
         //Move o IK para a posição do mouse    
         if (followMouse && ik != null) {
+            //Pegar posição do mouse
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPosition.z = transform.position.z;
 
+            //Pegar inicio do ombro
+            Transform bone = transform.parent.parent.parent;
+            Vector3 direction = mouseWorldPosition - bone.position;
 
-			ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
+            float distance = maxDistance;
 
+            //Logica para saber se o braço utilizado é o que fica por trás, caso seja, fica mais próximo do
+            //corpo
+            if(!(rightHand ^ flipped))
+                distance = lowerDistance;
 
+            //Atualiza o angulo que o offset deveria ter, calculando o angulo e depois rotacionando o offset
+            float alphaAngle;
+            if(!flipped)
+                alphaAngle = Mathf.Atan2(direction.y, direction.x);
+            else
+                alphaAngle = Mathf.Atan2(-direction.y, -direction.x);
+            alphaAngle *= Mathf.Rad2Deg; //Conversao para grau
+            //Rotaciona o vetor no eixo z
+            Vector3 correctOffset =  Quaternion.AngleAxis(alphaAngle, new Vector3(0,0,1)) * currentOffset;
+
+            //Faz com que o IK fique na circunferência do braço essticado
+            ik.transform.SetPositionAndRotation(bone.position + direction.normalized * distance + correctOffset, 
+            ik.transform.rotation);
 			/*Vector3 aux = (mouseWorldPosition - 
 				this.transform.position);*/
 
@@ -232,6 +264,13 @@ abstract public class scr_Weapon : MonoBehaviour {
             else
                 sprite.sortingOrder = backLayer;
         }
+
+        //Logica de offset (flipped XOR rightHand). Em caso de duvida verificar função setHandOffset
+        if(flipped ^ rightHand)
+            currentOffset = offsetPrincipal;
+        else
+            currentOffset = offsetSecondary;
+        
     }
 
     /**
@@ -254,4 +293,16 @@ abstract public class scr_Weapon : MonoBehaviour {
 	public float getCurrentCooldownTimer(){
 		return currCooldownTime;
 	}
+
+    public void setHandOffset(Vector2 newOffset) {
+        offsetSecondary = newOffset;
+        if(rightHand)
+            offsetSecondary.x *=-1;
+        if(!flipped && !rightHand)
+            currentOffset = offsetSecondary;
+        else if (flipped && rightHand) {
+            currentOffset = offsetSecondary;
+        } else
+            currentOffset = offsetPrincipal;
+    }
 }
