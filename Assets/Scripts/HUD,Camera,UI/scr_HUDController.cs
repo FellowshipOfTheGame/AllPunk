@@ -38,6 +38,8 @@ public class scr_HUDController : MonoBehaviour {
 	void Awake () {
 		if (hudController == null) {
 			hudController = this;
+			if(player == null)
+				player = scr_GameManager.instance.player;
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
 			playerInSteam = false;
@@ -56,6 +58,14 @@ public class scr_HUDController : MonoBehaviour {
 		}
 
 		transform.Find ("endGameText").gameObject.SetActive(true);
+	}
+
+	public void hideEndGameScreen(){
+		foreach (Transform child in transform) {
+			child.gameObject.SetActive(true);
+		}
+
+		transform.Find ("endGameText").gameObject.SetActive(false);
 	}
 
 
@@ -108,6 +118,9 @@ public class scr_HUDController : MonoBehaviour {
 		if (player != null) {
 			updateWeaponTimers ();
 			updatePlayerBars ();
+		} else {
+			//Tenta recuperar referencia perdida
+			recoverPlayerReference();
 		}
 
 		if (playerInSteam && condensationImg.color.a < 1) {
@@ -131,5 +144,16 @@ public class scr_HUDController : MonoBehaviour {
 
 		playerInSteam = inSteam;
 		this.condensationDelta = condensationDelta;
+	}
+
+	/// <summary>
+	/// Função utilizada para quando a HUD não consegue achar um player
+	/// </summary>
+	private void recoverPlayerReference() {
+		player = scr_GameManager.instance.player;
+		if(player != null) {
+			playerHealth = player.GetComponent<scr_HealthController> ();
+			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
+		}
 	}
 }

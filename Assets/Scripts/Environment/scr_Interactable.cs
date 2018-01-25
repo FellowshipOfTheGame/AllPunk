@@ -14,16 +14,16 @@ public abstract class scr_Interactable : MonoBehaviour {
     protected bool inside = false;
 
 	//Initialize the list and components
-	void Awake () {
+	protected void Awake () {
 		interactionZone = GetComponent<Collider2D> ();
         interactors = new List<scr_Interactor>();
 	}
 	
 	void OnTriggerEnter2D(Collider2D col){
-        scr_Interactor inter;
+        scr_Interactor inter = null;
 
         inter = col.GetComponent<scr_Interactor>();
-        
+        print("DEBUG: " + col.gameObject.name);
         //Add the interactor object to the list if valid
         if (inter != null) {
             interactors.Add(inter);
@@ -56,19 +56,21 @@ public abstract class scr_Interactable : MonoBehaviour {
         }
 	}
 
-    /**
-     * Function called by interactor to interact with the object. Take the interactor by parameter
-     */
+    /// <summary>
+    /// Função chamada pela entidade que está interagindo com o objeto
+    /// </summary>
+    /// <param name="interactor">Entidade interagindo com o objeto</param>
+    /// <returns></returns>
     public abstract bool Interact(scr_Interactor interactor);
 
-    /**
-     * Function called when object became interable
-     */
+    /// <summary>
+    /// Função chamada quando o objeto se torna interagivel
+    /// </summary>
     protected abstract void BecameInterable();
 
-    /**
-     * Function called when object stop being interable
-     */
+    /// <summary>
+    /// Função chamada quando o objeto deixa de ser interagivel
+    /// </summary>
     protected abstract void StopInterable();
 
     protected void OnDestroy()

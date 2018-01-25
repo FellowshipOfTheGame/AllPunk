@@ -102,6 +102,10 @@ public class scr_HealthController : MonoBehaviour {
 		return this.currentHp;
 	}
 
+	public void setCurrentHealth(float newHP) {
+		currentHp = newHP;
+	}
+
 	/**
 	 * Método para ma		tar a entidade.
 	 * Deve ser overwriten para efeitos de morte específicos

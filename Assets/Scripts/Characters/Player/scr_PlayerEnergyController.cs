@@ -17,6 +17,14 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 		return currentEnergy;
 	}
 
+	public void setCurrentEnergy(float newEnergy) {
+		currentEnergy = newEnergy;
+		if(currentEnergy > maxEnergy)
+			currentEnergy = maxEnergy;
+		if(currentEnergy < 0)
+			currentEnergy = 0;
+	}
+
 	public void drainEnergy(float drain){
 		currentEnergy -= drain;
 		if (currentEnergy < 0)

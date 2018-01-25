@@ -303,9 +303,9 @@ public enum PartType
         leftSprite.sortingOrder = auxLayer;
 
         //Find arm transform
-        //Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
-        //Transform rightArm = upperBody.Find("R.UpperArm");
-        //Transform leftArm = upperBody.Find("L.UpperArm");
+        Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
+        Transform rightArm = upperBody.Find("R.UpperArm");
+        Transform leftArm = upperBody.Find("L.UpperArm");
 
         //Change Arm position
         Vector3 newPosition = rightArm.transform.localPosition;
@@ -478,6 +478,7 @@ public enum PartType
 
     private void updateSave(){
         scr_GameManager.instance.playerStats = playerStats;
+        scr_GameManager.instance.updatePlayerStats();
         scr_GameManager.instance.Save();
     }
 
