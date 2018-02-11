@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 using UnityEngine;
 
 /**
@@ -7,7 +8,6 @@ using UnityEngine;
  */
 
 public class scr_HealthController : MonoBehaviour {
-
 
 	#region variables
 
@@ -36,14 +36,21 @@ public class scr_HealthController : MonoBehaviour {
 	*/
     //Referencia ao animator da entidade
     private Animator animator;
+
+    //Referencia para um sistema de eventos responsavel por feedback de knockback
+    UnityEvent knockBackCallback;
     #endregion variables
 
-	private void Awake(){
+    private void Awake(){
 		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		currentHp = maxHp;
         animator = GetComponent<Animator>();
         canBeHurt = true;
-	}
+        if(knockBackCallback == null)
+        {
+            knockBackCallback = new UnityEvent();
+        }
+    }
 
 	/**
 	 * Método usado para tomar dano.
@@ -73,9 +80,11 @@ public class scr_HealthController : MonoBehaviour {
 			
 			//print("dir1 " + direction);
 			direction = direction * (1 - poise);//Poise para reduzir knockback
-			this.transform.position += new Vector3 (0, direction.x, 0); //levemente levanta do chao
+			//this.transform.position += new Vector3 (0, direction.x, 0); //levemente levanta do chao
 			//print("dir2 " + direction);
 			this.entityRigidBody.AddForce (direction, ForceMode2D.Impulse);
+            if(knockBackCallback != null)
+                knockBackCallback.Invoke();
             if (animator != null)
             {
                 animator.SetTrigger("Hurt");
@@ -124,4 +133,24 @@ public class scr_HealthController : MonoBehaviour {
         canBeHurt = true;
     }
 
+    public void addKnockbackCallback(UnityAction call)
+    {
+        if(knockBackCallback != null)
+            knockBackCallback.AddListener(call);
+    }
+    
+    public void removeKnockbackCallback(UnityAction call)
+    {
+        if(knockBackCallback != null)
+            knockBackCallback.RemoveListener(call);
+    }
+
+    private void OnDestroy()
+    {
+        if(knockBackCallback != null)
+        {
+            knockBackCallback.RemoveAllListeners();
+        }
+
+    }
 }

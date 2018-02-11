@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class scr_EnemyBehavMelee : MonoBehaviour {
 
+    //Tempo que o inimigo fica sem se mexer depois de receber um ataque
+    [Range(0,2)]
+    public float knockbackTime = 1f;
     //Tempo que o inimigo precisa esperar para atacar
     public float attackCooldown = 1f;
     //Tempo que o inimigo espera para causar dano depois de colidir
     public float attackDelay = 0;
     //Dano que o inimigo causa
     public float attackDamage = 10;
+    //Forca do ataque
+    public float attackForce = 5;
     //Distancia de ataque
     public float attackDistance;
     //Direção de ataque
@@ -29,11 +34,21 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
     private bool animationStarted;
     //Referencia para o movimento
     private scr_EnemyBehavPatrol movementScript;
+    //O inimigo está sobre acao de um knockback
+    private bool underKnockback = false;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         movementScript = GetComponent<scr_EnemyBehavPatrol>();
+    }
+
+    private void Start()
+    {
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null) {
+            health.addKnockbackCallback(this.onKnockBack);
+        }
     }
 
     private void Update()
@@ -72,7 +87,7 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
                             if (life != null && col.tag != "Enemy")
                             {
                                 Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
-                                life.takeDamage(attackDamage, attackDir);
+                                life.takeDamage(attackDamage, attackDir*attackForce);
                             }
                         }
                     }
@@ -119,6 +134,10 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
             counter -= Time.fixedDeltaTime;
         }
 
+        //Nao atacar caso esteja sobre knockback
+        if (underKnockback)
+            return;
+
         //Calcula colisão
         int direction = ((transform.Find("NextWallCollision").position - transform.position).x > 0) ? 1 : -1;
         float height = (transform.Find("NextWallCollision").position - transform.Find("NextFloorCollision").position).y;
@@ -138,6 +157,30 @@ public class scr_EnemyBehavMelee : MonoBehaviour {
             }
         }
         
+    }
+
+    private void onKnockBack() {
+        StartCoroutine(waitKnockback());
+    }
+
+    private IEnumerator waitKnockback() {
+        underKnockback = true;
+        float counter = 0;
+        while(counter < knockbackTime)
+        {
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        underKnockback = false;
+    }
+
+    private void OnDestroy()
+    {
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.removeKnockbackCallback(this.onKnockBack);
+        }
     }
 
 }

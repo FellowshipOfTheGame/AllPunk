@@ -18,6 +18,9 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
     //Definir limite de distancia entre
     public Vector2 XLimit;
 
+    [Range(0,2)]
+    public float knockbackTime = 1f;
+
     //Referência para rigibody 2D
     private Rigidbody2D rb2D;
 
@@ -33,10 +36,24 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
     private Animator animator;
     //Pode mover ou não
     private bool cantMove;
+    //Se esta sobre acao de knockback ou nao
+    private bool underKnockback = false;
+
+
     void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+    }
+
+    private void Start()
+    {
+        //Adiciona callback de knockback da vida
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.addKnockbackCallback(this.onKnockBack);
+        }
     }
 
     // Update is called once per frame
@@ -96,7 +113,7 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
         }
 
         //Atualiza velocidade
-        if (isGrounded && !cantMove) {
+        if (isGrounded && !cantMove && !underKnockback) {
             int direction = (isFacingRight) ? 1 : -1;
             rb2D.velocity = new Vector2(direction *
             Speed, rb2D.velocity.y);
@@ -127,6 +144,32 @@ public class scr_EnemyBehavPatrol : MonoBehaviour {
 
     public void ResumeMoviment() {
         cantMove = false;
+    }
+
+    private void onKnockBack()
+    {
+        StartCoroutine(waitKnockback());
+    }
+
+    private IEnumerator waitKnockback()
+    {
+        underKnockback = true;
+        float counter = 0;
+        while (counter < knockbackTime)
+        {
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        underKnockback = false;
+    }
+
+    private void OnDestroy()
+    {
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.removeKnockbackCallback(this.onKnockBack);
+        }
     }
 
 }

@@ -55,6 +55,11 @@ public class scr_PlayerController : MonoBehaviour {
 
     public float armOffset;
 
+    //Tempo que o jogador fica sem poder se mexer depois de receber um ataque;
+
+    [Range(0,2)]
+    public float knockbackTime = 0.5f;
+
     //Facilidade de movimento no ar
     [Range(0,1)]
     public float airControl = 1f;
@@ -96,6 +101,9 @@ public class scr_PlayerController : MonoBehaviour {
 
     //Verifica se o botão estava sendo segurado
     private bool isHoldingJump = false;
+
+    //Verifica se o jogador está recebendo ataque
+    private bool underKnockback = false;
 
     //Referência para o gerenciador de PA's
     private scr_PA_Manager paManager;
@@ -148,15 +156,24 @@ public class scr_PlayerController : MonoBehaviour {
 
     }
 
+    private void Start()
+    {
+        //Adiciona callback de knockback da vida
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.addKnockbackCallback(this.onKnockBack);
+        }
+    }
 
 
-	/**
+    /**
 
 	 * Chamado uma vez por frame, usada para gerenciar Rigibody
 
 	 */
 
-	void FixedUpdate(){
+    void FixedUpdate(){
 
     }
 
@@ -284,14 +301,17 @@ public class scr_PlayerController : MonoBehaviour {
         if (!isGrounded)
             localSpeed = speed;
 
-        //Interpola a velocidade no ar, o que controla o fator de movimento aerio do personagem
-        if (isGrounded)
-		    rb.velocity = new Vector2 (movePlayerVector * localSpeed, rb.velocity.y);
-        else
+        //Verifica se o jogador nao esta sobre acao de knockback
+        if (!underKnockback)
         {
-            rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);
+            //Interpola a velocidade no ar, o que controla o fator de movimento aerio do personagem
+            if (isGrounded)
+                rb.velocity = new Vector2(movePlayerVector * localSpeed, rb.velocity.y);
+            else
+            {
+                rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);
+            }
         }
-
     }
 
 
@@ -413,6 +433,33 @@ public class scr_PlayerController : MonoBehaviour {
             animator.SetBool("IsGrounded", isGrounded);
         }
     }
+
+    private void onKnockBack()
+    {
+        StartCoroutine(waitKnockback());
+    }
+
+    private IEnumerator waitKnockback()
+    {
+        underKnockback = true;
+        float counter = 0;
+        while (counter < knockbackTime)
+        {
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        underKnockback = false;
+    }
+
+    private void OnDestroy()
+    {
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.removeKnockbackCallback(this.onKnockBack);
+        }
+    }
+
 
 }
 

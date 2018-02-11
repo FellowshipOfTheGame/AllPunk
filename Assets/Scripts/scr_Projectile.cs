@@ -9,6 +9,7 @@ public class scr_Projectile : MonoBehaviour {
 	public Vector2 direction = new Vector2 (-1, 0);
 	public float damage = 10;
 	public float timeToLive = 10; //em Segundos
+    public float force = 10;
 
 	private Rigidbody2D entityRigidBody;
 
@@ -55,7 +56,7 @@ public class scr_Projectile : MonoBehaviour {
 		//Entidade "danificável"
 		scr_HealthController entity = col.gameObject.GetComponent<scr_HealthController> ();
 		if (entity != null && entity.tag != ownerTag) {
-			entity.takeDamage (this.damage, this.direction.normalized);
+			entity.takeDamage (this.damage, this.direction.normalized * force);
 		}
 		Die ();
 
