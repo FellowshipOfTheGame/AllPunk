@@ -15,10 +15,10 @@ public enum WeaponPart
 {
     None,
     Sabre,
-    SteamBreath,
     RivetGun,
+    SteamBreath,
     GatlingGun
-};
+    };
 
 /// <summary>
 /// Enumerador utilizado para categorizar cada parte diferente que pode ser equipada no torso

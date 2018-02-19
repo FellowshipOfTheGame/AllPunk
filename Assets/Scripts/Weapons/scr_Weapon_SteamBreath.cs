@@ -32,8 +32,10 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	 * Para o steam breath, projetar uma Hitbox que realizará dano
 	 * zero e dará knockback em um vetor na direção mirada
 	 */
-		if (clicked) {
-			
+		if (clicked || holding) {
+
+            useEnergy();
+
 			//spawnPosition = particlePlayer.transform;
 
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

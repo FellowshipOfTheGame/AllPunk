@@ -21,16 +21,30 @@ abstract public class scr_Weapon : MonoBehaviour {
     //Se essa é ou não a mão direita
     [HideInInspector]
     public bool rightHand;
+    [Header("Atributos da arma")]
     //A arma deve seguir o mouse
+    [Tooltip("Deve seguir o mouse ou não")]
     public bool followMouse;
     //Como é o ataque utilizado
+    [Tooltip("Animação a ser utilizada quando atacar")]
     public AttackType attackType;
-    //Qual variação de sprite vai ser utilizado no braço
-    public int armVariation = 0;
+    [Tooltip("Qual variante de braço deve ser utilizada")]
+    public scr_PA_Manager.WeaponPart armVariationSprite;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 	//Custo de energia para ativar
 	public float energyDrain;
+    //Deve forçar o layer desejado
+    public bool forceLayer = false;
+    //A ordem do sprite a ser utilizado quando no sentido normal
+    public int frontLayer = 8;
+    //A ordem do sprite a ser utilizado quando inverte
+    public int backLayer = -4;
+
+    //Qual variação de sprite vai ser utilizado no braço em inteiro
+    [HideInInspector]
+    public int armVariation = 0;
+
 
     //Distancia máxima que o braço fica esticado, encontrado empiricamente
     protected float maxDistance = 1.5f;
@@ -46,10 +60,6 @@ abstract public class scr_Weapon : MonoBehaviour {
     protected Animator animator;
     //Sprite da arma
     protected SpriteRenderer sprite;
-    //A ordem do sprite a ser utilizado quando no sentido normal
-    protected int frontLayer;
-    //A ordem do sprite a ser utilizado quando inverte
-    protected int backLayer;
     //Se o botão do ataque foi clicado
     protected bool clicked;
     //Se o botão de ataque foi segurado
@@ -78,6 +88,9 @@ abstract public class scr_Weapon : MonoBehaviour {
         ik = null;
         animator = null;
 		currCooldownTime = 0;
+
+        //Conversao do braço para int
+        armVariation = (int)armVariationSprite;
 
 		Transform parentTransform = GetComponentInParent<Rigidbody2D> ().transform;
 		playerEnergy = GetComponentInParent<scr_PlayerEnergyController>();
@@ -215,11 +228,10 @@ abstract public class scr_Weapon : MonoBehaviour {
 
          */
 
-		if (clicked && currCooldownTime == 0 && playerEnergy.getCurrentEnergy() >= energyDrain) {
+		if ( (clicked || holding) && currCooldownTime == 0 && playerEnergy.getCurrentEnergy() >= energyDrain) {
 
 			//Chama a função específica de cada arma, decrementa energia
 
-			playerEnergy.drainEnergy(energyDrain);
 
 			currCooldownTime = cooldownTime;
 
@@ -291,14 +303,27 @@ abstract public class scr_Weapon : MonoBehaviour {
      * Define a ordem dos sprites
      */
     public void setSpriteLayer(int frontLayer, int backLayer) {
-        this.frontLayer = frontLayer;
-        this.backLayer = backLayer;
+        if (!forceLayer)
+        {
+            this.frontLayer = frontLayer;
+            this.backLayer = backLayer;
+        }
+        else
+        {
+            //Verificar se não esta invertido
+            if(frontLayer < 0)
+            {
+                int aux = this.frontLayer;
+                this.frontLayer = this.backLayer;
+                this.backLayer = aux;
+            }
+        }
         if (sprite != null)
         {
             if (!flipped)
-                sprite.sortingOrder = frontLayer;
+                sprite.sortingOrder = this.frontLayer;
             else
-                sprite.sortingOrder = backLayer;
+                sprite.sortingOrder = this.backLayer;
         }
     }
 
@@ -355,5 +380,9 @@ abstract public class scr_Weapon : MonoBehaviour {
             currentOffset = offsetSecondary;
         } else
             currentOffset = offsetPrincipal;
+    }
+
+    protected void useEnergy() {
+        playerEnergy.drainEnergy(energyDrain);
     }
 }
