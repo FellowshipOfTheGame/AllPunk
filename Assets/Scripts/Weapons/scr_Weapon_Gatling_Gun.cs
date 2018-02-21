@@ -37,7 +37,6 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
         if (line != null)
             line.enabled = false;
         cooldownTime = 0f;
-        energyDrain = 0f;
         gunAnimator = GetComponent<Animator>();
     }
 
