@@ -53,7 +53,7 @@ abstract public class scr_Weapon : MonoBehaviour {
     //Qual variação de sprite vai ser utilizado no braço em inteiro
     [HideInInspector]
     public int armVariation = 0;
-
+    [Space]
 
     //Distancia máxima que o braço fica esticado, encontrado empiricamente
     protected float maxDistance = 1.5f;

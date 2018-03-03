@@ -154,6 +154,8 @@ public class scr_HUDController : MonoBehaviour {
 		if(player != null) {
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
-		}
+            //updateWeaponTimers();
+            updatePlayerBars();
+        }
 	}
 }

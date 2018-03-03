@@ -33,7 +33,11 @@ public class scr_GameManager : MonoBehaviour {
 	public void endGame(){		
 		GetComponentInChildren<scr_HUDController> ().displayEndGameScreen ();
 		isGameOver = true;
-	}
+        Delete();
+        AsyncOperation aOp = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+        StartCoroutine(WaitSceneLoad(aOp));
+
+    }
 
 	public void pauseGame(){
 		isPause = !isPause;
@@ -74,7 +78,16 @@ public class scr_GameManager : MonoBehaviour {
 /// </summary>
 /// <returns>true=Salvou os dados no arquivo.false=Deu alguma merda</returns>
 	public bool Save(){
-		BinaryFormatter bf = new BinaryFormatter ();
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null)
+                return false;
+        }
+
+        player.GetComponent<scr_PA_Manager>().updatePlayerStats();
+
+        BinaryFormatter bf = new BinaryFormatter ();
 		FileStream file = File.Create (Application.persistentDataPath + "/PlayerStatus.dat");
 
 		bf.Serialize (file, playerStats);
@@ -122,7 +135,7 @@ public class scr_GameManager : MonoBehaviour {
 	/// Funçao utilizada para atualizar stats relacionados ao jogador, como vida e energia
 	/// </summary>
 	public void updatePlayerStats() {
-		//Atualizar stats de vida
+        //Atualizar stats de vida
 		scr_HealthController health = player.GetComponent<scr_HealthController>();
 		playerStats.maxHp = health.getMaxHealth();
 		playerStats.currentHp = health.getCurrentHealth();
@@ -195,17 +208,22 @@ public class scr_GameManager : MonoBehaviour {
 			yield return null;
 
 		GameObject sceneManager = GameObject.Find("SceneManager");
-		if(sceneManager == null) {
-			print("Cant find Scene Manager");
-		}
-		scr_SceneManager sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+        if (sceneManager == null)
+        {
+            print("Cant find Scene Manager");
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+        else
+        {
+            scr_SceneManager sceneScript = sceneManager.GetComponent<scr_SceneManager>();
 
-		GameObject spawnPlayer = sceneScript.spawnPlayerFromScene(previusScene, playerStats);
-		player = spawnPlayer;
-
+            GameObject spawnPlayer = sceneScript.spawnPlayerFromScene(previusScene, playerStats);
+            player = spawnPlayer;
+        }
 		//Update instances
 		isLoading = false;
 		scr_CameraController cameraScript = Camera.main.GetComponent<scr_CameraController>();
+        cameraScript = Camera.main.GetComponent<scr_CameraController>();
 		cameraScript.player = player;
 
 		//Ajust camera position
