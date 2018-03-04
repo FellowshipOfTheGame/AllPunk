@@ -40,7 +40,7 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     private Rigidbody2D rb2d;
     //O personagem esta sofrendo knockback ou nao
     private bool underKnockback = false;
-
+    private Animator animator;
 
     private void Awake()
     {
@@ -50,11 +50,13 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
 
         currentVelocity = Vector2.zero;
 
-        
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
     {
+        if (!useDetectRange)
+            animator.SetFloat("HorizontalSpeed", 1);
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         if (receiveKnockback)
         {
@@ -68,6 +70,8 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Player") {
             canSee = true;
+            if(useDetectRange)
+                animator.SetFloat("HorizontalSpeed", 1);
         }
     }
 
@@ -76,6 +80,9 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
         if (collision.gameObject.tag == "Player")
         {
             canSee = false;
+            if (useDetectRange)
+                animator.SetFloat("HorizontalSpeed", 0);
+
         }
     }
 
@@ -124,6 +131,7 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     }
 
     private void onKnockback() {
+        animator.SetTrigger("Hurt");
         StartCoroutine(waitKnockback());
     }
 
