@@ -16,7 +16,7 @@ public class scr_GameManager : MonoBehaviour {
 	private GameObject exit;
 	public bool DEBUG_THEREISAEXIT = true;
 
-	private bool isPause;
+	private bool isPause = true;
 	private bool isGameOver;
 
 	//Variaveis responsaveis por tratar a transição de cenas
@@ -38,9 +38,12 @@ public class scr_GameManager : MonoBehaviour {
 
     }
 
-	public void pauseGame(){
-		isPause = !isPause;
-		Time.timeScale = System.Convert.ToSingle (isPause);
+	public void setPauseGame(bool pause){
+		isPause = !pause;
+        if (pause)
+            Time.timeScale = 0f;
+        else
+            Time.timeScale = 1f;
 
 		player.GetComponent<scr_PlayerController> ().enabled = isPause;
 		player.GetComponent<scr_PA_Manager> ().pauseWeaponScripts (isPause);
@@ -228,7 +231,7 @@ public class scr_GameManager : MonoBehaviour {
 			}
 
 			if (Input.GetButtonDown ("Cancel") && canPause) {
-				pauseGame ();
+				setPauseGame (isPause);
 			}
 
 
