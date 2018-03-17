@@ -94,6 +94,14 @@ public class scr_HealthController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Removes a certain amount of damage.
+	/// </summary>
+	/// <param name="damage">Damage to remove.</param>
+	public void removeDamage(float damage){
+		this.currentHp = Mathf.Clamp (this.currentHp + damage, 0, this.maxHp);
+	}
+
 	/* //TENTATIVA DE STUN
 	public void Update(){
 		if (currStunTime > 0) {
