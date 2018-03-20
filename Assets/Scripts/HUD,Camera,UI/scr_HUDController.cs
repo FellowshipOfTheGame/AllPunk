@@ -16,6 +16,7 @@ public class scr_HUDController : MonoBehaviour {
 
 	private scr_HealthController playerHealth;
 	protected scr_PlayerEnergyController playerEnergy;
+	private scr_PlayerItemController playerItems;
 	private bool playerInSteam;
 
 	[Header("Sliders and Text")]
@@ -28,6 +29,9 @@ public class scr_HUDController : MonoBehaviour {
 
 	public Text rightWeaponText;
 	public Slider rightWeaponSlider;
+
+	public Text item1Text;
+	public Text item2Text;
 
 	[Header("Images")]
 	public Image condensationImg;
@@ -42,6 +46,7 @@ public class scr_HUDController : MonoBehaviour {
 				player = scr_GameManager.instance.player;
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
+			playerItems = player.GetComponent<scr_PlayerItemController> ();
 			playerInSteam = false;
 
 			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
@@ -111,6 +116,27 @@ public class scr_HUDController : MonoBehaviour {
 	}
 
 
+	void updatePlayerItems(){
+		scr_Item item1 = playerItems.getItem (0);
+		if (item1 != null) {
+			int item1Curr = item1.getCurrQty ();
+			int item1Max = item1.getMaxQty ();
+			item1Text.text = item1Curr + "/" + item1Max;
+		}
+		else
+			item1Text.text = "N/A";
+		
+		scr_Item item2 = playerItems.getItem (1);
+		if (item2 != null) {
+			int item2Curr = playerItems.getItem (1).getCurrQty ();
+			int item2Max = playerItems.getItem (1).getMaxQty ();
+			item2Text.text = item2Curr + "/" + item2Max;
+		}
+		else
+			item2Text.text = "N/A";
+
+	}
+
 
 	// Update is called once per frame
 	void Update () {
@@ -118,6 +144,7 @@ public class scr_HUDController : MonoBehaviour {
 		if (player != null) {
 			updateWeaponTimers ();
 			updatePlayerBars ();
+			updatePlayerItems ();
 		} else {
 			//Tenta recuperar referencia perdida
 			recoverPlayerReference();

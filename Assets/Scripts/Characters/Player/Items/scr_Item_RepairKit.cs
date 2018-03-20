@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class scr_RepairKit : MonoBehaviour, scr_Item {
+public class scr_Item_RepairKit : MonoBehaviour, scr_Item {
 
 	#region variables
 	[SerializeField] int currQty;
@@ -19,7 +19,7 @@ public class scr_RepairKit : MonoBehaviour, scr_Item {
 
 
 	public void setCurrQty(int newQty){
-		Mathf.Clamp (newQty, 0, maxQty);
+		currQty = Mathf.Clamp (newQty, 0, maxQty);
 	}
 
 
@@ -40,6 +40,7 @@ public class scr_RepairKit : MonoBehaviour, scr_Item {
 
 	public void setPlayerReferences(GameObject playerObject){
 		playerHealth = playerObject.GetComponent<scr_HealthController> ();
+		//print ("PLAYA" + playerObject);
 	}
 
 	#endregion
