@@ -131,9 +131,9 @@ public class scr_GameManager : MonoBehaviour {
 
 		//Atualizar stats de energia
 		scr_PlayerEnergyController energy = player.GetComponent<scr_PlayerEnergyController>();
-		playerStats.maxEnergy = energy.getMaxEnergy();
-		playerStats.currentEnergy = energy.getCurrentEnergy();
-		playerStats.rechargeRate = energy.rechargeRate;
+		playerStats.maxResEnergy = energy.getMaxResEnergy();
+		playerStats.currentResEnergy = energy.getCurrentResEnergy();
+		playerStats.rechargeRate = energy.getResRechargeRate();
 	}
 
 	/// <summary>

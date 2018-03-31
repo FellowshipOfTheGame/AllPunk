@@ -256,7 +256,7 @@ abstract public class scr_Weapon : MonoBehaviour {
 
          */
 
-		if ( (clicked || holding) && currCooldownTime == 0 && playerEnergy.getCurrentEnergy() >= energyDrain) {
+		if ( (clicked || holding) && currCooldownTime == 0 && playerEnergy.getTotalCurrentEnergy() >= energyDrain) {
 
 			//Chama a função específica de cada arma, decrementa energia
 

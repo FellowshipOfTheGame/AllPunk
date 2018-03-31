@@ -106,13 +106,13 @@ public class scr_HUDController : MonoBehaviour {
 		healthSlider.value = playerCurrentHp / playerMaxHp;
 
 
-		float playerMaxEnergy = playerEnergy.getMaxEnergy ();
-		float playerCurrentEnergy = playerEnergy.getCurrentEnergy ();
+		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
+		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
 		energyText.text = "Energy " +
-		((playerCurrentEnergy / playerMaxEnergy) * 100).ToString ("0.#") + "%";
+		((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
 
-		energySlider.value = playerCurrentEnergy / playerMaxEnergy;
+		energySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
 	}
 
 

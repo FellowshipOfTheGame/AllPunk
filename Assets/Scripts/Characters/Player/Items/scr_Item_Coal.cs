@@ -29,13 +29,10 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 
 	public bool useItem (){
 		print ("NOT IMPLEMENTED");
-		/*if (playerHealth!=null && currQty > 0 && playerHealth.getCurrentHealth() < playerHealth.getMaxHealth()) {
-			playerHealth.removeDamage (hpInc);
-			currQty--;
-			return true;
-		}
-		else
-			return false;*/
+		return false;
+		/*
+		 * Verifica se o jogador tem a Peça do tipo caldeira, se tiver, chama o método de recarga da caldeira
+		 */
 	}
 
 

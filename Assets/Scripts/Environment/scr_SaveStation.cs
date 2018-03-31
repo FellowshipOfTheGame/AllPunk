@@ -230,7 +230,7 @@ public class scr_SaveStation : scr_Interactable
         if (recoverEnergy)
         {
             scr_PlayerEnergyController energy = interactor.GetComponent<scr_PlayerEnergyController>();
-            energy.setCurrentEnergy(energy.getMaxEnergy());
+			energy.setCurrentResEnergy(energy.getMaxResEnergy());
         }
     }
 

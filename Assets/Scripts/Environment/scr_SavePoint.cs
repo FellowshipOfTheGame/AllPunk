@@ -36,9 +36,9 @@ public class scr_SavePoint : scr_Interactable {
 			newText += "\nHealth recovered!";
 		}
 		if(recoverEnergy) {
-			playerStats.currentEnergy = playerStats.maxEnergy;
+			playerStats.currentResEnergy = playerStats.maxResEnergy;
 			scr_PlayerEnergyController energy = interactor.GetComponent<scr_PlayerEnergyController>();
-			energy.setCurrentEnergy(energy.getMaxEnergy());
+			energy.setCurrentResEnergy(energy.getMaxResEnergy());
 			newText += "\nEnergy recovered!";
 		}
 		playerStats.savePointScene = SceneManager.GetActiveScene().name;

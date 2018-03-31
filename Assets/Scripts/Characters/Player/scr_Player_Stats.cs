@@ -14,10 +14,13 @@ public class scr_Player_Stats {
 	//Defesa, usada para diminuir dano
 	public float defense;
 	public float poise;
-	//Energy variables
-	public float currentEnergy;
-	public float maxEnergy;
+	//Energy variables - reserve
+	public float currentResEnergy;
+	public float maxResEnergy;
 	public float rechargeRate;
+	//Energy variables - primary
+	public float currentPrimEnergy;
+	public float maxPrimEnergy;
 
 	[Header("Equipped parts")]
 	public scr_PA_Manager.WeaponPart leftWeaponEquiped;

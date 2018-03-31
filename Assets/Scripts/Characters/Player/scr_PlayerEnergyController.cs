@@ -4,48 +4,92 @@ using UnityEngine;
 
 public class scr_PlayerEnergyController : MonoBehaviour {
 
-	private float currentEnergy;
-	public float maxEnergy;
-	public float rechargeRate;
+	[Header("Sigma's Reserve Energy Stats")]
+	[Tooltip("Maximum Reserve Energy")]
+	private float currResEnergy;
+	[SerializeField] float maxResEnergy;
+	[SerializeField] float reserveRechargeRate;
 
-
-	public float getMaxEnergy(){
-		return maxEnergy;
+	[Header("Sigma's Primary Energy Stats")]
+	private float currPrimEnergy;
+	[SerializeField] float maxPrimEnergy;
+	[SerializeField] scr_Rechargable primEnergySource;
+		
+	public float getMaxResEnergy(){
+		return maxResEnergy;
 	}
 
-	public float getCurrentEnergy(){
-		return currentEnergy;
+	public float getCurrentResEnergy(){
+		return currResEnergy;
 	}
 
-	public void setCurrentEnergy(float newEnergy) {
-		currentEnergy = newEnergy;
-		if(currentEnergy > maxEnergy)
-			currentEnergy = maxEnergy;
-		if(currentEnergy < 0)
-			currentEnergy = 0;
+	public float getResRechargeRate(){
+		return reserveRechargeRate;
 	}
 
-	public void drainEnergy(float drain){
-		currentEnergy -= drain;
-		if (currentEnergy < 0)
-			currentEnergy = 0;
+	public float getTotalCurrentEnergy(){
+		return currResEnergy + currPrimEnergy;
+	}
+
+	public void setCurrentResEnergy(float newEnergy) {
+		currResEnergy = newEnergy;
+		if(currResEnergy > maxResEnergy)
+			currResEnergy = maxResEnergy;
+		if(currResEnergy < 0)
+			currResEnergy = 0;
+	}
+
+	public void setMaxResEnergy(float max){
+		maxResEnergy = max;
+	}
+
+	public void setResRechargeRate(float rate){
+		reserveRechargeRate = rate;
+	}
+
+	public void setPrimEnergySource (scr_Rechargable rec){
+		if(rec!=null)
+			primEnergySource = rec;
+	}
+
+	/// <summary>
+	/// Drains the energy, first the reserve, then the primary.
+	/// </summary>
+	/// <param name="drain">Energy to Drain.</param>
+	/// <returns>True if energy was drained, false if insuficient energy</returns>
+	public bool drainEnergy(float drain){
+		//Reserve energy alone is enough
+		if (currResEnergy >= drain) {
+			currResEnergy -= drain;
+			return true;
+		}
+		//Requires 
+		else if (currResEnergy + currPrimEnergy >= drain) {
+			currResEnergy -= drain;
+			if (currResEnergy < 0) {
+				currPrimEnergy += currResEnergy;
+				currResEnergy = 0;
+			}
+			return true;
+		} else
+			return false;
 	}
 
 	// Use this for initialization
 	void Awake () {
-		currentEnergy = maxEnergy;
+		currResEnergy = maxResEnergy;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if (currentEnergy > maxEnergy)
-			currentEnergy = maxEnergy;
+		if (currResEnergy > maxResEnergy)
+			currResEnergy = maxResEnergy;
 
-		//print ("en: " + currentEnergy + "/" + maxEnergy);
-		if (currentEnergy + rechargeRate < maxEnergy)
-			currentEnergy += rechargeRate*Time.timeScale;
-		else if (currentEnergy < maxEnergy)
-			currentEnergy += maxEnergy-currentEnergy*Time.timeScale;
+		//print ("en: " + currResEnergy + "/" + maxResEnergy);
+		if (currResEnergy + reserveRechargeRate < maxResEnergy)
+			currResEnergy += reserveRechargeRate*Time.timeScale;
+		else if (currResEnergy < maxResEnergy)
+			currResEnergy += maxResEnergy-currResEnergy*Time.timeScale;
 	}
 }
