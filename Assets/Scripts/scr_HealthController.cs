@@ -102,16 +102,6 @@ public class scr_HealthController : MonoBehaviour {
 		this.currentHp = Mathf.Clamp (this.currentHp + damage, 0, this.maxHp);
 	}
 
-	/* //TENTATIVA DE STUN
-	public void Update(){
-		if (currStunTime > 0) {
-			this.entityRigidBody.velocity = new Vector2 (0f, 0f);
-			currStunTime -= Time.deltaTime;
-			if (currStunTime < 0)
-				currStunTime = 0;
-		}
-	}*/
-
 	public float getMaxHealth(){
 		return this.maxHp;
 	}

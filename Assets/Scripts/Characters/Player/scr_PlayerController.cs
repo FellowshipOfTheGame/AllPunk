@@ -47,10 +47,6 @@ public class scr_PlayerController : MonoBehaviour {
 
 	public float lowJumpMultiplier = 1f;
 
-    //Define se o personagem tem ou vai usar os IKs para movimentar os braços
-
-    public bool useArmIK = true;
-
     //Distancia considerada até inverter o personagem
 
     public float armOffset;
@@ -76,13 +72,6 @@ public class scr_PlayerController : MonoBehaviour {
 
 	private Transform playerFeetPosition;
 
-    //Transform do IK do braço direito
-
-    private Transform rightArmIK;
-
-    //Transform do IK do braço esquerdo
-
-    private Transform leftArmIK;
 
 	//Variable to track how much movement is needed from input
 
@@ -139,17 +128,7 @@ public class scr_PlayerController : MonoBehaviour {
 		rb = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 
 		playerFeetPosition = this.transform.Find("playerFeetPosition").GetComponent<Transform>(); //PEGAR O COLLIDER CIRCULAR NOS PÉS;
-
-        if (useArmIK)
-
-        {
-
-            rightArmIK = this.transform.Find("IK").Find("IK_R_Hand").GetComponent<Transform>();
-
-            leftArmIK = this.transform.Find("IK").Find("IK_L_Hand").GetComponent<Transform>();
-
-        }
-
+        
         paManager = GetComponent<scr_PA_Manager>();
 
         animator = GetComponent<Animator>();
@@ -165,19 +144,7 @@ public class scr_PlayerController : MonoBehaviour {
             health.addKnockbackCallback(this.onKnockBack);
         }
     }
-
-
-    /**
-
-	 * Chamado uma vez por frame, usada para gerenciar Rigibody
-
-	 */
-
-    void FixedUpdate(){
-
-    }
-
-
+		
 
     private void Update()
 
@@ -222,51 +189,23 @@ public class scr_PlayerController : MonoBehaviour {
 			highJump();
 
 
+		//Change arm orientation
 
-		if (!useArmIK)
-		{
+		Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-			//Indo para a direita e virado para a esquerda
+		mouseWorldPosition.z = transform.position.z;
 
-			if (movePlayerVector > 0 && !isFacingRight)
+		Vector3 relativeMouse = mouseWorldPosition - transform.position;
 
-				Flip();
+		if (relativeMouse.x + armOffset < 0 && isFacingRight)
 
-			//Indo para a esquerda e virado para a direita
+			Flip();
 
-			else if (movePlayerVector < 0 && isFacingRight)
+		if (relativeMouse.x - armOffset > 0 && !isFacingRight)
 
-				Flip();
+			Flip();
 
-		}
-
-
-
-		if (useArmIK)
-
-		{
-
-			//Change arm orientation
-
-			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-			mouseWorldPosition.z = transform.position.z;
-
-			/*rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
-
-			leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);*/
-
-			Vector3 relativeMouse = mouseWorldPosition - transform.position;
-
-			if (relativeMouse.x + armOffset < 0 && isFacingRight)
-
-				Flip();
-
-			if (relativeMouse.x - armOffset > 0 && !isFacingRight)
-
-				Flip();
-
-		}
+		
 
         UpdateAnimation();
 	}
@@ -315,12 +254,11 @@ public class scr_PlayerController : MonoBehaviour {
     }
 
 
-
-    /**
-	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
-	 * @return true		Está tocando o chão
-	 */
-
+	/// <summary>
+	/// Verifies if the character is in contact with the ground
+	/// </summary>
+	/// <returns><c>true</c>, if ground was touched, <c>false</c> otherwise.</returns>
+	/// <param name="pos">Position.</param>
     bool touchesGround(Vector2 pos){
 
 		/*Array de todos os colliders que colidem com os pés do jogador.
@@ -342,13 +280,8 @@ public class scr_PlayerController : MonoBehaviour {
 			}	
 		}
 		return isGrounded;
-
 	}
-
-
-
-
-
+		
 	//Método para Salto, adiciona velocidade no eixo Y
 
 	void Jump (){
@@ -399,14 +332,9 @@ public class scr_PlayerController : MonoBehaviour {
 	 */
 
 	void Flip()
-
 	{
-
 		//muda a direção que o jogador está encarando
-
 		isFacingRight = !isFacingRight;
-
-
 
 		//Multiplica a escala por -1
 
@@ -419,8 +347,6 @@ public class scr_PlayerController : MonoBehaviour {
 
         if (paManager != null)
             paManager.Flip();
-
-
 	}
 
     void UpdateAnimation()

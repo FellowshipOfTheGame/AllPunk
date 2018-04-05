@@ -48,12 +48,22 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	}
 
 	public void setPrimEnergySource (scr_Rechargable rec){
-		if(rec!=null)
+		if (rec != null) {
 			primEnergySource = rec;
+
+		}
+		//PASSAR COMO CALLBACK A FUNCAO DE RECARGA PARA ENERGIA PRINCIAPL
 	}
 
+	public void setMaxPrimEnergy(float max){
+		maxPrimEnergy = max;
+		if (currPrimEnergy > maxPrimEnergy)
+			currPrimEnergy = maxPrimEnergy;
+	}
+
+
 	/// <summary>
-	/// Drains the energy, first the reserve, then the primary.
+	/// Drains the energy, first the re	serve, then the primary.
 	/// </summary>
 	/// <param name="drain">Energy to Drain.</param>
 	/// <returns>True if energy was drained, false if insuficient energy</returns>
