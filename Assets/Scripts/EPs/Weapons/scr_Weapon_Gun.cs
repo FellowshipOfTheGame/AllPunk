@@ -8,6 +8,17 @@ public class scr_Weapon_Gun : scr_Weapon
     public float intensity;
     private Transform spawnPosition;
 
+
+	public override bool Equip (GameObject playerReference)
+	{
+		throw new System.NotImplementedException ();
+	}
+
+	public override bool Unequip ()
+	{
+		throw new System.NotImplementedException ();
+	}
+
     private void Awake()
     {
         base.Awake();

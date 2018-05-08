@@ -16,6 +16,16 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 
 	#endregion variables
 
+	public override bool Equip (GameObject playerReference)
+	{
+		throw new System.NotImplementedException ();
+	}
+
+	public override bool Unequip ()
+	{
+		throw new System.NotImplementedException ();
+	}
+
 	public void Awake()
 	{
 		base.Awake();

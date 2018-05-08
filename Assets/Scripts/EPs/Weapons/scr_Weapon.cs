@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Anima2D;
 
-abstract public class scr_Weapon : MonoBehaviour {
+abstract public class scr_Weapon : EP {
 
     /**
      * Enumerador dos tipos de ataque
@@ -36,7 +36,7 @@ abstract public class scr_Weapon : MonoBehaviour {
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 	//Custo de energia para ativar
-	public float energyDrain;
+	//public float energyDrain;
     //Deve forçar o layer desejado
     public bool forceLayer = false;
     //A ordem do sprite a ser utilizado quando no sentido normal
@@ -129,7 +129,6 @@ abstract public class scr_Weapon : MonoBehaviour {
 	protected void Update()
 
 	{
-
 		if (currCooldownTime > 0) {
 			currCooldownTime -= Time.deltaTime;
 
@@ -139,7 +138,6 @@ abstract public class scr_Weapon : MonoBehaviour {
 				currCooldownTime = 0;
 
 		}
-
 
 		//Move o IK para a posição do mouse    
 
