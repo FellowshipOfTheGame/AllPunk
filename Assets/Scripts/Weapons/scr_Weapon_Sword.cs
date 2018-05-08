@@ -38,6 +38,7 @@ public class scr_Weapon_Sword : scr_Weapon {
         print(noAnimation);
         if (clicked && noAnimation)
         {
+            useEnergy();
             StartAttackAnimation();
         }
 

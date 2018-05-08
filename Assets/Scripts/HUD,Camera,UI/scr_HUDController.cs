@@ -16,6 +16,7 @@ public class scr_HUDController : MonoBehaviour {
 
 	private scr_HealthController playerHealth;
 	protected scr_PlayerEnergyController playerEnergy;
+	private scr_PlayerItemController playerItems;
 	private bool playerInSteam;
 
 	[Header("Sliders and Text")]
@@ -29,6 +30,9 @@ public class scr_HUDController : MonoBehaviour {
 	public Text rightWeaponText;
 	public Slider rightWeaponSlider;
 
+	public Text item1Text;
+	public Text item2Text;
+
 	[Header("Images")]
 	public Image condensationImg;
 
@@ -38,8 +42,11 @@ public class scr_HUDController : MonoBehaviour {
 	void Awake () {
 		if (hudController == null) {
 			hudController = this;
+			if(player == null)
+				player = scr_GameManager.instance.player;
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
+			playerItems = player.GetComponent<scr_PlayerItemController> ();
 			playerInSteam = false;
 
 			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
@@ -56,6 +63,14 @@ public class scr_HUDController : MonoBehaviour {
 		}
 
 		transform.Find ("endGameText").gameObject.SetActive(true);
+	}
+
+	public void hideEndGameScreen(){
+		foreach (Transform child in transform) {
+			child.gameObject.SetActive(true);
+		}
+
+		transform.Find ("endGameText").gameObject.SetActive(false);
 	}
 
 
@@ -91,15 +106,36 @@ public class scr_HUDController : MonoBehaviour {
 		healthSlider.value = playerCurrentHp / playerMaxHp;
 
 
-		float playerMaxEnergy = playerEnergy.getMaxEnergy ();
-		float playerCurrentEnergy = playerEnergy.getCurrentEnergy ();
+		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
+		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
 		energyText.text = "Energy " +
-		((playerCurrentEnergy / playerMaxEnergy) * 100).ToString ("0.#") + "%";
+		((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
 
-		energySlider.value = playerCurrentEnergy / playerMaxEnergy;
+		energySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
 	}
 
+
+	void updatePlayerItems(){
+		scr_Item item1 = playerItems.getItem (0);
+		if (item1 != null) {
+			int item1Curr = item1.getCurrQty ();
+			int item1Max = item1.getMaxQty ();
+			item1Text.text = item1Curr + "/" + item1Max;
+		}
+		else
+			item1Text.text = "N/A";
+		
+		scr_Item item2 = playerItems.getItem (1);
+		if (item2 != null) {
+			int item2Curr = playerItems.getItem (1).getCurrQty ();
+			int item2Max = playerItems.getItem (1).getMaxQty ();
+			item2Text.text = item2Curr + "/" + item2Max;
+		}
+		else
+			item2Text.text = "N/A";
+
+	}
 
 
 	// Update is called once per frame
@@ -108,6 +144,10 @@ public class scr_HUDController : MonoBehaviour {
 		if (player != null) {
 			updateWeaponTimers ();
 			updatePlayerBars ();
+			updatePlayerItems ();
+		} else {
+			//Tenta recuperar referencia perdida
+			recoverPlayerReference();
 		}
 
 		if (playerInSteam && condensationImg.color.a < 1) {
@@ -131,5 +171,18 @@ public class scr_HUDController : MonoBehaviour {
 
 		playerInSteam = inSteam;
 		this.condensationDelta = condensationDelta;
+	}
+
+	/// <summary>
+	/// Função utilizada para quando a HUD não consegue achar um player
+	/// </summary>
+	private void recoverPlayerReference() {
+		player = scr_GameManager.instance.player;
+		if(player != null) {
+			playerHealth = player.GetComponent<scr_HealthController> ();
+			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
+            //updateWeaponTimers();
+            updatePlayerBars();
+        }
 	}
 }

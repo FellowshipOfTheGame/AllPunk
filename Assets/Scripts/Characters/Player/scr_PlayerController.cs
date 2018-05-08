@@ -47,13 +47,14 @@ public class scr_PlayerController : MonoBehaviour {
 
 	public float lowJumpMultiplier = 1f;
 
-    //Define se o personagem tem ou vai usar os IKs para movimentar os braços
-
-    public bool useArmIK = true;
-
     //Distancia considerada até inverter o personagem
 
     public float armOffset;
+
+    //Tempo que o jogador fica sem poder se mexer depois de receber um ataque;
+
+    [Range(0,2)]
+    public float knockbackTime = 0.5f;
 
     //Facilidade de movimento no ar
     [Range(0,1)]
@@ -71,13 +72,6 @@ public class scr_PlayerController : MonoBehaviour {
 
 	private Transform playerFeetPosition;
 
-    //Transform do IK do braço direito
-
-    private Transform rightArmIK;
-
-    //Transform do IK do braço esquerdo
-
-    private Transform leftArmIK;
 
 	//Variable to track how much movement is needed from input
 
@@ -96,6 +90,9 @@ public class scr_PlayerController : MonoBehaviour {
 
     //Verifica se o botão estava sendo segurado
     private bool isHoldingJump = false;
+
+    //Verifica se o jogador está recebendo ataque
+    private bool underKnockback = false;
 
     //Referência para o gerenciador de PA's
     private scr_PA_Manager paManager;
@@ -131,36 +128,23 @@ public class scr_PlayerController : MonoBehaviour {
 		rb = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 
 		playerFeetPosition = this.transform.Find("playerFeetPosition").GetComponent<Transform>(); //PEGAR O COLLIDER CIRCULAR NOS PÉS;
-
-        if (useArmIK)
-
-        {
-
-            rightArmIK = this.transform.Find("IK").Find("IK_R_Hand").GetComponent<Transform>();
-
-            leftArmIK = this.transform.Find("IK").Find("IK_L_Hand").GetComponent<Transform>();
-
-        }
-
+        
         paManager = GetComponent<scr_PA_Manager>();
 
         animator = GetComponent<Animator>();
 
     }
 
-
-
-	/**
-
-	 * Chamado uma vez por frame, usada para gerenciar Rigibody
-
-	 */
-
-	void FixedUpdate(){
-
+    private void Start()
+    {
+        //Adiciona callback de knockback da vida
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.addKnockbackCallback(this.onKnockBack);
+        }
     }
-
-
+		
 
     private void Update()
 
@@ -205,51 +189,23 @@ public class scr_PlayerController : MonoBehaviour {
 			highJump();
 
 
+		//Change arm orientation
 
-		if (!useArmIK)
-		{
+		Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-			//Indo para a direita e virado para a esquerda
+		mouseWorldPosition.z = transform.position.z;
 
-			if (movePlayerVector > 0 && !isFacingRight)
+		Vector3 relativeMouse = mouseWorldPosition - transform.position;
 
-				Flip();
+		if (relativeMouse.x + armOffset < 0 && isFacingRight)
 
-			//Indo para a esquerda e virado para a direita
+			Flip();
 
-			else if (movePlayerVector < 0 && isFacingRight)
+		if (relativeMouse.x - armOffset > 0 && !isFacingRight)
 
-				Flip();
+			Flip();
 
-		}
-
-
-
-		if (useArmIK)
-
-		{
-
-			//Change arm orientation
-
-			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-			mouseWorldPosition.z = transform.position.z;
-
-			/*rightArmIK.SetPositionAndRotation(mouseWorldPosition, rightArmIK.rotation);
-
-			leftArmIK.SetPositionAndRotation(mouseWorldPosition,leftArmIK.rotation);*/
-
-			Vector3 relativeMouse = mouseWorldPosition - transform.position;
-
-			if (relativeMouse.x + armOffset < 0 && isFacingRight)
-
-				Flip();
-
-			if (relativeMouse.x - armOffset > 0 && !isFacingRight)
-
-				Flip();
-
-		}
+		
 
         UpdateAnimation();
 	}
@@ -284,23 +240,25 @@ public class scr_PlayerController : MonoBehaviour {
         if (!isGrounded)
             localSpeed = speed;
 
-        //Interpola a velocidade no ar, o que controla o fator de movimento aerio do personagem
-        if (isGrounded)
-		    rb.velocity = new Vector2 (movePlayerVector * localSpeed, rb.velocity.y);
-        else
+        //Verifica se o jogador nao esta sobre acao de knockback
+        if (!underKnockback)
         {
-            rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);
+            //Interpola a velocidade no ar, o que controla o fator de movimento aerio do personagem
+            if (isGrounded)
+                rb.velocity = new Vector2(movePlayerVector * localSpeed, rb.velocity.y);
+            else
+            {
+                rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);
+            }
         }
-
     }
 
 
-
-    /**
-	 * Método que faz a verificação se o jogador está fazendo contato com o chão.
-	 * @return true		Está tocando o chão
-	 */
-
+	/// <summary>
+	/// Verifies if the character is in contact with the ground
+	/// </summary>
+	/// <returns><c>true</c>, if ground was touched, <c>false</c> otherwise.</returns>
+	/// <param name="pos">Position.</param>
     bool touchesGround(Vector2 pos){
 
 		/*Array de todos os colliders que colidem com os pés do jogador.
@@ -322,13 +280,8 @@ public class scr_PlayerController : MonoBehaviour {
 			}	
 		}
 		return isGrounded;
-
 	}
-
-
-
-
-
+		
 	//Método para Salto, adiciona velocidade no eixo Y
 
 	void Jump (){
@@ -379,14 +332,9 @@ public class scr_PlayerController : MonoBehaviour {
 	 */
 
 	void Flip()
-
 	{
-
 		//muda a direção que o jogador está encarando
-
 		isFacingRight = !isFacingRight;
-
-
 
 		//Multiplica a escala por -1
 
@@ -399,8 +347,6 @@ public class scr_PlayerController : MonoBehaviour {
 
         if (paManager != null)
             paManager.Flip();
-
-
 	}
 
     void UpdateAnimation()
@@ -413,6 +359,33 @@ public class scr_PlayerController : MonoBehaviour {
             animator.SetBool("IsGrounded", isGrounded);
         }
     }
+
+    private void onKnockBack()
+    {
+        StartCoroutine(waitKnockback());
+    }
+
+    private IEnumerator waitKnockback()
+    {
+        underKnockback = true;
+        float counter = 0;
+        while (counter < knockbackTime)
+        {
+            counter += Time.deltaTime;
+            yield return null;
+        }
+        underKnockback = false;
+    }
+
+    private void OnDestroy()
+    {
+        scr_HealthController health = GetComponent<scr_HealthController>();
+        if (health != null)
+        {
+            health.removeKnockbackCallback(this.onKnockBack);
+        }
+    }
+
 
 }
 

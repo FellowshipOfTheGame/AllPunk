@@ -12,6 +12,7 @@ public class scr_Sign : scr_Interactable {
 
     public void Awake()
     {
+        base.Awake();
         canvas = GetComponentInChildren<Canvas>();
         canvas.enabled = false;
     }

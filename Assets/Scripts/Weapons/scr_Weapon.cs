@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Anima2D;
 
 abstract public class scr_Weapon : MonoBehaviour {
 
@@ -21,16 +22,38 @@ abstract public class scr_Weapon : MonoBehaviour {
     //Se essa é ou não a mão direita
     [HideInInspector]
     public bool rightHand;
+    [Header("Atributos da arma")]
     //A arma deve seguir o mouse
+    [Tooltip("Deve seguir o mouse ou não")]
     public bool followMouse;
+    [Tooltip("Posição a ficar caso não siga o mouse")]
+    public Vector2 fixedPosition;
     //Como é o ataque utilizado
+    [Tooltip("Animação a ser utilizada quando atacar")]
     public AttackType attackType;
-    //Qual variação de sprite vai ser utilizado no braço
-    public int armVariation = 0;
+    [Tooltip("Qual variante de braço deve ser utilizada")]
+    public scr_PA_Manager.WeaponPart armVariationSprite;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 	//Custo de energia para ativar
 	public float energyDrain;
+    //Deve forçar o layer desejado
+    public bool forceLayer = false;
+    //A ordem do sprite a ser utilizado quando no sentido normal
+    public int frontLayer = 8;
+    //A ordem do sprite a ser utilizado quando inverte
+    public int backLayer = -4;
+    [Header("Animation transition ")]
+    [Tooltip("Minima distancia que move o mouse para parar animação e retomar mira")]
+    public float mouseDeltaToAnim = 0.25f;
+    [Tooltip("Tempo que demora para retomar a animação depois de mudar de posição do braço")]
+    public float timeToAnimate = 3f;
+    [Tooltip("Tempo de transição entre animação e mirando no alvo")]
+    public float animationTransitionTime = 0.2f;
+    //Qual variação de sprite vai ser utilizado no braço em inteiro
+    [HideInInspector]
+    public int armVariation = 0;
+    [Space]
 
     //Distancia máxima que o braço fica esticado, encontrado empiricamente
     protected float maxDistance = 1.5f;
@@ -46,10 +69,6 @@ abstract public class scr_Weapon : MonoBehaviour {
     protected Animator animator;
     //Sprite da arma
     protected SpriteRenderer sprite;
-    //A ordem do sprite a ser utilizado quando no sentido normal
-    protected int frontLayer;
-    //A ordem do sprite a ser utilizado quando inverte
-    protected int backLayer;
     //Se o botão do ataque foi clicado
     protected bool clicked;
     //Se o botão de ataque foi segurado
@@ -67,6 +86,16 @@ abstract public class scr_Weapon : MonoBehaviour {
     //Qual o offset atual da mao
     protected Vector3 currentOffset;
 
+    //Animação do braço
+    //Referencia ao Script do ik
+    protected IkLimb2D ikLimb;
+    //Contador de tempo até começar animação
+    protected float animCounter = 0f;
+    //Booleano representando se o jogador está sobre animação dos braços ou não
+    protected bool armAnimationPlaying = false;
+    //Distancia em forma quadrada (reduzir processamento)
+    protected float squaredAnimationDistance;
+
     #endregion Variables
 
     /**
@@ -78,6 +107,10 @@ abstract public class scr_Weapon : MonoBehaviour {
         ik = null;
         animator = null;
 		currCooldownTime = 0;
+        animCounter = 0;
+
+        //Conversao do braço para int
+        armVariation = (int)armVariationSprite;
 
 		Transform parentTransform = GetComponentInParent<Rigidbody2D> ().transform;
 		playerEnergy = GetComponentInParent<scr_PlayerEnergyController>();
@@ -86,6 +119,11 @@ abstract public class scr_Weapon : MonoBehaviour {
 			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
 		else
 			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("L.UpperArm").Find("L.LowerArm");
+
+        //Variaveis de animação
+        //ikLimb = ik.GetComponent<IkLimb2D>();
+        squaredAnimationDistance = mouseDeltaToAnim * mouseDeltaToAnim;
+        animCounter = timeToAnimate;
     }
 
 	protected void Update()
@@ -102,6 +140,7 @@ abstract public class scr_Weapon : MonoBehaviour {
 
 		}
 
+
 		//Move o IK para a posição do mouse    
 
 		if (followMouse && ik != null) {
@@ -110,14 +149,16 @@ abstract public class scr_Weapon : MonoBehaviour {
 			Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			mouseWorldPosition.z = transform.position.z;
 
-			//Pegar inicio do ombro
 
-			Transform bone = transform.parent.parent.parent;
+            //Pegar inicio do ombro
+
+            Transform bone = transform.parent.parent.parent;
 
 			Vector3 direction = mouseWorldPosition - bone.position;
 
-			//if(direction.magnitude < maxDistance) {
-			if(true){//PLACEHOLDER
+
+            //if(direction.magnitude < maxDistance) {
+            if (true){//PLACEHOLDER
 				ik.transform.SetPositionAndRotation(mouseWorldPosition, ik.transform.rotation);
 			}
 
@@ -215,17 +256,45 @@ abstract public class scr_Weapon : MonoBehaviour {
 
          */
 
-		if (clicked && currCooldownTime == 0 && playerEnergy.getCurrentEnergy() >= energyDrain) {
+		if ( (clicked || holding) && currCooldownTime == 0 && playerEnergy.getTotalCurrentEnergy() >= energyDrain) {
 
 			//Chama a função específica de cada arma, decrementa energia
 
-			playerEnergy.drainEnergy(energyDrain);
 
 			currCooldownTime = cooldownTime;
 
 			AttackAction (noAnimation);
 
-		}
+            //Verifica se o jogador estava em animação ou não e para a animação caso esteja
+            if (armAnimationPlaying)
+                stopArmAnimation();
+            else
+                animCounter = timeToAnimate;
+
+        }
+
+
+        //Verificar se houve movimento do mouse, para poder fazer animação de movimento ou não
+        Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
+        if (mouseDelta.sqrMagnitude > squaredAnimationDistance)
+        {
+            if (armAnimationPlaying)
+                stopArmAnimation();
+            else
+                animCounter = timeToAnimate;
+        }
+
+        //Começa a animação caso estore o timer
+        if (animCounter > 0)
+        {
+            animCounter -= Time.deltaTime;
+        }
+        else
+        {
+            if(!armAnimationPlaying)
+                startArmAnimation();
+        }
 
 	}
 
@@ -239,6 +308,13 @@ abstract public class scr_Weapon : MonoBehaviour {
 
     public void setIK(GameObject ik) {
         this.ik = ik;
+        ikLimb = ik.GetComponent<IkLimb2D>();
+        ikLimb.weight = 1;
+
+        if (!followMouse)
+        {
+            ik.transform.localPosition = fixedPosition;
+        }
     }
 
     /**
@@ -291,14 +367,27 @@ abstract public class scr_Weapon : MonoBehaviour {
      * Define a ordem dos sprites
      */
     public void setSpriteLayer(int frontLayer, int backLayer) {
-        this.frontLayer = frontLayer;
-        this.backLayer = backLayer;
+        if (!forceLayer)
+        {
+            this.frontLayer = frontLayer;
+            this.backLayer = backLayer;
+        }
+        else
+        {
+            //Verificar se não esta invertido
+            if(frontLayer < 0)
+            {
+                int aux = this.frontLayer;
+                this.frontLayer = this.backLayer;
+                this.backLayer = aux;
+            }
+        }
         if (sprite != null)
         {
             if (!flipped)
-                sprite.sortingOrder = frontLayer;
+                sprite.sortingOrder = this.frontLayer;
             else
-                sprite.sortingOrder = backLayer;
+                sprite.sortingOrder = this.backLayer;
         }
     }
 
@@ -356,4 +445,40 @@ abstract public class scr_Weapon : MonoBehaviour {
         } else
             currentOffset = offsetPrincipal;
     }
+
+    protected void useEnergy() {
+        playerEnergy.drainEnergy(energyDrain);
+    }
+
+    protected void startArmAnimation()
+    {
+        armAnimationPlaying = true;
+        StartCoroutine(changeIKWeight(1f,0f, animationTransitionTime*2));
+    }
+
+    protected void stopArmAnimation() {
+        animCounter = timeToAnimate;
+        armAnimationPlaying = false;
+        StartCoroutine(changeIKWeight(0f, 1f, animationTransitionTime));
+    }
+
+    protected IEnumerator changeIKWeight(float initialValue, float finalValue, float time)
+    {
+        float speed = (finalValue - initialValue) / time;
+        float counter = time;
+        float currentWeight = initialValue;
+
+        Debug.Log("Speed: " + speed + ", Initial: " + initialValue + ", Final: " + finalValue);
+
+        while (counter > 0)
+        {
+            currentWeight += speed * Time.deltaTime;
+            ikLimb.weight = currentWeight;
+            counter -= Time.deltaTime;
+            yield return null;
+        }
+        Debug.Log("Peso final: " + currentWeight);
+        ikLimb.weight = finalValue;
+    }
+
 }

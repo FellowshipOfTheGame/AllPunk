@@ -15,10 +15,10 @@ public enum WeaponPart
 {
     None,
     Sabre,
-    SteamBreath,
     RivetGun,
+    SteamBreath,
     GatlingGun
-};
+    };
 
 /// <summary>
 /// Enumerador utilizado para categorizar cada parte diferente que pode ser equipada no torso
@@ -79,6 +79,8 @@ public enum PartType
     public Vector2 leftHandOffset = new Vector2 (0,0);
 
     //Debbug variables
+    [Header("DEBUG")]
+    public bool saveWhenUnlock = false; 
     public bool TEST_ARM;
     public bool canChangeWeapons;
     public int testWeapon = 0;
@@ -201,7 +203,7 @@ public enum PartType
             weapon.setHandOffset(leftHandOffset);
             if (flipped)
                 weapon.flipHand();
-            updateSave();
+            saveChanges();
         }
     }
 
@@ -303,9 +305,9 @@ public enum PartType
         leftSprite.sortingOrder = auxLayer;
 
         //Find arm transform
-        //Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
-        //Transform rightArm = upperBody.Find("R.UpperArm");
-        //Transform leftArm = upperBody.Find("L.UpperArm");
+        Transform upperBody = transform.Find("Bones").Find("Hip").Find("UpperBody");
+        Transform rightArm = upperBody.Find("R.UpperArm");
+        Transform leftArm = upperBody.Find("L.UpperArm");
 
         //Change Arm position
         Vector3 newPosition = rightArm.transform.localPosition;
@@ -388,7 +390,7 @@ public enum PartType
             leftWeapon = null;
             playerStats.leftWeaponEquiped = WeaponPart.None;
         }
-        updateSave();
+        saveChanges();
     }
 
 /// <summary>
@@ -403,7 +405,7 @@ public enum PartType
 
         meshAnim.frame = bodyToEquip;
         playerStats.torsoEquiped = (TorsoPart) bodyToEquip;
-        updateSave();
+        saveChanges();
         return true;
     }
 
@@ -420,7 +422,7 @@ public enum PartType
 
         meshAnim.frame = headToEquip;
         playerStats.headEquiped = (HeadPart) headToEquip;
-        updateSave();
+        saveChanges();
         return true;
     }
 
@@ -443,7 +445,7 @@ public enum PartType
         }
 
         playerStats.legsEquiped = (LegPart) legsToEquip;
-        updateSave();
+        saveChanges();
         return true;
     }
 
@@ -472,13 +474,22 @@ public enum PartType
                 break;
         }
         //Salva modificações
-        updateSave();
+        saveChanges();
         print("Unlocked " + type.ToString() + ". ID: " + partID);
     }
 
-    private void updateSave(){
+    public void updatePlayerStats() {
         scr_GameManager.instance.playerStats = playerStats;
-        scr_GameManager.instance.Save();
+        scr_GameManager.instance.updatePlayerStats();
+    }
+
+    private void saveChanges(){
+        if (saveWhenUnlock)
+        {
+            scr_GameManager.instance.playerStats = playerStats;
+            scr_GameManager.instance.updatePlayerStats();
+            scr_GameManager.instance.Save();
+        }
     }
 
 }
