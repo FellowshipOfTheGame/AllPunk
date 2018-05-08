@@ -9,7 +9,7 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 	[SerializeField] int maxQty;
 	[SerializeField] int enInc;
 
-	public scr_PlayerEnergyController playerEnergy;
+	public scr_EP_Boiler playerBoiler;
 	#endregion
 
 	#region Item Implementations
@@ -28,16 +28,23 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 	}
 
 	public bool useItem (){
-		print ("NOT IMPLEMENTED");
-		return false;
-		/*
-		 * Verifica se o jogador tem a Peça do tipo caldeira, se tiver, chama o método de recarga da caldeira
-		 */
+		if (playerBoiler.burnCoal (enInc) && currQty > 0){
+			currQty--;
+			return true;
+		}
+		else
+			return false;
 	}
 
 
 	public void setPlayerReferences(GameObject playerObject){
-		playerEnergy = playerObject.GetComponent<scr_PlayerEnergyController> ();
+		/*if(playerObject.EPManager.currTorso=="boiler")
+			playerBoiler = UnlockedEps.get("boiler");
+		*/
+		//playerBoiler = playerObject.GetComponent<scr_EP_Boiler> ();
+
+		//PARA TESTAR - COLOQUE UM BOILER NO PREFAB DO SIGMA E ARRASTE PARA A REFERENCIA DO COAL
+		throw new System.NotImplementedException ();
 	}
 
 	#endregion
