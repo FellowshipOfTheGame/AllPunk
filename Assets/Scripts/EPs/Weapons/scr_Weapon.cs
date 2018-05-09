@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Anima2D;
 
-abstract public class scr_Weapon : EP {
+abstract public class scr_Weapon : scr_EP {
 
     /**
      * Enumerador dos tipos de ataque
@@ -35,8 +35,8 @@ abstract public class scr_Weapon : EP {
     public scr_PA_Manager.WeaponPart armVariationSprite;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
-	//Custo de energia para ativar
-	//public float energyDrain;
+	//USADO PARA ALTERAR O ATRIBUTO DO SCR_EP
+	[SerializeField] float weaponEnergyDrain;
     //Deve forçar o layer desejado
     public bool forceLayer = false;
     //A ordem do sprite a ser utilizado quando no sentido normal
@@ -108,6 +108,9 @@ abstract public class scr_Weapon : EP {
         animator = null;
 		currCooldownTime = 0;
         animCounter = 0;
+
+		///Alters the protected attribute energyDrain
+		energyDrain = weaponEnergyDrain;
 
         //Conversao do braço para int
         armVariation = (int)armVariationSprite;

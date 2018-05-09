@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EP : MonoBehaviour {
+public abstract class scr_EP : MonoBehaviour {
 
 	public enum EpType
 	{
@@ -14,10 +14,10 @@ public abstract class EP : MonoBehaviour {
 
 	#region Variables
 	protected string keyName;
-	protected string name;
+	protected string epName;
 	protected string descritption;
 	protected EpType type;
-	protected int energyDrain;
+	protected float energyDrain;
 	protected int meshId;
 	protected Sprite thumbImg;
 	#endregion 
@@ -27,8 +27,8 @@ public abstract class EP : MonoBehaviour {
 	public string getKeyName(){
 		return keyName;
 	}
-	public string geName(){
-		return name;
+	public string geEpName(){
+		return epName;
 	}
 	public string getDescription(){
 		return descritption;
@@ -36,7 +36,7 @@ public abstract class EP : MonoBehaviour {
 	public EpType getEpType(){
 		return type;
 	}
-	public int getEnergyDrain(){
+	public float getEnergyDrain(){
 		return energyDrain;
 	}
 	public int getMeshId(){
