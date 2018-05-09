@@ -35,8 +35,7 @@ abstract public class scr_Weapon : scr_EP {
     public scr_PA_Manager.WeaponPart armVariationSprite;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
-	//USADO PARA ALTERAR O ATRIBUTO DO SCR_EP
-	[SerializeField] float weaponEnergyDrain;
+
     //Deve forçar o layer desejado
     public bool forceLayer = false;
     //A ordem do sprite a ser utilizado quando no sentido normal
@@ -108,9 +107,6 @@ abstract public class scr_Weapon : scr_EP {
         animator = null;
 		currCooldownTime = 0;
         animCounter = 0;
-
-		///Alters the protected attribute energyDrain
-		energyDrain = weaponEnergyDrain;
 
         //Conversao do braço para int
         armVariation = (int)armVariationSprite;
