@@ -33,8 +33,7 @@ abstract public class scr_Weapon : scr_EP {
     public AttackType attackType;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
-	//USADO PARA ALTERAR O ATRIBUTO DO SCR_EP
-	[SerializeField] float weaponEnergyDrain;
+
     //Deve forçar o layer desejado
     public bool forceLayer = false;
     //A ordem do sprite a ser utilizado quando no sentido normal
@@ -101,8 +100,6 @@ abstract public class scr_Weapon : scr_EP {
 		currCooldownTime = 0;
         animCounter = 0;
 
-		///Alters the protected attribute energyDrain
-		energyDrain = weaponEnergyDrain;
 
         //Variaveis de animação
         //ikLimb = ik.GetComponent<IkLimb2D>();

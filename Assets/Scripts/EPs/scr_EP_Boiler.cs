@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class scr_EP_Boiler : scr_EP {
 
+
+	[Header("Boiler Variables")]
 	/// <summary>
 	/// Reference to The player energy controller.
 	/// </summary>

@@ -13,6 +13,7 @@ public abstract class scr_EP : MonoBehaviour {
 	};
 
 	#region Variables
+	[Header("EP Variables")]
 	[SerializeField]
 	protected string keyName;
 	[SerializeField]
