@@ -34,8 +34,6 @@ abstract public class scr_Weapon : scr_EP {
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 
-    //Deve forçar o layer desejado
-    public bool forceLayer = false;
     //A ordem do sprite a ser utilizado quando no sentido normal
     public int frontLayer = 8;
     //A ordem do sprite a ser utilizado quando inverte
@@ -105,9 +103,20 @@ abstract public class scr_Weapon : scr_EP {
         //ikLimb = ik.GetComponent<IkLimb2D>();
         squaredAnimationDistance = mouseDeltaToAnim * mouseDeltaToAnim;
         animCounter = timeToAnimate;
+
+
+        if (sprite != null)
+        {
+            if (!flipped)
+                sprite.sortingOrder = this.frontLayer;
+            else
+                sprite.sortingOrder = this.backLayer;
+        }
+
     }
 
     public override bool Equip(GameObject playerReference) {
+        //Referencia para a energia
         playerEnergy = playerReference.GetComponent<scr_PlayerEnergyController>();
         
         Transform ikRoot = playerReference.transform.Find("IK");
@@ -122,6 +131,8 @@ abstract public class scr_Weapon : scr_EP {
 
         animator = playerReference.GetComponent<Animator>();
 
+        //Atualiza referência do animador
+        setAnimator(animator);
         return true;
     }
 
@@ -201,8 +212,6 @@ abstract public class scr_Weapon : scr_EP {
 		clicked = Input.GetButtonDown(fireButton);
 
 		holding = Input.GetButton(fireButton);
-
-        Debug.Log("Clicked: "+ clicked + ", Holding: " + holding);
 
 		/*Condições para ativar a arma: 
 
@@ -317,33 +326,7 @@ abstract public class scr_Weapon : scr_EP {
         this.rightHand = RightHand;
     }
 
-    /**
-     * Define a ordem dos sprites
-     */
-    public void setSpriteLayer(int frontLayer, int backLayer) {
-        if (!forceLayer)
-        {
-            this.frontLayer = frontLayer;
-            this.backLayer = backLayer;
-        }
-        else
-        {
-            //Verificar se não esta invertido
-            if(frontLayer < 0)
-            {
-                int aux = this.frontLayer;
-                this.frontLayer = this.backLayer;
-                this.backLayer = aux;
-            }
-        }
-        if (sprite != null)
-        {
-            if (!flipped)
-                sprite.sortingOrder = this.frontLayer;
-            else
-                sprite.sortingOrder = this.backLayer;
-        }
-    }
+    
 
     /**
      * Troca a ordem dos sprites a serem usados
@@ -371,7 +354,7 @@ abstract public class scr_Weapon : scr_EP {
             animator.SetTrigger("R_Attack");
         else
             animator.SetTrigger("L_Attack");
-        
+        Debug.Log("Animação: "+ rightHand);
     }
 
 	public float getCooldownTimer(){

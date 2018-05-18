@@ -5,8 +5,15 @@ using Anima2D;
 
 public class scr_EPManager : MonoBehaviour {
 
+	[Tooltip("Array com EPS a serem equipadas")]
 	public scr_EP[] EPs;
+	/// <summary>
+	/// Dicionário com string e referencia pra prefab
+	/// </summary>
 	public Dictionary<string, scr_EP> EPDictionary;
+	/// <summary>
+	/// Dicionário com string e status de desbloqueados
+	/// </summary>
 	public Dictionary<string, bool> UnlockedEPs;
 
 	//Name of the equipped part
@@ -36,6 +43,48 @@ public class scr_EPManager : MonoBehaviour {
 	
 	//Variavel pra saber se está virado ou não
 	private bool flipped = false;
+
+	/// <summary>
+	/// Retorna a string da parte atualmente equipada
+	/// </summary>
+	/// <param name="type">Tipo a ser procurado. Se for procurar por arm, utilizar sobremetodo pra poder dizer qual braço</param>
+	/// <returns>Parte equipada</returns>
+	public string getCurrentPart(scr_EP.EpType type){
+		if(type == scr_EP.EpType.Arm){
+			return getCurrentPart(type, ArmToEquip.AnyArm);
+		}
+		switch(type) {
+			case scr_EP.EpType.Head:
+				return currentHead;
+			case scr_EP.EpType.Torso:
+				return currentTorso;
+			case scr_EP.EpType.Legs:
+				return currentLegs;
+		}
+		return "NULL";
+	}
+
+	/// <summary>
+	/// Retorna o nome do braço equipado no lado dado. Pode ser usado para ver outras partes também
+	/// </summary>
+	/// <param name="type">Tipo procurado.</param>
+	/// <param name="arm">Braço pelo qual está procurando. Não usar Any se estiver procurando por braço</param>
+	/// <returns></returns>
+	public string getCurrentPart(scr_EP.EpType type, ArmToEquip arm){
+		if(type != scr_EP.EpType.Arm){
+			return getCurrentPart(type);
+		}
+		switch(arm) {
+			case ArmToEquip.AnyArm:
+				Debug.LogWarning("Especificar qual braço quer examinar");
+				return "None";
+			case ArmToEquip.RightArm:
+				return currentRightArm;
+			case ArmToEquip.LeftArm:
+				return currentLeftArm;
+		}
+		return "NULL";		
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -91,6 +140,9 @@ public class scr_EPManager : MonoBehaviour {
 
 	}
 	
+	/// <summary>
+	/// Realiza a troca de sprites e posição do braço
+	/// </summary>
 	public void Flip(){
 		//Flip weapon orientation
 		if(refRightArm != null){
@@ -134,17 +186,29 @@ public class scr_EPManager : MonoBehaviour {
 		boneLeftArm.position = auxPosition;
 	}
 
+	/// <summary>
+	/// Desbloqueia uma parte para ser equipada
+	/// </summary>
+	/// <param name="keyName">Chave da EP</param>
 	public void unlockPart(string keyName){
 		if(UnlockedEPs.ContainsKey(keyName))
 			UnlockedEPs[keyName] = true;
 	}
 
+	/// <summary>
+	/// Enumerável para decidir que braço equipar
+	/// </summary>
 	public enum ArmToEquip{
 		LeftArm,
 		RightArm,
 		AnyArm
 	}
 
+	/// <summary>
+	/// Equipa uma parte
+	/// </summary>
+	/// <param name="name">Chave da EP</param>
+	/// <returns>Sucesso ou não em equipar</returns>
 	public bool equipPart(string name){
 		if(UnlockedEPs.ContainsKey(name) || UnlockedEPs[name] == true){
 			scr_EP.EpType type = EPDictionary[name].getEpType();
@@ -191,8 +255,19 @@ public class scr_EPManager : MonoBehaviour {
 		}
 		return false;
 	}
+
+	/// <summary>
+	/// Equipa uma arma no braço. Se não for um braço, vai chamar a outra função
+	/// </summary>
+	/// <param name="name">Chave da EP</param>
+	/// <param name="arm">Braço em que vai ser equipado</param>
+	/// <returns></returns>
 	public bool equipPart(string name, ArmToEquip arm){
-		if(UnlockedEPs.ContainsKey(name) || UnlockedEPs[name] == true){
+		if(!UnlockedEPs.ContainsKey(name)){
+			Debug.LogWarning("Não foi encontrado a key com o nome: " + name);
+			return false;
+		}
+		if(UnlockedEPs[name] == true){
 			//Garantir que seja equipada caso nao seja arma
 			scr_EP.EpType type = EPDictionary[name].getEpType();
 			if(type != scr_EP.EpType.Arm)
@@ -251,7 +326,77 @@ public class scr_EPManager : MonoBehaviour {
 		return false;
 	}
 
+	/// <summary>
+	/// Remove a parte especificada do corpo
+	/// </summary>
+	/// <param name="type">Tipo a ser removido. Para Braços, usar sobrecarga com o braço.</param>
+	/// <returns></returns>
+	public void removeBodyPart(scr_EP.EpType type){
+		if(type == scr_EP.EpType.Arm){
+			removeBodyPart(type, ArmToEquip.AnyArm);
+			return ;
+		}
+		switch(type) {
+			case scr_EP.EpType.Head:
+				removePart(currentHead);
+				break;
+			case scr_EP.EpType.Torso:
+				removePart(currentTorso);
+				break;
+			case scr_EP.EpType.Legs:
+				removePart(currentLegs);
+				break;
+		}
+	}
+
+	/// <summary>
+	/// Remove o braço especificado
+	/// </summary>
+	/// <param name="type">Tipo a ser removido, de preferencia Arm</param>
+	/// <param name="arm">Qual o braço a ser removido. Não usar Any</param>
+	/// <returns></returns>
+	public void removeBodyPart(scr_EP.EpType type, ArmToEquip arm){
+		if(type != scr_EP.EpType.Arm){
+			removeBodyPart(type);
+			return ;
+		}
+		switch(arm) {
+			case ArmToEquip.AnyArm:
+				Debug.LogWarning("Especificar qual braço quer remover");
+				break ;
+			case ArmToEquip.RightArm:
+				removePart(currentRightArm, ArmToEquip.RightArm);
+				break ;
+			case ArmToEquip.LeftArm:
+				removePart(currentLeftArm, ArmToEquip.LeftArm);
+				break;
+		}
+	}
+
+	/// <summary>
+	/// Remove todas as partes equipadas
+	/// </summary>
+	public void removeAll(){
+		if(currentHead != "None")
+			removePart(currentHead);
+		if(currentTorso != "None")
+			removePart(currentTorso);
+		if(currentLegs != "None")
+			removePart(currentLegs);
+		if(currentLeftArm != "None")
+			removePart(currentLeftArm, ArmToEquip.LeftArm);
+		if(currentRightArm != "None")
+			removePart(currentRightArm, ArmToEquip.RightArm);
+	}
+
+	/// <summary>
+	/// Remove a parte equipada com a key desejada
+	/// </summary>
+	/// <param name="name">Key da chave da EP a ser removida</param>
 	public void removePart(string name) {
+		//Avoid null reference
+		if(name == "None")
+			return ;
 		if(currentHead == name){
 			refHead.Unequip();
 			Destroy(refHead.gameObject);
@@ -289,7 +434,16 @@ public class scr_EPManager : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// Remover o braço especificado
+	/// </summary>
+	/// <param name="name">Chave da EP</param>
+	/// <param name="arm">Braço a ser removido</param>
 	public void removePart(string name, ArmToEquip arm) {
+		//Avoid null reference
+		if(name == "None")
+			return ;
+
 		if(arm == ArmToEquip.AnyArm) {
 			if (currentRightArm == name)
 				arm = ArmToEquip.RightArm;

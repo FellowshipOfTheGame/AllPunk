@@ -41,6 +41,7 @@ public class scr_Weapon_Sword : scr_Weapon {
     //Update function for UpAttack
     override protected void AttackAction(bool noAnimation)
     {
+        print("Teste");
         print(noAnimation);
         if (clicked && noAnimation)
         {
