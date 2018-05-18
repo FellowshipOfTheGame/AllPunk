@@ -41,14 +41,10 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
     }
 
 
-	public override bool Equip (GameObject playerReference)
-	{
-		throw new System.NotImplementedException ();
-	}
-
 	public override bool Unequip ()
 	{
-		throw new System.NotImplementedException ();
+		Debug.Log("Removed: "+ epName);
+		return true;
 	}
 
     protected override void AttackAction(bool noAnimation)

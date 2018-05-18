@@ -13,12 +13,19 @@ public abstract class scr_EP : MonoBehaviour {
 	};
 
 	#region Variables
+	[SerializeField]
 	protected string keyName;
+	[SerializeField]
 	protected string epName;
+	[SerializeField]
 	protected string descritption;
+	[SerializeField]
 	protected EpType type;
+	[SerializeField]
 	protected float energyDrain;
+	[SerializeField]
 	protected int meshId;
+	[SerializeField]
 	protected Sprite thumbImg;
 	#endregion 
 

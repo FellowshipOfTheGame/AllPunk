@@ -31,8 +31,6 @@ abstract public class scr_Weapon : scr_EP {
     //Como é o ataque utilizado
     [Tooltip("Animação a ser utilizada quando atacar")]
     public AttackType attackType;
-    [Tooltip("Qual variante de braço deve ser utilizada")]
-    public scr_PA_Manager.WeaponPart armVariationSprite;
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 	//USADO PARA ALTERAR O ATRIBUTO DO SCR_EP
@@ -50,9 +48,7 @@ abstract public class scr_Weapon : scr_EP {
     public float timeToAnimate = 3f;
     [Tooltip("Tempo de transição entre animação e mirando no alvo")]
     public float animationTransitionTime = 0.2f;
-    //Qual variação de sprite vai ser utilizado no braço em inteiro
-    [HideInInspector]
-    public int armVariation = 0;
+
     [Space]
 
     //Distancia máxima que o braço fica esticado, encontrado empiricamente
@@ -79,10 +75,6 @@ abstract public class scr_Weapon : scr_EP {
 	protected float currCooldownTime;
     //Se está ou não tocando a animação
     protected bool playingAnimation;
-    //Variavel dizendo qual o offset que a mão tem que ter quando é a mão secundaria
-    protected Vector3 offsetSecondary = new Vector3(0,0,0);
-    //Variavel dizendo qual o offset que a mão tem que ter quando é a mão primária
-    protected Vector3 offsetPrincipal = new Vector3(0,0,0);
     //Qual o offset atual da mao
     protected Vector3 currentOffset;
 
@@ -112,21 +104,28 @@ abstract public class scr_Weapon : scr_EP {
 		///Alters the protected attribute energyDrain
 		energyDrain = weaponEnergyDrain;
 
-        //Conversao do braço para int
-        armVariation = (int)armVariationSprite;
-
-		Transform parentTransform = GetComponentInParent<Rigidbody2D> ().transform;
-		playerEnergy = GetComponentInParent<scr_PlayerEnergyController>();
-
-		if(rightHand)
-			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
-		else
-			lowerArm = parentTransform.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("L.UpperArm").Find("L.LowerArm");
-
         //Variaveis de animação
         //ikLimb = ik.GetComponent<IkLimb2D>();
         squaredAnimationDistance = mouseDeltaToAnim * mouseDeltaToAnim;
         animCounter = timeToAnimate;
+    }
+
+    public override bool Equip(GameObject playerReference) {
+        playerEnergy = playerReference.GetComponent<scr_PlayerEnergyController>();
+        
+        Transform ikRoot = playerReference.transform.Find("IK");
+
+        if(rightHand){
+			lowerArm = playerReference.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("R.UpperArm").Find("R.LowerArm");
+            setIK(ikRoot.Find("IK_R_Hand").gameObject);
+        }else {
+			lowerArm = playerReference.transform.Find("Bones").Find("Hip").Find("UpperBody").Find("L.UpperArm").Find("L.LowerArm");
+            setIK(ikRoot.Find("IK_L_Hand").gameObject);
+        }
+
+        animator = playerReference.GetComponent<Animator>();
+
+        return true;
     }
 
 	protected void Update()
@@ -157,53 +156,8 @@ abstract public class scr_Weapon : scr_EP {
 
 			Vector3 direction = mouseWorldPosition - bone.position;
 
-
-            //if(direction.magnitude < maxDistance) {
-            if (true){//PLACEHOLDER
-				ik.transform.SetPositionAndRotation(mouseWorldPosition, ik.transform.rotation);
-			}
-
-			else {
-
-				float distance = maxDistance;
-				//Logica para saber se o braço utilizado é o que fica por trás, caso seja, fica mais próximo do
-				//corpo
-
-				if(!(rightHand ^ flipped))
-					distance = lowerDistance;
-
-				//Atualiza o angulo que o offset deveria ter, calculando o angulo e depois rotacionando o offset
-
-				float alphaAngle;
-
-				if(!flipped)
-					alphaAngle = Mathf.Atan2(direction.y, direction.x);
-
-				else
-					alphaAngle = Mathf.Atan2(-direction.y, -direction.x);
-
-				alphaAngle *= Mathf.Rad2Deg; //Conversao para grau
-
-				//Rotaciona o vetor no eixo z
-				Vector3 correctOffset =  Quaternion.AngleAxis(alphaAngle, new Vector3(0,0,1)) * currentOffset;
-
-				//Faz com que o IK fique na circunferência do braço essticado
-				ik.transform.SetPositionAndRotation(bone.position + direction.normalized * distance + correctOffset, 
-					ik.transform.rotation);
-
-				/*Vector3 aux = (mouseWorldPosition - 
-                this.transform.position);*/
-				//Se maior do que o limite
-				/*if (aux.magnitude > deadzoneRadius) {
-                print ("ok");
-                ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
-            } else {
-                ik.transform.SetPositionAndRotation (mouseWorldPosition, ik.transform.rotation);
-
-                print ("nope");
-            }*/
-
-			}
+            ik.transform.SetPositionAndRotation(mouseWorldPosition, ik.transform.rotation);
+			
 
 		}
 
@@ -250,6 +204,8 @@ abstract public class scr_Weapon : scr_EP {
 		clicked = Input.GetButtonDown(fireButton);
 
 		holding = Input.GetButton(fireButton);
+
+        Debug.Log("Clicked: "+ clicked + ", Holding: " + holding);
 
 		/*Condições para ativar a arma: 
 
@@ -405,12 +361,6 @@ abstract public class scr_Weapon : scr_EP {
             else
                 sprite.sortingOrder = backLayer;
         }
-
-        //Logica de offset (flipped XOR rightHand). Em caso de duvida verificar função setHandOffset
-        if(flipped ^ rightHand)
-            currentOffset = offsetPrincipal;
-        else
-            currentOffset = offsetSecondary;
         
     }
 
@@ -434,18 +384,6 @@ abstract public class scr_Weapon : scr_EP {
 	public float getCurrentCooldownTimer(){
 		return currCooldownTime;
 	}
-
-    public void setHandOffset(Vector2 newOffset) {
-        offsetSecondary = newOffset;
-        if(rightHand)
-            offsetSecondary.x *=-1;
-        if(!flipped && !rightHand)
-            currentOffset = offsetSecondary;
-        else if (flipped && rightHand) {
-            currentOffset = offsetSecondary;
-        } else
-            currentOffset = offsetPrincipal;
-    }
 
     protected void useEnergy() {
         playerEnergy.drainEnergy(energyDrain);

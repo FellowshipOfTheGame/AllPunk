@@ -7,14 +7,10 @@ public class scr_Weapon_Sword : scr_Weapon {
     public float damage;
     public float attackImpulse;
 
-	public override bool Equip (GameObject playerReference)
-	{
-		throw new System.NotImplementedException ();
-	}
-
 	public override bool Unequip ()
 	{
-		throw new System.NotImplementedException ();
+		Debug.Log("Removed: "+ epName);
+		return true;
 	}
 
     private void Update()

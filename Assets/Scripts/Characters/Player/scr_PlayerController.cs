@@ -95,7 +95,7 @@ public class scr_PlayerController : MonoBehaviour {
     private bool underKnockback = false;
 
     //Referência para o gerenciador de PA's
-    private scr_PA_Manager paManager;
+    private scr_EPManager epManager;
 
     //Referência para o animator
     private Animator animator;
@@ -129,7 +129,7 @@ public class scr_PlayerController : MonoBehaviour {
 
 		playerFeetPosition = this.transform.Find("playerFeetPosition").GetComponent<Transform>(); //PEGAR O COLLIDER CIRCULAR NOS PÉS;
         
-        paManager = GetComponent<scr_PA_Manager>();
+        epManager = GetComponent<scr_EPManager>();
 
         animator = GetComponent<Animator>();
 
@@ -345,8 +345,8 @@ public class scr_PlayerController : MonoBehaviour {
 		transform.localScale = theScale;
 
 
-        if (paManager != null)
-            paManager.Flip();
+        if (epManager != null)
+            epManager.Flip();
 	}
 
     void UpdateAnimation()

@@ -164,6 +164,7 @@ public enum PartType
     private void instanciateWeapon(bool right, int ID) {
         if (ID < weaponsPrefabs.Length && ID > -1   ) {
             scr_Weapon weapon = null;
+            /* Parte com erro depois de mudança de scr_Weapon
             if (right)
             {
                 if(rightWeapon != null)
@@ -204,6 +205,7 @@ public enum PartType
             if (flipped)
                 weapon.flipHand();
             saveChanges();
+            */
         }
     }
 
