@@ -5,6 +5,21 @@ using Anima2D;
 
 public class scr_EPManager : MonoBehaviour {
 
+	/// <summary>
+	/// EP keys Constants. 
+	/// All keys of new EPs are to be placed inside this class
+	/// </summary>
+	public static class EPKeys
+	{
+		public const string KEY_BOILER = "torso_boiler"; 
+		public const string KEY_GATLING = "arm_gatling_gun";
+		public const string KEY_JETJUMP = "legs_jet_jump";
+		public const string KEY_RIVETGUN = "arm_rivet_gun";
+		public const string KEY_FIRESWORD = "arm_fire_sword";
+		public const string KEY_STEAMBREATH = "arm_steam_breath";
+		public const string KEY_STEAMGOGGLES = "head_steam_goggles";
+	}
+
 	[Tooltip("Array com EPS a serem equipadas")]
 	public scr_EP[] EPs;
 	/// <summary>

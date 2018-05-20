@@ -28,7 +28,8 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 	}
 
 	public bool useItem (){
-		if (playerBoiler.burnCoal (enInc) && currQty > 0){
+		///can only use the item If player has boiler equipped and has energy to increase
+		if (playerBoiler != null && playerBoiler.burnCoal (enInc) && currQty > 0){
 			currQty--;
 			return true;
 		}
@@ -38,13 +39,12 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 
 
 	public void setPlayerReferences(GameObject playerObject){
-		/*if(playerObject.EPManager.currTorso=="boiler")
-			playerBoiler = UnlockedEps.get("boiler");
-		*/
-		//playerBoiler = playerObject.GetComponent<scr_EP_Boiler> ();
+		scr_EPManager epMan = playerObject.GetComponent<scr_EPManager>();
 
-		//PARA TESTAR - COLOQUE UM BOILER NO PREFAB DO SIGMA E ARRASTE PARA A REFERENCIA DO COAL
-		throw new System.NotImplementedException ();
+		if (epMan.getCurrentPart (scr_EP.EpType.Torso) == scr_EPManager.EPKeys.KEY_BOILER)
+			playerBoiler = playerObject.GetComponent<scr_EP_Boiler> ();
+		else
+			playerBoiler = null;
 	}
 
 	#endregion
