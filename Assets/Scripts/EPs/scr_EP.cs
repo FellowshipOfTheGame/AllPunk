@@ -15,6 +15,8 @@ public abstract class scr_EP : MonoBehaviour {
 	#region Variables
 	[Header("EP Variables")]
 	[SerializeField]
+	protected scr_AudioClient audioClient;
+	[SerializeField]
 	protected string keyName;
 	[SerializeField]
 	protected string epName;

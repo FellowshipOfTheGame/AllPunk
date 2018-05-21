@@ -9,6 +9,7 @@ public class scr_AudioManager : MonoBehaviour {
 	public static scr_AudioManager instance = null;
 	public AudioSource sfxSource;
 	public AudioSource musicSoruce;
+	public AudioSource voiceSource;
 	#endregion
 
 
@@ -31,6 +32,10 @@ public class scr_AudioManager : MonoBehaviour {
 			musicSoruce.loop = wrapper.loop;
 			musicSoruce.Play ();
 			return true;
+		case scr_AudioClient.sources.voice:
+			voiceSource.pitch = wrapper.pitch;
+			voiceSource.PlayOneShot (wrapper.clip, wrapper.volume);
+			return true;
 		default:
 			Debug.LogWarning ("AudioManager playClipOnce: source not found");
 			return false;
@@ -46,7 +51,7 @@ public class scr_AudioManager : MonoBehaviour {
 
 		DontDestroyOnLoad(gameObject);
 
-		if (sfxSource == null || musicSoruce == null)
+		if (sfxSource == null || musicSoruce == null || voiceSource == null)
 			Debug.LogError ("AudioManager Error: null AudioSources");
 
 	}

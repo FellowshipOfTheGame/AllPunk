@@ -15,8 +15,14 @@ public class scr_AudioClient : MonoBehaviour {
 	public enum sources{
 		local,	//The Local audiosource
 		sfx,	//AudioManager's SFX Audiosource
-		music	//AudioManager's Music Audiosource
+		music,	//AudioManager's Music Audiosource
+		voice	//AudioManager's Voice Audiosource
 	};
+
+	/// <summary>
+	/// The key list. Used to get a random element of the dictionary
+	/// </summary>
+	private	List<string> keyList;
 	#endregion
 
 
@@ -31,6 +37,7 @@ public class scr_AudioClient : MonoBehaviour {
 		if (localAudiosource == null) {
 			localAudiosource.GetComponent<AudioSource> ();
 		}
+		keyList = new List <string> (audioClips.Keys);
 	}
 
 
@@ -55,6 +62,24 @@ public class scr_AudioClient : MonoBehaviour {
 			return scr_AudioManager.instance.playClipOnce (wrapper, source);
 		}
 
+	}
+
+	/// <summary>
+	/// Plays a random clip stored in the dictionary
+	/// </summary>
+	/// <returns><c>true</c>, if random clip was played, <c>false</c> otherwise.</returns>
+	/// <param name="source">Source.</param>
+	bool playRandomClip(scr_AudioClient.sources source){
+		scr_AudioClipWrapper wrapper;
+		audioClips.TryGetValue ( keyList[Random.Range(0,keyList.Count-1)], out wrapper );
+
+		switch (source) {
+		case sources.local:
+			localAudiosource.PlayOneShot (wrapper.clip, wrapper.volume);
+			return true;
+		default:
+			return scr_AudioManager.instance.playClipOnce (wrapper, source);
+		}
 	}
 		
 }
