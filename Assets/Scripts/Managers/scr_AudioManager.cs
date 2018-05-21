@@ -9,15 +9,32 @@ public class scr_AudioManager : MonoBehaviour {
 	public static scr_AudioManager instance = null;
 	public AudioSource sfxSource;
 	public AudioSource musicSoruce;
-
-	public enum sources{
-		sfx,
-		music
-	};
 	#endregion
 
-	public bool playAudio(){
-		return true;
+
+	/// <summary>
+	/// Plays the clip once. Method to be called by the scr_AudioClient
+	/// </summary>
+	/// <returns><c>true</c>, if clip was played, <c>false</c> otherwise.</returns>
+	/// <param name="wrapper">Wrapper.</param>
+	/// <param name="source">Source.</param>
+	public bool playClipOnce(scr_AudioClipWrapper wrapper, scr_AudioClient.sources source){
+		switch (source) {
+		case scr_AudioClient.sources.sfx:
+			sfxSource.pitch = wrapper.pitch;
+			sfxSource.PlayOneShot (wrapper.clip, wrapper.volume);
+			return true;
+		case scr_AudioClient.sources.music:
+			musicSoruce.volume = wrapper.volume;
+			musicSoruce.pitch = wrapper.pitch;
+			musicSoruce.clip = wrapper.clip;
+			musicSoruce.loop = wrapper.loop;
+			musicSoruce.Play ();
+			return true;
+		default:
+			Debug.LogWarning ("AudioManager playClipOnce: source not found");
+			return false;
+		}
 	}
 
 	void Awake () {

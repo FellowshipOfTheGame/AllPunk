@@ -6,4 +6,4 @@ using UnityEditor;
 using System.Reflection;
 
 [Serializable]
-public class AudioClipDictionary : SerializableDictionary<string, AudioClip> {}
+public class AudioClipDictionary : SerializableDictionary<string, scr_AudioClipWrapper> {}
