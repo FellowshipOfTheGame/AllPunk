@@ -239,7 +239,7 @@ public class scr_PlayerController : MonoBehaviour {
             localSpeed = speed;
         if (!isGrounded)
             localSpeed = speed;
-
+        
         //Verifica se o jogador nao esta sobre acao de knockback
         if (!underKnockback)
         {
@@ -285,7 +285,6 @@ public class scr_PlayerController : MonoBehaviour {
 	//Método para Salto, adiciona velocidade no eixo Y
 
 	void Jump (){
-		rb.velocity += new Vector2  (rb.velocity.x, 0);
 		rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
 	}
 
