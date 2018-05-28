@@ -34,9 +34,6 @@ public class scr_AudioClient : MonoBehaviour {
 	AudioClipDictionary audioClips;
 
 	void Awake(){
-		if (localAudiosource == null) {
-			localAudiosource.GetComponent<AudioSource> ();
-		}
 		keyList = new List <string> (audioClips.Keys);
 	}
 
@@ -47,9 +44,11 @@ public class scr_AudioClient : MonoBehaviour {
 	/// <returns><c>true</c>, if audio clip was played, <c>false</c> otherwise.</returns>
 	/// <param name="key">Key.</param>
 	/// <param name="source">Audiosource to play in.</param>
-	bool playAudioClip(string key, scr_AudioClient.sources source){
-		if (!audioClips.ContainsKey (key))
+	public bool playAudioClip(string key, scr_AudioClient.sources source){
+		if (!audioClips.ContainsKey (key)) {
+			Debug.LogWarning ("AudioClient Warning - Key not found!");
 			return false;
+		}
 
 		scr_AudioClipWrapper wrapper;
 		audioClips.TryGetValue (key, out wrapper);
@@ -69,14 +68,19 @@ public class scr_AudioClient : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c>, if random clip was played, <c>false</c> otherwise.</returns>
 	/// <param name="source">Source.</param>
-	bool playRandomClip(scr_AudioClient.sources source){
+	public bool playRandomClip(scr_AudioClient.sources source){
 		scr_AudioClipWrapper wrapper;
 		audioClips.TryGetValue ( keyList[Random.Range(0,keyList.Count-1)], out wrapper );
 
 		switch (source) {
 		case sources.local:
-			localAudiosource.PlayOneShot (wrapper.clip, wrapper.volume);
-			return true;
+			if (localAudiosource != null) {
+				localAudiosource.PlayOneShot (wrapper.clip, wrapper.volume);
+				return true;
+			} else {
+				Debug.LogError ("Audio Client Error - No local AudioSource!");
+				return false;
+			}
 		default:
 			return scr_AudioManager.instance.playClipOnce (wrapper, source);
 		}

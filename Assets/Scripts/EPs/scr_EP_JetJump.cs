@@ -50,6 +50,8 @@ public class scr_EP_JetJump : scr_EP {
 			playerRigidbody.AddForce (Vector2.up * impulseMagnitude, ForceMode2D.Impulse);
 			currNumberOfJumps--;
 			playerEnergy.drainEnergy (energyDrain);
+			audioClient.playRandomClip (scr_AudioClient.sources.sfx);
+
 		} else if (playerController.isGrounded)
 			currNumberOfJumps = numberOfJumps;
 

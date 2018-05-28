@@ -100,6 +100,9 @@ public class scr_PlayerController : MonoBehaviour {
     //Referência para o animator
     private Animator animator;
 
+	[Header("Audio Client")]
+	public scr_AudioClient audioclient;
+
     #endregion variables
 
     #region getters
@@ -244,8 +247,9 @@ public class scr_PlayerController : MonoBehaviour {
         if (!underKnockback)
         {
             //Interpola a velocidade no ar, o que controla o fator de movimento aerio do personagem
-            if (isGrounded)
-                rb.velocity = new Vector2(movePlayerVector * localSpeed, rb.velocity.y);
+			if (isGrounded) {
+				rb.velocity = new Vector2 (movePlayerVector * localSpeed, rb.velocity.y);
+			}
             else
             {
                 rb.velocity = Vector2.Lerp(rb.velocity, new Vector2(movePlayerVector * localSpeed, rb.velocity.y), airControl);

@@ -72,6 +72,8 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 					entity.takeDamage (0, weaponDirection.normalized * knockbackIntensity);
 				}
 			}
+
+			audioClient.playRandomClip (scr_AudioClient.sources.sfx);
 			//StartAttackAnimation();
 		}
 	}

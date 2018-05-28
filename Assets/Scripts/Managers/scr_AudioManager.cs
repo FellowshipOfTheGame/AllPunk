@@ -22,13 +22,12 @@ public class scr_AudioManager : MonoBehaviour {
 	public bool playClipOnce(scr_AudioClipWrapper wrapper, scr_AudioClient.sources source){
 		switch (source) {
 		case scr_AudioClient.sources.sfx:
-			sfxSource.pitch = wrapper.pitch;
 			sfxSource.PlayOneShot (wrapper.clip, wrapper.volume);
 			return true;
 		case scr_AudioClient.sources.music:
+			musicSoruce.clip = wrapper.clip;
 			musicSoruce.volume = wrapper.volume;
 			musicSoruce.pitch = wrapper.pitch;
-			musicSoruce.clip = wrapper.clip;
 			musicSoruce.loop = wrapper.loop;
 			musicSoruce.Play ();
 			return true;
@@ -55,5 +54,13 @@ public class scr_AudioManager : MonoBehaviour {
 			Debug.LogError ("AudioManager Error: null AudioSources");
 
 	}
+
+	void Update(){
+		if (Input.GetKeyDown (KeyCode.T)) {
+			sfxSource.PlayOneShot (sfxSource.clip);
+			print ("KKK");
+		}
+	}
+		
 
 }
