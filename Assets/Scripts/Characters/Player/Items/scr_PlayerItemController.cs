@@ -5,6 +5,7 @@ using UnityEngine;
 public class scr_PlayerItemController : MonoBehaviour {
 
 	[SerializeField] List<scr_Item> playerItems = new List <scr_Item>();
+	[SerializeField] scr_AudioClient audioClient;
 
 	/// <summary>
 	/// Adds the item.
@@ -55,7 +56,8 @@ public class scr_PlayerItemController : MonoBehaviour {
 	void Update(){
 		///TEST INPUTS / FUNCTIONALITIES
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {
-			playerItems [0].useItem ();
+			if(playerItems [0].useItem ())
+				audioClient.playAudioClip ("Repair", scr_AudioClient.sources.sfx);
 		}
 
 		if (Input.GetKeyDown (KeyCode.Alpha2)) {
