@@ -10,7 +10,7 @@ namespace FSM
 	/// It will only serve to call the transition methods and set the currentState variable
 	/// It should NOT contain any logic regarding the states
 	/// </summary>
-	public class StateMachine
+	public class StateMachine : MonoBehaviour
 	{
 
 		[SerializeField]
@@ -19,6 +19,13 @@ namespace FSM
 			get {
 				return this.currentState;
 			}
+		}
+
+		void Start(){
+			if (currentState != null)
+				currentState.Enter ();
+			else
+				Debug.LogWarning ("FSM with no CurrentState!");
 		}
 
 		/// <summary>

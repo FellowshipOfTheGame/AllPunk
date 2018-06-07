@@ -11,18 +11,19 @@ namespace FSM
 	/// required methods, store all connected states to it
 	///  and will be responsable for checking if a State Transition must occur
 	/// </summary>
-	public abstract class State
+	public abstract class State : MonoBehaviour
 	{
+		[Header("State Variables")]
 		/// <summary>
 		/// Reference to the linked state machine.
 		/// </summary>
 		[SerializeField]
-		StateMachine stateMachine;
+		protected StateMachine stateMachine;
 		/// <summary>
 		/// Dictionary including all connected States.
 		/// </summary>
 		[SerializeField]
-		StateDictionary connectedStates;
+		protected StateDictionary connectedStates;
 
 		/// <summary>
 		/// To be executed when the FSM enters this Method
