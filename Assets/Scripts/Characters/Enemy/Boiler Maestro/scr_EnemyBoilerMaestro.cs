@@ -15,10 +15,12 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	//Used in the grounded check
 	private RaycastHit2D groundHit;
 	//Used in the obstacle check
-	private BoxCollider2D obstacleCollider;
+	private RaycastHit2D obstacleHit;
 
 	//Height of the capsuleCollider, used in grounded check
 	private float height;
+	//Used to RayCast for obstacles
+	private Vector2 groundHitPoint = Vector2.zero;
 	#endregion
 
 	#region MonoBehavior methods
@@ -66,11 +68,10 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 
 		//Debug.DrawLine (transform.position, transform.position + new Vector3 (0, -height, 0), Color.cyan);
 
-		///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered out
+		///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
 		groundHit = Physics2D.Raycast (transform.position, Vector2.down, height, 1 << LayerMask.NameToLayer("Ground"));
 
 		if (groundHit.collider != null) {
-			//print ("Grounded");
 			return true;
 		}
 		else
@@ -85,23 +86,45 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	public bool hasFloor(){
 		//Raycasts towards the ground in front of the enemy
 		if(isFacingRight)
+			///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
 			groundHit = Physics2D.Raycast (transform.position + Vector3.right*height, Vector2.down, height,
 				1 << LayerMask.NameToLayer("Ground"));
 		else
 			groundHit = Physics2D.Raycast (transform.position + Vector3.left*height, Vector2.down, height,
 				1 << LayerMask.NameToLayer("Ground"));
 		
-		if (groundHit != null)
+		if (groundHit.collider != null) {
+			groundHitPoint = groundHit.point;
 			return true;
+		}
 		else
 			return false;
 	}
 
 
-	/*
+	/// <summary>
+	/// Checks if there is an obstacle in front of the enemy.
+	/// Takes the position of the last hasFloor rayCastHit and
+	/// Raycasts upwards to check if there's enough space for the
+	/// enemy
+	/// </summary>
+	/// <returns><c>true</c>, if obstacle <c>false</c> otherwise.</returns>
 	public bool hasObstacle(){
-	3 rays, na altura do pe, na cabeca e no meio do peito?
-	}*/
+		//Raises the point a bit to avoid colliding with the floor
+		groundHitPoint += Vector2.up * 0.1f;
+		Debug.DrawLine (groundHitPoint, groundHitPoint + Vector2.up * height, Color.cyan);
+
+		//Ignore all collisions not on the Default or Ground Layers
+		//int layerMask = (1 << LayerMask.NameToLayer ("Default") | 1 << LayerMask.NameToLayer ("Ground"));
+		obstacleHit = Physics2D.Raycast (groundHitPoint, Vector2.up, height, LayerMask.GetMask("Ground","Default"));
+
+		if (obstacleHit.collider != null) {
+			print("> " + obstacleHit.transform);
+			return true;
+		}
+		else
+			return false;
+	}
 
 
 
