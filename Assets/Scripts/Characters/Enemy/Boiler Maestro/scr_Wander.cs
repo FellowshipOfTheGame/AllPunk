@@ -28,27 +28,24 @@ public class scr_Wander : FSM.State {
 
 	public override void Execute ()
 	{
-		///TODO: Check if Player is sighted, if so, transition to Hunt
+		if(boilerMaestro.Target != null){
+			FSM.State huntState;
+			connectedStates.TryGetValue("Hunt", out huntState);
+			stateMachine.transitionToState (huntState);
+		}
 
 
-		//Will fall down
+		//ObstacleCheck
 		if (!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle())
 			boilerMaestro.Flip ();
 
-		if(boilerMaestro.IsFacingRight)
-			boilerMaestro.rb2D.velocity = new Vector2(1 * wanderSpeed, boilerMaestro.rb2D.velocity.y);
-		else
-			boilerMaestro.rb2D.velocity = new Vector2(-1 * wanderSpeed, boilerMaestro.rb2D.velocity.y);
-		
+		boilerMaestro.horizontalMove (wanderSpeed);
 
-		boilerMaestro.animator.SetBool("IsGrounded", boilerMaestro.isGrounded());
-		boilerMaestro.animator.SetFloat("HorizontalSpeed", Mathf.Abs(boilerMaestro.rb2D.velocity.x));
-		boilerMaestro.animator.SetFloat("VerticalSpeed", boilerMaestro.rb2D.velocity.y);
+
 	}
 
 	public override void Exit ()
 	{
-		throw new System.NotImplementedException ();
 	}
 		
 }

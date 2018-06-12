@@ -4,4 +4,4 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomPropertyDrawer(typeof(AudioClipDictionary))]
-public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
+public class AudioClipDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}

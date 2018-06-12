@@ -11,7 +11,7 @@ namespace FSM
 	/// required methods, store all connected states to it
 	///  and will be responsable for checking if a State Transition must occur
 	/// </summary>
-	public abstract class State : MonoBehaviour
+	public abstract class State : MonoBehaviour 
 	{
 		[Header("State Variables")]
 		/// <summary>

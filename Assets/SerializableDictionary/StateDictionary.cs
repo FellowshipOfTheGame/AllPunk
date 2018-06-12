@@ -4,7 +4,6 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using System.Reflection;
-using FSM;
 
 [Serializable]
-public class StateDictionary : SerializableDictionary<string, State> {}
+public class StateDictionary : SerializableDictionary<string, FSM.State> {}
