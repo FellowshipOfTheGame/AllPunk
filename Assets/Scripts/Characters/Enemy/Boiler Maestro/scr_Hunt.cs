@@ -9,8 +9,14 @@ public class scr_Hunt : FSM.State{
 	[SerializeField]
 	scr_EnemyBoilerMaestro boilerMaestro;
 
-	//[SerializeField]
-	//float wanderSpeed;
+	[SerializeField]
+	float huntSpeed;
+	[SerializeField]
+	float smashRange;
+	[SerializeField]
+	float chargeRange;
+
+	FSM.State nexState;
 
 	#endregion
 
@@ -31,12 +37,20 @@ public class scr_Hunt : FSM.State{
 		print ("Execute Hunt");
 
 		if(boilerMaestro.Target == null){
-			FSM.State wanderState;
-			connectedStates.TryGetValue("Wander", out wanderState);
-			stateMachine.transitionToState (wanderState);
+			connectedStates.TryGetValue("Wander", out nexState);
+			stateMachine.transitionToState (nexState);
 		}
 
 		boilerMaestro.faceTarget ();
+
+		if (boilerMaestro.targetInRange (smashRange)) {
+			print ("CAN SMASH");
+			connectedStates.TryGetValue("Smash", out nexState);
+			stateMachine.transitionToState (nexState);
+		}
+		if (boilerMaestro.targetInRange (chargeRange)) {
+			print ("CAN CHARGE");
+		}
 
 		if (!boilerMaestro.hasFloor () || boilerMaestro.hasObstacle ())
 			boilerMaestro.horizontalMove (0f);

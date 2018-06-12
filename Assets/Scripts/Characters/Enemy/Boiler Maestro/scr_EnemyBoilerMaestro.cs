@@ -21,6 +21,8 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	//Used in the obstacle check
 	private RaycastHit2D obstacleHit;
 
+	private RaycastHit2D targetRangeHit;
+
 	//Height of the capsuleCollider, used in grounded check
 	private float height;
 	//Used to RayCast for obstacles
@@ -106,10 +108,12 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		//Raycasts towards the ground in front of the enemy
 		if(isFacingRight)
 			///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
-			groundHit = Physics2D.Raycast (transform.position + Vector3.right*height + Vector3.down, Vector2.down, height*2,
+			//groundHit = Physics2D.Raycast (transform.position + Vector3.right*height + Vector3.down, Vector2.down, height*2,
+			//	LayerMask.GetMask("Ground"));
+			groundHit = Physics2D.Raycast (groundCheckOrigin.position, Vector2.down, height*2,
 				LayerMask.GetMask("Ground"));
 		else
-			groundHit = Physics2D.Raycast (transform.position + Vector3.left*height  + Vector3.down, Vector2.down, height*2,
+			groundHit = Physics2D.Raycast (groundCheckOrigin.position, Vector2.down, height*2,
 				LayerMask.GetMask("Ground"));
 		
 		if (groundHit.collider != null) {
@@ -150,6 +154,30 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			return this.isFacingRight;
 		}
 	}
+
+	/// <summary>
+	/// Checks if there is a target within range. Used by the Hunt behaviour to check for
+	/// conditions to smash and to charge
+	/// </summary>
+	/// <returns><c>true</c>, if in range was targeted, <c>false</c> otherwise.</returns>
+	/// <param name="range">Range.</param>
+	public bool targetInRange(float range){
+		if (Target == null)
+			return false;
+		else {
+			if (IsFacingRight)
+				targetRangeHit = Physics2D.Raycast (transform.position, Vector2.right, range, LayerMask.GetMask ("Player"));
+			else
+				targetRangeHit = Physics2D.Raycast (transform.position, Vector2.left, range, LayerMask.GetMask ("Player"));
+
+
+			if (targetRangeHit.collider != null && targetRangeHit.collider.CompareTag ("Player"))
+				return true;
+			else
+				return false;
+		}
+	}
+		
 	#endregion
 
 	#region Action Methods
