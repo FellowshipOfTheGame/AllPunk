@@ -55,7 +55,7 @@ public class scr_Hunt : FSM.State{
 		if (!boilerMaestro.hasFloor () || boilerMaestro.hasObstacle ())
 			boilerMaestro.horizontalMove (0f);
 		else
-			boilerMaestro.horizontalMove (10f);
+			boilerMaestro.horizontalMove (huntSpeed);
 
 
 	}

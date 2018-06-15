@@ -120,10 +120,12 @@ public class scr_CameraController : MonoBehaviour {
 	}
 
 	void Update () {
-		manualZoom ();
+		if (player != null) {
+			manualZoom ();
 
-		manualPan ();
+			manualPan ();
 
-		autoPan ();
+			autoPan ();
+		}
 	}
 }

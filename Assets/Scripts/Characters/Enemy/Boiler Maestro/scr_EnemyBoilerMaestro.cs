@@ -27,7 +27,8 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	private float height;
 	//Used to RayCast for obstacles
 	private Vector2 groundHitPoint = Vector2.zero;
-
+	//A animação de ataque está acontecendo
+	private bool animationStarted;
 	/// <summary>
 	/// The player target.
 	/// </summary>
@@ -142,7 +143,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		obstacleHit = Physics2D.Raycast (groundHitPoint, Vector2.up, height, LayerMask.GetMask("Ground","Default"));
 
 		if (obstacleHit.collider != null) {
-			print("> " + obstacleHit.transform);
+//			print("> " + obstacleHit.transform);
 			return true;
 		}
 		else
@@ -221,6 +222,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		animator.SetFloat("HorizontalSpeed", Mathf.Abs(rb2D.velocity.x));
 		animator.SetFloat("VerticalSpeed", rb2D.velocity.y);
 	}
+
 
 	#endregion
 }
