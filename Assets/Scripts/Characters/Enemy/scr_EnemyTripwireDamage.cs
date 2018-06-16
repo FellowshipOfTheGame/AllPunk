@@ -35,10 +35,11 @@ public class scr_EnemyTripwireDamage : MonoBehaviour {
 			scr_HealthController health = targetRangeHit.collider.gameObject.GetComponent<scr_HealthController>();
 			if (health != null)
 			{
+				//health.takeDamage(touchDamage, -1 * targetRangeHit.rigidbody.velocity.normalized * repulseForce);
 				if(targetRangeHit.rigidbody.velocity.x >= 0)
 					health.takeDamage(touchDamage, Vector2.right * repulseForce);
 				if(targetRangeHit.rigidbody.velocity.x < 0)
-					health.takeDamage(touchDamage, Vector2.left * repulseForce);				
+					health.takeDamage(touchDamage, Vector2.left * repulseForce);		
 			}
 		}
 	}

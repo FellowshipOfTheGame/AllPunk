@@ -8,6 +8,9 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 
 	[SerializeField] FSM.StateMachine stateMachine;
 	[SerializeField] CapsuleCollider2D capCollider;
+	[SerializeField] scr_AudioClient audioClient;
+	[SerializeField] scr_HealthController healthController;
+
 	public Rigidbody2D rb2D;
 	public Animator animator;
 
@@ -22,6 +25,9 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	private RaycastHit2D obstacleHit;
 
 	private RaycastHit2D targetRangeHit;
+
+	public float knockBackTime;
+	private bool underKnockback;
 
 	//Height of the capsuleCollider, used in grounded check
 	private float height;
@@ -55,10 +61,14 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			capCollider = GetComponent<CapsuleCollider2D> ();
 		if (groundCheckOrigin == null)
 			transform.Find ("GroundCheckOrigin");
+		if (healthController == null)
+			healthController = GetComponent<scr_HealthController> ();
 	}
 
 	void Start(){
 		height = capCollider.size.y;
+		healthController.addKnockbackCallback (onKnockBack);
+		underKnockback = false;
 	}
 
 	void FixedUpdate(){
@@ -206,7 +216,6 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	/// </summary>
 	public void faceTarget(){
 		if (Target != null) {
-			StartCoroutine(waitSeconds(2f));
 			if (Target.transform.position.x < transform.position.x && IsFacingRight)
 				Flip ();
 			else if (Target.transform.position.x > transform.position.x && !IsFacingRight)
@@ -219,20 +228,34 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	/// </summary>
 	/// <param name="speed">Speed.</param>
 	public void horizontalMove(float speed){
-		if(IsFacingRight)
-			rb2D.velocity = new Vector2(1 * speed, rb2D.velocity.y);
-		else
-			rb2D.velocity = new Vector2(-1 * speed, rb2D.velocity.y);
-
-		animator.SetBool("IsGrounded", isGrounded());
-		animator.SetFloat("HorizontalSpeed", Mathf.Abs(rb2D.velocity.x));
-		animator.SetFloat("VerticalSpeed", rb2D.velocity.y);
+		if (!underKnockback) {
+			if (IsFacingRight)
+				rb2D.velocity = new Vector2 (1 * speed, rb2D.velocity.y);
+			else
+				rb2D.velocity = new Vector2 (-1 * speed, rb2D.velocity.y);
+		}
+		animator.SetBool ("IsGrounded", isGrounded ());
+		animator.SetFloat ("HorizontalSpeed", Mathf.Abs (rb2D.velocity.x));
+		animator.SetFloat ("VerticalSpeed", rb2D.velocity.y);
 	}
 
 
 	#endregion
 
-	IEnumerator waitSeconds(float seconds){
-		yield return new WaitForSeconds (seconds);
+	private void onKnockBack()
+	{
+		StartCoroutine(waitKnockback());
+	}
+
+	private IEnumerator waitKnockback()
+	{
+		underKnockback = true;
+		float counter = 0;
+		while (counter < knockBackTime)
+		{
+			counter += Time.deltaTime;
+			yield return null;
+		}
+		underKnockback = false;
 	}
 }

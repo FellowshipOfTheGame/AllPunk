@@ -82,10 +82,14 @@ public class scr_HealthController : MonoBehaviour {
 			direction = direction * (1 - poise);//Poise para reduzir knockback
                                                 //this.transform.position += new Vector3 (0, direction.x, 0); //levemente levanta do chao
                                                 //print("dir2 " + direction);
-            this.entityRigidBody.velocity = Vector2.zero;
-			this.entityRigidBody.AddForce (direction, ForceMode2D.Impulse);
-            if(knockBackCallback != null)
-                knockBackCallback.Invoke();
+			if (direction.magnitude != 0) {
+				this.entityRigidBody.velocity = Vector2.zero;
+				this.entityRigidBody.AddForce (direction, ForceMode2D.Impulse);
+
+				if(knockBackCallback != null)
+					knockBackCallback.Invoke();
+			}
+
             if (animator != null)
             {
                 animator.SetTrigger("Hurt");
