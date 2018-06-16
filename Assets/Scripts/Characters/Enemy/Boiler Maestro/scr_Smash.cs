@@ -61,7 +61,7 @@ public class scr_Smash : FSM.State {
 		{
 			if (!hitCollider.isActiveAndEnabled)
 				continue;
-			Collider2D col = Physics2D.OverlapCircle (hitCollider.transform.position, 0.5f, LayerMask.GetMask ("Player"));
+			Collider2D col = Physics2D.OverlapCircle (hitCollider.transform.position, 1f, LayerMask.GetMask ("Player"));
 
 			if (col != null && col.CompareTag ("Player")) {
 				scr_HealthController life = col.GetComponent<scr_HealthController>();

@@ -74,6 +74,11 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			target = col.gameObject;
 		}
 	}
+	void OnTriggerStay2D(Collider2D col){
+		if (col.CompareTag ("Player")) {
+			target = col.gameObject;
+		}
+	}
 	void OnTriggerExit2D(Collider2D col){
 		if (col.CompareTag ("Player")) {
 			target = null;
@@ -201,6 +206,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	/// </summary>
 	public void faceTarget(){
 		if (Target != null) {
+			StartCoroutine(waitSeconds(2f));
 			if (Target.transform.position.x < transform.position.x && IsFacingRight)
 				Flip ();
 			else if (Target.transform.position.x > transform.position.x && !IsFacingRight)
@@ -225,4 +231,8 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 
 
 	#endregion
+
+	IEnumerator waitSeconds(float seconds){
+		yield return new WaitForSeconds (seconds);
+	}
 }

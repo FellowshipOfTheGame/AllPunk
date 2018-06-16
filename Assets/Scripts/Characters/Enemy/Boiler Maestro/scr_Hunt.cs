@@ -44,7 +44,6 @@ public class scr_Hunt : FSM.State{
 		boilerMaestro.faceTarget ();
 
 		if (boilerMaestro.targetInRange (smashRange)) {
-			print ("CAN SMASH");
 			connectedStates.TryGetValue("Smash", out nexState);
 			stateMachine.transitionToState (nexState);
 		}
