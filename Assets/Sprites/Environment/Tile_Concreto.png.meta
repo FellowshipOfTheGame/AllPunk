@@ -1,0 +1,428 @@
+fileFormatVersion: 2
+guid: eacb06d36f5a2b642aca1c83ce42c059
+timeCreated: 1529189237
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: tile_padrao_0
+    21300002: tile_padrao_1
+    21300004: tile_padrao_2
+    21300006: tile_padrao_3
+    21300008: tile_padrao_4
+    21300010: tile_padrao_5
+    21300012: tile_padrao_6
+    21300014: tile_padrao_7
+    21300016: tile_padrao_8
+    21300018: tile_padrao_9
+    21300020: tile_padrao_10
+    21300022: tile_padrao_11
+    21300024: tile_padrao_12
+    21300026: tile_padrao_13
+    21300028: tile_padrao_14
+    21300030: tile_padrao_15
+  externalObjects: {}
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -1
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 590
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tile_padrao_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1770
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_1
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 1770
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 295}
+        - {x: -295, y: -2.3046875}
+        - {x: -2.7546997, y: -0.18359375}
+        - {x: 0, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_2
+      rect:
+        serializedVersion: 2
+        x: 1180
+        y: 1770
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -2.3046875, y: 295}
+        - {x: -2.7407227, y: -1.1523438}
+        - {x: 295, y: -1.1523438}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_3
+      rect:
+        serializedVersion: 2
+        x: 1770
+        y: 1770
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 295}
+        - {x: -295, y: -1.1523438}
+        - {x: 295, y: -1.1523438}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1180
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 2.3046875}
+        - {x: -295, y: -295}
+        - {x: 1.1523438, y: -295}
+        - {x: 1.1523438, y: -0.24816895}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_5
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 1180
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 2.3046875, y: -295}
+        - {x: 2.3046875, y: 295}
+        - {x: -295, y: 295}
+        - {x: -295, y: -295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_6
+      rect:
+        serializedVersion: 2
+        x: 1180
+        y: 1180
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 3.4570312}
+        - {x: -295, y: -295}
+        - {x: 1.1523438, y: -295}
+        - {x: -0.96875, y: 0.4864502}
+      - - {x: -3.4570312, y: 295}
+        - {x: 1.0008545, y: -0.7849121}
+        - {x: 107.16797, y: -1.1523438}
+        - {x: 295, y: -1.1523438}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_7
+      rect:
+        serializedVersion: 2
+        x: 1770
+        y: 1180
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 295}
+        - {x: -295, y: -295}
+        - {x: 0, y: -295}
+        - {x: -0.82055664, y: -136.88452}
+        - {x: 133.42017, y: -3.6923828}
+        - {x: 295, y: -2.3046875}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 590
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -4.609375, y: 0.76104736}
+        - {x: -3.4570312, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 2.3046875}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_9
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 590
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -3.4570312, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 2.3046875}
+        - {x: -3.524109, y: 2.008484}
+      - - {x: -295, y: 295}
+        - {x: -295, y: -2.3046875}
+        - {x: 0.6593628, y: -2.0755005}
+        - {x: 1.1523438, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_10
+      rect:
+        serializedVersion: 2
+        x: 1180
+        y: 590
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -3.4570312, y: 295}
+        - {x: -3.4570312, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_11
+      rect:
+        serializedVersion: 2
+        x: 1770
+        y: 590
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 295}
+        - {x: -295, y: -1.1523438}
+        - {x: -113.8457, y: -2.864441}
+        - {x: -2.2546387, y: -132.33618}
+        - {x: -2.3046875, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 0}
+        - {x: -295, y: 0}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_13
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 0
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 295}
+        - {x: -295, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 1.1523438}
+        - {x: 127.668884, y: 4.9176636}
+        - {x: 2.1625366, y: 134.15079}
+        - {x: 0, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_14
+      rect:
+        serializedVersion: 2
+        x: 1180
+        y: 0
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -2.3046875, y: 295}
+        - {x: -3.2402344, y: 128.04044}
+        - {x: -127.70886, y: 4.061737}
+        - {x: -295, y: 3.4570312}
+        - {x: -295, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_15
+      rect:
+        serializedVersion: 2
+        x: 1770
+        y: 0
+        width: 590
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -295, y: 295}
+        - {x: -295, y: -295}
+        - {x: 295, y: -295}
+        - {x: 295, y: 295}
+      tessellationDetail: 0
+    outline: []
+    physicsShape: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
