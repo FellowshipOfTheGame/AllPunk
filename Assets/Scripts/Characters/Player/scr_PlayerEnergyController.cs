@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 using UnityEngine;
 
 public class scr_PlayerEnergyController : MonoBehaviour {
@@ -10,6 +11,10 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	private float currResEnergy;
 	[SerializeField] float maxResEnergy;
 	[SerializeField] float reserveRechargeRate;
+	/// <summary>
+	/// The time in seconds without using the primary energy to begin the recharge
+	/// </summary>
+	[SerializeField] float rechargeWarmUp = 1f;
 
 	[Header("Sigma's Primary Energy Stats")]
 
@@ -24,11 +29,11 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	/// Used to check if the reserve energy can be recharged
 	/// </summary>
 	private bool canRechargeReserve = true;
-	/// <summary>
-	/// The time in seconds without using the primary energy to begin the recharge
-	/// </summary>
-	[SerializeField] float rechargeReserveWarmUp = 1f;
 
+	/// <summary>
+	/// The energy change callback, used to update the HUD
+	/// </summary>
+	UnityEvent energyChangeCallback;
 	#endregion
 
 	#region getters/setters
@@ -76,6 +81,38 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	#endregion
 
 
+	#region Monobehaviour Methods
+	// Use this for initialization
+	void Awake () {
+		currResEnergy = maxResEnergy;
+		currPrimEnergy = currPrimEnergy;
+		if (energyChangeCallback == null) {
+			energyChangeCallback = new UnityEvent();
+		}
+	}
+
+	// Update is called once per frame
+	void Update () {
+
+		if (canRechargeReserve) {
+			currResEnergy = Mathf.Clamp (currResEnergy + reserveRechargeRate * Time.timeScale, 0, maxResEnergy);
+
+			if(energyChangeCallback != null)
+				energyChangeCallback.Invoke ();
+		}
+	}
+
+	private void OnDestroy()
+	{
+		if(energyChangeCallback != null)
+		{
+			energyChangeCallback.RemoveAllListeners();
+		}
+
+	}
+
+	#endregion
+
 
 	/// <summary>
 	/// Drains the energy, first the re	serve, then the primary.
@@ -87,6 +124,8 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 		if (currResEnergy >= drain) {
 			currResEnergy -= drain;
 			StartCoroutine (reserveRechargeWarmUp ());
+			if(energyChangeCallback != null)
+				energyChangeCallback.Invoke ();
 			return true;
 		}
 		//Requires 
@@ -105,22 +144,22 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 
 	IEnumerator reserveRechargeWarmUp(){
 		canRechargeReserve = false;
-		yield return new WaitForSeconds (rechargeReserveWarmUp);
+		yield return new WaitForSeconds (rechargeWarmUp);
 		canRechargeReserve = true;
 	}
 
+	#region callBackMethods
+	public void addEnergyChangeCallback(UnityAction call)
+	{
+		if(energyChangeCallback != null)
+			energyChangeCallback.AddListener(call);
+	}
 
-	// Use this for initialization
-	void Awake () {
-		currResEnergy = maxResEnergy;
-		currPrimEnergy = currPrimEnergy;
+	public void removeEnergyChangeCallback(UnityAction call)
+	{
+		if(energyChangeCallback != null)
+			energyChangeCallback.RemoveListener(call);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-		if(canRechargeReserve)
-			currResEnergy = Mathf.Clamp (currResEnergy + reserveRechargeRate * Time.timeScale,0, maxResEnergy);
-	}
+	#endregion
 
 }

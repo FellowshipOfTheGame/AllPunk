@@ -31,7 +31,6 @@ public class scr_PlayerItemController : MonoBehaviour {
 			}
 		}
 
-		//print ("New item!");
 		newItem.setPlayerReferences (this.gameObject);
 		playerItems.Add (newItem);
 
@@ -61,7 +60,8 @@ public class scr_PlayerItemController : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.Alpha2)) {
-			playerItems [1].useItem ();
+			if(playerItems [1].useItem ())
+				audioClient.playAudioClip ("Refuel", scr_AudioClient.sources.sfx);
 		}
 	}
 }

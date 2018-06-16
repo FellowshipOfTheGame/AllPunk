@@ -28,10 +28,15 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 	}
 
 	public bool useItem (){
-		///can only use the item If player has boiler equipped and has energy to increase
+		///can only use the item If player has boiler equipped and has energy to increased
+
+		if (playerBoiler == null)
+			print ("PAU no PlayerBoiler");
+
 		if (playerBoiler != null && playerBoiler.burnCoal (enInc) && currQty > 0){
 			currQty--;
 			return true;
+
 		}
 		else
 			return false;
@@ -41,8 +46,14 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 	public void setPlayerReferences(GameObject playerObject){
 		scr_EPManager epMan = playerObject.GetComponent<scr_EPManager>();
 
-		if (epMan.getCurrentPart (scr_EP.EpType.Torso) == scr_EPManager.EPKeys.KEY_BOILER)
-			playerBoiler = playerObject.GetComponent<scr_EP_Boiler> ();
+		/*print (playerObject);
+		print (">> " + epMan.getCurrentPart (scr_EP.EpType.Torso));
+		print (">| " + scr_EPManager.EPKeys.KEY_BOILER);*/
+
+
+		if (epMan.getCurrentPart (scr_EP.EpType.Torso) == scr_EPManager.EPKeys.KEY_BOILER) {
+			playerBoiler = (scr_EP_Boiler)epMan.getCurrentPartRef (scr_EP.EpType.Torso);
+		}
 		else
 			playerBoiler = null;
 	}

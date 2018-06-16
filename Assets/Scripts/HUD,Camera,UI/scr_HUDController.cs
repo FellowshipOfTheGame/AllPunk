@@ -38,7 +38,7 @@ public class scr_HUDController : MonoBehaviour {
 
 	#endregion
 
-
+	#region Monobehavior Methods
 	void Awake () {
 		if (hudController == null) {
 			hudController = this;
@@ -56,6 +56,39 @@ public class scr_HUDController : MonoBehaviour {
 		}
 
 	}
+
+	void Start(){
+		playerEnergy.addEnergyChangeCallback (updateEnergyBars);
+	}
+
+	// Update is called once per frame
+	void Update () {
+		//Se o player não morreu
+		if (player != null) {
+			updateWeaponTimers ();
+			updateHealthBar ();
+			updatePlayerItems ();
+		} else {
+			//Tenta recuperar referencia perdida
+			recoverPlayerReference();
+		}
+
+		if (playerInSteam && condensationImg.color.a < 1) {
+			print ("Inc-ing");
+			Color c = condensationImg.color;
+			c.a+= condensationDelta * Time.deltaTime;
+			condensationImg.color = c;
+
+
+		} else if (!playerInSteam && condensationImg.color.a > 0) {
+			print ("Dec-ing");
+			Color c = condensationImg.color;
+			c.a-= condensationDelta * Time.deltaTime;
+			condensationImg.color = c;
+		}
+	}
+
+	#endregion
 
 	public void displayEndGameScreen(){
 		foreach (Transform child in transform) {
@@ -75,7 +108,7 @@ public class scr_HUDController : MonoBehaviour {
 
 
 	void updateWeaponTimers(){
-		Vector4 timers = player.GetComponent<scr_PA_Manager>().getCountdownTimers();
+		/*Vector4 timers = player.GetComponent<scr_PA_Manager>().getCountdownTimers();
 		if (timers.x != 0 && timers.y != 0) {
 			rightWeaponSlider.GetComponentInParent<CanvasGroup> ().alpha = 1;
 
@@ -92,10 +125,10 @@ public class scr_HUDController : MonoBehaviour {
 
 		if (timers.z != 0 && timers.w != 0) {
 			//float leftTime = timers.z / timers.w;// Tempo atual:total
-		}
+		}*/
 	}
 
-	void updatePlayerBars(){
+	void updateHealthBar(){
 
 		float playerMaxHp = playerHealth.getMaxHealth ();
 		float playerCurrentHp = playerHealth.getCurrentHealth ();
@@ -104,13 +137,18 @@ public class scr_HUDController : MonoBehaviour {
 			((playerCurrentHp / playerMaxHp) * 100).ToString ("0.#") + "%";
 
 		healthSlider.value = playerCurrentHp / playerMaxHp;
+	}
 
-
+	/// <summary>
+	/// Invoked by the player's Energy to update Energy bars
+	/// </summary>
+	void updateEnergyBars(){
+		print ("CHANGED");
 		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
 		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
 		energyText.text = "Energy " +
-		((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
+			((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
 
 		energySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
 	}
@@ -138,32 +176,6 @@ public class scr_HUDController : MonoBehaviour {
 	}
 
 
-	// Update is called once per frame
-	void Update () {
-		//Se o player não morreu
-		if (player != null) {
-			updateWeaponTimers ();
-			updatePlayerBars ();
-			updatePlayerItems ();
-		} else {
-			//Tenta recuperar referencia perdida
-			recoverPlayerReference();
-		}
-
-		if (playerInSteam && condensationImg.color.a < 1) {
-			print ("Inc-ing");
-			Color c = condensationImg.color;
-			c.a+= condensationDelta * Time.deltaTime;
-			condensationImg.color = c;
-
-
-		} else if (!playerInSteam && condensationImg.color.a > 0) {
-			print ("Dec-ing");
-			Color c = condensationImg.color;
-			c.a-= condensationDelta * Time.deltaTime;
-			condensationImg.color = c;
-		}
-	}
 		
 	public void setPlayerInSteam(bool inSteam, float condensationDelta){
 
@@ -182,7 +194,7 @@ public class scr_HUDController : MonoBehaviour {
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
             //updateWeaponTimers();
-            updatePlayerBars();
+			updateHealthBar();
         }
 	}
 }

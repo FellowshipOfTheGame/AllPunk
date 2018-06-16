@@ -23,6 +23,8 @@ public class scr_HealthController : MonoBehaviour {
 	//Usada para reduzir a força do knockback
 	[Range(0,1)]
 	public float poise;
+	//To play Audio
+	[SerializeField] scr_AudioClient audioClient;
 	//Referencia ao Rigidbody2D da entidade
 	private Rigidbody2D entityRigidBody;
 	//Verificando se o objeto está morto
@@ -42,6 +44,7 @@ public class scr_HealthController : MonoBehaviour {
     #endregion variables
 
     private void Awake(){
+		audioClient = (scr_AudioClient)GetComponent (typeof(scr_AudioClient));
 		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		currentHp = maxHp;
         animator = GetComponent<Animator>();
@@ -64,6 +67,7 @@ public class scr_HealthController : MonoBehaviour {
 
         if (canBeHurt)
         {
+			audioClient.playAudioClip ("Hurt", scr_AudioClient.sources.local);
             float netDamage = damage - this.defense;
             if (netDamage > 0)
                 this.currentHp -= netDamage;
@@ -125,6 +129,8 @@ public class scr_HealthController : MonoBehaviour {
 	 * @return void
 	 */
 	private void die (){
+		audioClient.playAudioClip ("Die", scr_AudioClient.sources.sfx);
+		StartCoroutine(waitInvinciTime());
 		Destroy(this.gameObject);
 	}
 

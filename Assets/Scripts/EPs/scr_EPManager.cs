@@ -80,6 +80,26 @@ public class scr_EPManager : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Retorna a referencia ao Script da arma atualmente equipada
+	/// </summary>
+	/// <returns>The current part.</returns>
+	/// <param name="type">Type.</param>
+	public scr_EP getCurrentPartRef(scr_EP.EpType type){
+		if(type == scr_EP.EpType.Arm){
+			return getCurrentPartRef(type, ArmToEquip.AnyArm);
+		}
+		switch(type) {
+		case scr_EP.EpType.Head:
+			return refHead;
+		case scr_EP.EpType.Torso:
+			return refTorso;
+		case scr_EP.EpType.Legs:
+			return refLegs;
+		}
+		return null;
+	}
+
+	/// <summary>
 	/// Retorna o nome do braço equipado no lado dado. Pode ser usado para ver outras partes também
 	/// </summary>
 	/// <param name="type">Tipo procurado.</param>
@@ -99,6 +119,28 @@ public class scr_EPManager : MonoBehaviour {
 				return currentLeftArm;
 		}
 		return "NULL";		
+	}
+
+	/// <summary>
+	/// Retorna o script da arma atualmente equipada
+	/// </summary>
+	/// <returns>The current part.</returns>
+	/// <param name="type">Type.</param>
+	/// <param name="arm">Arm.</param>
+	public scr_EP getCurrentPartRef(scr_EP.EpType type, ArmToEquip arm){
+		if(type != scr_EP.EpType.Arm){
+			return getCurrentPartRef(type);
+		}
+		switch(arm) {
+		case ArmToEquip.AnyArm:
+			Debug.LogWarning("Especificar qual braço quer examinar");
+			return null;
+		case ArmToEquip.RightArm:
+			return refRightArm;
+		case ArmToEquip.LeftArm:
+			return refLeftArm;
+		}
+		return null;		
 	}
 
 	// Use this for initialization
