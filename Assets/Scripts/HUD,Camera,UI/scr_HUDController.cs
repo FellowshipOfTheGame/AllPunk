@@ -16,7 +16,8 @@ public class scr_HUDController : MonoBehaviour {
 
 	private scr_HealthController playerHealth;
 	protected scr_PlayerEnergyController playerEnergy;
-	private scr_PlayerItemController playerItems;
+	private scr_PlayerItemController playerItemsScript;
+	private List<scr_Item> playerItemList;
 	private bool playerInSteam;
 
 	[Header("Sliders and Text")]
@@ -30,9 +31,8 @@ public class scr_HUDController : MonoBehaviour {
 	public Text rightWeaponText;
 	public Slider rightWeaponSlider;
 
-	public Text item1Text;
-	public Text item2Text;
-
+	public Text [] itemTexts;
+	public Image[] itemImages;
 	[Header("Images")]
 	public Image condensationImg;
 
@@ -46,7 +46,7 @@ public class scr_HUDController : MonoBehaviour {
 				player = scr_GameManager.instance.player;
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
-			playerItems = player.GetComponent<scr_PlayerItemController> ();
+			playerItemsScript = player.GetComponent<scr_PlayerItemController> ();
 			playerInSteam = false;
 
 			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
@@ -59,6 +59,9 @@ public class scr_HUDController : MonoBehaviour {
 
 	void Start(){
 		playerEnergy.addEnergyChangeCallback (updateEnergyBars);
+		playerHealth.addHealthChangeCallback (updateHealthBar);
+		playerItemsScript.addItemChangeCallback (updateItems);
+		playerItemList = playerItemsScript.getAllItems ();
 	}
 
 	// Update is called once per frame
@@ -66,10 +69,7 @@ public class scr_HUDController : MonoBehaviour {
 		//Se o player não morreu
 		if (player != null) {
 			updateWeaponTimers ();
-			updateHealthBar ();
-			updatePlayerItems ();
 		} else {
-			//Tenta recuperar referencia perdida
 			recoverPlayerReference();
 		}
 
@@ -106,7 +106,6 @@ public class scr_HUDController : MonoBehaviour {
 		transform.Find ("endGameText").gameObject.SetActive(false);
 	}
 
-
 	void updateWeaponTimers(){
 		/*Vector4 timers = player.GetComponent<scr_PA_Manager>().getCountdownTimers();
 		if (timers.x != 0 && timers.y != 0) {
@@ -128,6 +127,9 @@ public class scr_HUDController : MonoBehaviour {
 		}*/
 	}
 
+	/// <summary>
+	/// Invoked by the player's Health to Update the health bar.
+	/// </summary>
 	void updateHealthBar(){
 
 		float playerMaxHp = playerHealth.getMaxHealth ();
@@ -143,7 +145,6 @@ public class scr_HUDController : MonoBehaviour {
 	/// Invoked by the player's Energy to update Energy bars
 	/// </summary>
 	void updateEnergyBars(){
-		print ("CHANGED");
 		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
 		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
@@ -154,29 +155,21 @@ public class scr_HUDController : MonoBehaviour {
 	}
 
 
-	void updatePlayerItems(){
-		scr_Item item1 = playerItems.getItem (0);
-		if (item1 != null) {
-			int item1Curr = item1.getCurrQty ();
-			int item1Max = item1.getMaxQty ();
-			item1Text.text = item1Curr + "/" + item1Max;
+	/// <summary>
+	/// Invoked by the player's Energy to update the item UI Quantities
+	/// </summary>
+	void updateItems(){
+		int index = 0;
+		foreach (scr_Item item in playerItemList) {
+			if (item != null) {
+				itemImages [index].sprite = item.getItemSprite();
+				itemTexts [index].text = item.getCurrQty () + "/" + item.getMaxQty ();
+			} else
+				itemTexts [index].text = "N/A";
+			index++;
 		}
-		else
-			item1Text.text = "N/A";
-		
-		scr_Item item2 = playerItems.getItem (1);
-		if (item2 != null) {
-			int item2Curr = playerItems.getItem (1).getCurrQty ();
-			int item2Max = playerItems.getItem (1).getMaxQty ();
-			item2Text.text = item2Curr + "/" + item2Max;
-		}
-		else
-			item2Text.text = "N/A";
-
 	}
 
-
-		
 	public void setPlayerInSteam(bool inSteam, float condensationDelta){
 
 		//Verificação de equipamento, se tiver os goggles, sempre falso

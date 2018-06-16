@@ -37,6 +37,16 @@ public class scr_AudioClient : MonoBehaviour {
 		keyList = new List <string> (audioClips.Keys);
 	}
 
+	/// <summary>
+	/// Checks to see if there is a local audio source.
+	/// </summary>
+	/// <returns><c>true</c>, if local audio source exists, <c>false</c> otherwise.</returns>
+	public bool hasLocalAudioSource(){
+		if (localAudiosource != null)
+			return true;
+		else
+			return false;
+	}
 
 	/// <summary>
 	/// Plays an audio clip sotred in the clips dictionary

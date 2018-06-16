@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class scr_PlayerItemController : MonoBehaviour {
 
 	[SerializeField] List<scr_Item> playerItems = new List <scr_Item>();
 	[SerializeField] scr_AudioClient audioClient;
+	UnityEvent itemChangeCallback;
 
 	/// <summary>
 	/// Adds the item.
@@ -23,6 +25,7 @@ public class scr_PlayerItemController : MonoBehaviour {
 				//Within maximum quantity
 				if (newQty <= i.getMaxQty ()) {
 					i.setCurrQty (newQty);
+					itemChangeCallback.Invoke ();
 					return true;
 				} else {
 					//Exceeded Maximum quantity
@@ -31,9 +34,10 @@ public class scr_PlayerItemController : MonoBehaviour {
 			}
 		}
 
+
 		newItem.setPlayerReferences (this.gameObject);
 		playerItems.Add (newItem);
-
+		itemChangeCallback.Invoke ();
 		return true;
 	}
 
@@ -52,16 +56,48 @@ public class scr_PlayerItemController : MonoBehaviour {
 		return gotItem;
 	}
 
+	public List<scr_Item> getAllItems(){
+		return playerItems;
+	}
+
+	void Awake(){
+		if (itemChangeCallback == null)
+			itemChangeCallback = new UnityEvent();
+	}
 	void Update(){
 		///TEST INPUTS / FUNCTIONALITIES
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {
-			if(playerItems [0].useItem ())
+			if (playerItems [0].useItem ()) {
 				audioClient.playAudioClip ("Repair", scr_AudioClient.sources.sfx);
+				itemChangeCallback.Invoke ();
+			}
 		}
 
 		if (Input.GetKeyDown (KeyCode.Alpha2)) {
-			if(playerItems [1].useItem ())
+			if (playerItems [1].useItem ()) {
 				audioClient.playAudioClip ("Refuel", scr_AudioClient.sources.sfx);
+				itemChangeCallback.Invoke ();
+			}
 		}
 	}
+	private void OnDestroy()
+	{
+		if(itemChangeCallback != null)
+			itemChangeCallback.RemoveAllListeners();
+	}
+
+	#region Callback method
+	public void addItemChangeCallback(UnityAction call)
+	{
+		if(itemChangeCallback != null)
+			itemChangeCallback.AddListener(call);
+	}
+
+	public void removeItemChangeCallback(UnityAction call)
+	{
+		if(itemChangeCallback != null)
+			itemChangeCallback.RemoveListener(call);
+	}
+
+	#endregion
 }

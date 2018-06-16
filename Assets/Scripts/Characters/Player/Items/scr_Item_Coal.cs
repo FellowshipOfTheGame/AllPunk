@@ -8,7 +8,8 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 	[SerializeField] int currQty;
 	[SerializeField] int maxQty;
 	[SerializeField] int enInc;
-
+	[SerializeField] Sprite coalSprite;
+	[SerializeField] scr_AudioClipWrapper audioClipWrapper;
 	public scr_EP_Boiler playerBoiler;
 	#endregion
 
@@ -29,10 +30,6 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 
 	public bool useItem (){
 		///can only use the item If player has boiler equipped and has energy to increased
-
-		if (playerBoiler == null)
-			print ("PAU no PlayerBoiler");
-
 		if (playerBoiler != null && playerBoiler.burnCoal (enInc) && currQty > 0){
 			currQty--;
 			return true;
@@ -58,6 +55,15 @@ public class scr_Item_Coal : MonoBehaviour, scr_Item {
 			playerBoiler = null;
 	}
 
+	public Sprite getItemSprite ()
+	{
+		return coalSprite;
+	}
+
+	public scr_AudioClipWrapper getAudioClip ()
+	{
+		return audioClipWrapper;
+	}
 	#endregion
 
 

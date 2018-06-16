@@ -31,7 +31,7 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	private bool canRechargeReserve = true;
 
 	/// <summary>
-	/// The energy change callback, used to update the HUD
+	/// The change callback, used to update the HUD
 	/// </summary>
 	UnityEvent energyChangeCallback;
 	#endregion
@@ -95,7 +95,7 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	void Update () {
 
 		if (canRechargeReserve) {
-			currResEnergy = Mathf.Clamp (currResEnergy + reserveRechargeRate * Time.timeScale, 0, maxResEnergy);
+			currResEnergy = Mathf.Clamp (currResEnergy + reserveRechargeRate * Time.deltaTime, 0, maxResEnergy);
 
 			if(energyChangeCallback != null)
 				energyChangeCallback.Invoke ();

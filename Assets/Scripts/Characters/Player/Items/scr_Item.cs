@@ -7,6 +7,20 @@ using UnityEngine;
 /// </summary>
 public interface scr_Item {
 
+	#region AudioVisual Methods
+	/// <summary>
+	/// Gets the item sprite. Used for the UI
+	/// </summary>
+	/// <returns>The item sprite.</returns>
+	Sprite getItemSprite();
+
+	/// <summary>
+	/// Gets the audio clip to be played when the item is usedd
+	/// </summary>
+	/// <returns>The audio clip.</returns>
+	scr_AudioClipWrapper getAudioClip ();
+	#endregion
+
 	#region Quantity Methods
 	/// <summary>
 	/// Gets the current item quanity.

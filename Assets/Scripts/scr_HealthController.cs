@@ -41,8 +41,14 @@ public class scr_HealthController : MonoBehaviour {
 
     //Referencia para um sistema de eventos responsavel por feedback de knockback
     UnityEvent knockBackCallback;
+
+	/// <summary>
+	/// The change callback, used to update the HUD
+	/// </summary>
+	UnityEvent healthChangeCallback;
     #endregion variables
 
+	#region Monobehaviour methods
     private void Awake(){
 		audioClient = (scr_AudioClient)GetComponent (typeof(scr_AudioClient));
 		entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
@@ -53,8 +59,22 @@ public class scr_HealthController : MonoBehaviour {
         {
             knockBackCallback = new UnityEvent();
         }
+		if (healthChangeCallback == null)
+			healthChangeCallback = new UnityEvent ();
     }
 
+	private void OnDestroy()
+	{
+		if(knockBackCallback != null)
+		{
+			knockBackCallback.RemoveAllListeners();
+			healthChangeCallback.RemoveAllListeners ();
+		}
+
+	}
+	#endregion
+
+	#region health Methods
 	/**
 	 * Método usado para tomar dano.
 	 * O HP é alterado subtraindo damage - ou / defense
@@ -67,10 +87,20 @@ public class scr_HealthController : MonoBehaviour {
 
         if (canBeHurt)
         {
-			audioClient.playAudioClip ("Hurt", scr_AudioClient.sources.local);
+			
             float netDamage = damage - this.defense;
-            if (netDamage > 0)
-                this.currentHp -= netDamage;
+			if (netDamage > 0) {
+				this.currentHp -= netDamage;
+
+				///Plays the Audio
+				if(audioClient != null && audioClient.hasLocalAudioSource())
+					audioClient.playAudioClip ("Hurt", scr_AudioClient.sources.local);
+				else if(audioClient != null)
+					audioClient.playAudioClip ("Hurt", scr_AudioClient.sources.sfx);
+
+				if (healthChangeCallback != null)
+					healthChangeCallback.Invoke ();
+			}
             StartCoroutine(waitInvinciTime());
         }
         else
@@ -80,12 +110,13 @@ public class scr_HealthController : MonoBehaviour {
 		if (this.currentHp <= 0) {
 			this.isDead = true;
 			this.die ();
-		} else {
+		} 
+		else {
 			
 			//print("dir1 " + direction);
 			direction = direction * (1 - poise);//Poise para reduzir knockback
-                                                //this.transform.position += new Vector3 (0, direction.x, 0); //levemente levanta do chao
-                                                //print("dir2 " + direction);
+            
+			///Effect Knockback
 			if (direction.magnitude != 0) {
 				this.entityRigidBody.velocity = Vector2.zero;
 				this.entityRigidBody.AddForce (direction, ForceMode2D.Impulse);
@@ -97,7 +128,6 @@ public class scr_HealthController : MonoBehaviour {
             if (animator != null)
             {
                 animator.SetTrigger("Hurt");
-                //print("Ai");
             }
 		}
 	}
@@ -108,6 +138,7 @@ public class scr_HealthController : MonoBehaviour {
 	/// <param name="damage">Damage to remove.</param>
 	public void removeDamage(float damage){
 		this.currentHp = Mathf.Clamp (this.currentHp + damage, 0, this.maxHp);
+		healthChangeCallback.Invoke ();
 	}
 
 	public float getMaxHealth(){
@@ -120,10 +151,11 @@ public class scr_HealthController : MonoBehaviour {
 
 	public void setCurrentHealth(float newHP) {
 		currentHp = newHP;
+		healthChangeCallback.Invoke ();
 	}
 
 	/**
-	 * Método para ma		tar a entidade.
+	 * Método para matar a entidade.
 	 * Deve ser overwriten para efeitos de morte específicos
 	 * @param void
 	 * @return void
@@ -133,6 +165,7 @@ public class scr_HealthController : MonoBehaviour {
 		StartCoroutine(waitInvinciTime());
 		Destroy(this.gameObject);
 	}
+	#endregion
 
     private IEnumerator waitInvinciTime() {
         print("Começou");
@@ -142,6 +175,7 @@ public class scr_HealthController : MonoBehaviour {
         canBeHurt = true;
     }
 
+	#region callback Methods
     public void addKnockbackCallback(UnityAction call)
     {
         if(knockBackCallback != null)
@@ -154,12 +188,16 @@ public class scr_HealthController : MonoBehaviour {
             knockBackCallback.RemoveListener(call);
     }
 
-    private void OnDestroy()
-    {
-        if(knockBackCallback != null)
-        {
-            knockBackCallback.RemoveAllListeners();
-        }
+	public void addHealthChangeCallback(UnityAction call)
+	{
+		if(healthChangeCallback != null)
+			healthChangeCallback.AddListener(call);
+	}
 
-    }
+	public void removeHealthChangeCallback(UnityAction call)
+	{
+		if(healthChangeCallback != null)
+			healthChangeCallback.RemoveListener(call);
+	}
+	#endregion
 }

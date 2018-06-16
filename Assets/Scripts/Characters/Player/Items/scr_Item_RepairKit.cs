@@ -8,7 +8,8 @@ public class scr_Item_RepairKit : MonoBehaviour, scr_Item {
 	[SerializeField] int currQty;
 	[SerializeField] int maxQty;
 	[SerializeField] int hpInc;
-
+	[SerializeField] Sprite repairKitSprite;
+	[SerializeField] scr_AudioClipWrapper audioClipWrapper;
 	public scr_HealthController playerHealth;
 	#endregion
 
@@ -16,12 +17,10 @@ public class scr_Item_RepairKit : MonoBehaviour, scr_Item {
 	public int getCurrQty (){
 		return currQty;
 	}
-
-
+		
 	public void setCurrQty(int newQty){
 		currQty = Mathf.Clamp (newQty, 0, maxQty);
 	}
-
 
 	public int getMaxQty (){
 		return maxQty;
@@ -37,11 +36,21 @@ public class scr_Item_RepairKit : MonoBehaviour, scr_Item {
 			return false;
 	}
 
-
 	public void setPlayerReferences(GameObject playerObject){
 		playerHealth = playerObject.GetComponent<scr_HealthController> ();
 		//print ("PLAYA" + playerObject);
 	}
+
+	public Sprite getItemSprite ()
+	{
+		return repairKitSprite;
+	}
+
+	public scr_AudioClipWrapper getAudioClip ()
+	{
+		return audioClipWrapper;
+	}
+
 
 	#endregion
 
