@@ -14,7 +14,10 @@ public class scr_MovingPlataform : MonoBehaviour {
     public bool canMove = true;
     [Tooltip("A plataforma deve levar o jogador (AINDA NAO IMPLEMENTADO)")]
     public bool shouldCarry = true;
+    [Tooltip("Os tags do que a plataforma deve carregar")]
+    public string[] carryTag = {"Player", "Enemy"};
 
+    private Dictionary<Transform, Transform> previousParent;
 
     private Transform myTransform;
     private Vector3 direction;
@@ -28,6 +31,39 @@ public class scr_MovingPlataform : MonoBehaviour {
     {
         myTransform = transform;
         rb2d = GetComponent<Rigidbody2D>();
+        previousParent = new Dictionary<Transform, Transform>();
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        Transform otherTrans = other.transform;
+        bool canCarry = false;
+        string tag  = other.gameObject.tag;
+        foreach(string s in carryTag){
+            if(s.Equals(tag)){
+                canCarry = true;
+                break;
+            }
+        }
+        if(canCarry && !previousParent.ContainsKey(otherTrans)){
+            previousParent.Add(otherTrans,otherTrans.parent);
+            otherTrans.SetParent(myTransform);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D other) {
+        Transform otherTrans = other.transform;
+        bool canCarry = false;
+        string tag  = other.gameObject.tag;
+        foreach(string s in carryTag){
+            if(s.Equals(tag)){
+                canCarry = true;
+                break;
+            }
+        }
+        if(canCarry && previousParent.ContainsKey(otherTrans)){
+            otherTrans.parent = previousParent[otherTrans];
+            previousParent.Remove(otherTrans);
+        }
     }
 
     //Vai tentar mover a plataforma pelo caminho
@@ -42,6 +78,8 @@ public class scr_MovingPlataform : MonoBehaviour {
                 myTransform.position = movingPoints[0];
                 findNewTarget();
             }
+
+            myTransform.position += direction * speed * Time.deltaTime;
 
             //Verifica se passou do ponto
             Vector3 target = new Vector3(movingPoints[targetIndex].x, movingPoints[targetIndex].y, myTransform.position.z);
@@ -69,7 +107,7 @@ public class scr_MovingPlataform : MonoBehaviour {
                 targetIndex = 0;
                 direction = movingPoints[targetIndex] - movingPoints[currentIndex];
                 direction.Normalize();
-                rb2d.velocity = direction * speed;
+                //rb2d.velocity = direction * speed;
             }
             else
             {
@@ -85,7 +123,7 @@ public class scr_MovingPlataform : MonoBehaviour {
             myTransform.position = movingPoints[targetIndex - 1];
             direction = movingPoints[targetIndex] - movingPoints[currentIndex];
             direction.Normalize();
-            rb2d.velocity = direction * speed;
+            //rb2d.velocity = direction * speed;
         }
         print("Mudou para cur: " + currentIndex + " , next: " + targetIndex);
     }
