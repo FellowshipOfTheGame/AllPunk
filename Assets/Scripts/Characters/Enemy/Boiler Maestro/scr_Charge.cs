@@ -43,10 +43,10 @@ public class scr_Charge : FSM.State {
 	public override void Execute ()
 	{
 		if(!isRunning) {
-			if(boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Running")){
+			if(!hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Running")){
 				isRunning = true;
 			}
-			if(hasFinishedRunning && !boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("WarmDown")){
+			if(hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Move")){
 				FSM.State huntState;
 				connectedStates.TryGetValue("Hunt", out huntState);
 				stateMachine.transitionToState(huntState);
