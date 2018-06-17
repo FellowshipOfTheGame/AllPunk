@@ -112,6 +112,7 @@ public class scr_SaveStation : scr_Interactable
 
     private void updateDropdown()
     {
+        /* 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         scr_Player_Stats playerStats = player.GetComponent<scr_PA_Manager>().playerStats;
@@ -187,8 +188,10 @@ public class scr_SaveStation : scr_Interactable
         }
         drop.AddOptions(options);
 
+        */
     }
 
+    /*
     public void equipPart(scr_PA_Manager.PartType type, int id, bool isRight)
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -216,6 +219,7 @@ public class scr_SaveStation : scr_Interactable
                 break;
         }
     }
+    */
 
     private void heal(scr_Interactor interactor)
     {
@@ -269,7 +273,9 @@ public class scr_SaveStation : scr_Interactable
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        scr_Player_Stats playerStats = player.GetComponent<scr_PA_Manager>().playerStats;
+        //scr_Player_Stats playerStats = player.GetComponent<scr_PA_Manager>().playerStats;
+
+        /*
 
         //Right Hand
         if (origin == 0)
@@ -316,6 +322,7 @@ public class scr_SaveStation : scr_Interactable
             equipPart(scr_PA_Manager.PartType.Legs, id, true);
             print(origin + " " + drop.value);
         }
+        */
     }
 
 }

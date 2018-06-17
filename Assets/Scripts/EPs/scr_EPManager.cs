@@ -29,7 +29,8 @@ public class scr_EPManager : MonoBehaviour {
 	/// <summary>
 	/// Dicionário com string e status de desbloqueados
 	/// </summary>
-	public Dictionary<string, bool> UnlockedEPs;
+	[SerializeField]
+	public StringBoleanDictionary UnlockedEPs;
 
 	//Name of the equipped part
 	private string currentHead = "None";
@@ -143,10 +144,15 @@ public class scr_EPManager : MonoBehaviour {
 		return null;		
 	}
 
+	public StringBoleanDictionary getUnlockedParts(){
+		return UnlockedEPs;
+	}
+
+
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		EPDictionary = new Dictionary<string, scr_EP>();
-		UnlockedEPs = new Dictionary<string, bool>();
+		UnlockedEPs = new StringBoleanDictionary();
 		//Fix names on EP dictionary
 		foreach(scr_EP ep in EPs){
 			EPDictionary.Add(ep.getKeyName(), ep );
@@ -267,7 +273,7 @@ public class scr_EPManager : MonoBehaviour {
 	/// <param name="name">Chave da EP</param>
 	/// <returns>Sucesso ou não em equipar</returns>
 	public bool equipPart(string name){
-		if(UnlockedEPs.ContainsKey(name) || UnlockedEPs[name] == true){
+		if(UnlockedEPs.ContainsKey(name) && UnlockedEPs[name] == true){
 			scr_EP.EpType type = EPDictionary[name].getEpType();
 			if(type == scr_EP.EpType.Arm)
 				return equipPart(name, ArmToEquip.AnyArm);
@@ -532,6 +538,16 @@ public class scr_EPManager : MonoBehaviour {
 			refRightArm.GetComponent<scr_Weapon> ().enabled = isPause;
 		if(refLeftArm != null)
 			refLeftArm.GetComponent<scr_Weapon> ().enabled = isPause;
+	}
+
+	public void applyPlayerStats(scr_Player_Stats playerStats) {
+		UnlockedEPs.CopyFrom(playerStats.unlockedEPs);
+
+		equipPart(playerStats.headEquiped);
+		equipPart(playerStats.torsoEquiped);
+		equipPart(playerStats.legsEquiped);
+		equipPart(playerStats.leftWeaponEquiped, ArmToEquip.LeftArm);
+		equipPart(playerStats.rightWeaponEquiped, ArmToEquip.RightArm);
 	}
 
 }
