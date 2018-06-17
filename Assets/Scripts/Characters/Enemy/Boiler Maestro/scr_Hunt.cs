@@ -48,7 +48,8 @@ public class scr_Hunt : FSM.State{
 			stateMachine.transitionToState (nexState);
 		}
 		if (boilerMaestro.targetInRange (chargeRange)) {
-			print ("CAN CHARGE");
+			connectedStates.TryGetValue("Charge", out nexState);
+			stateMachine.transitionToState (nexState);
 		}
 
 		if (!boilerMaestro.hasFloor () || boilerMaestro.hasObstacle ())

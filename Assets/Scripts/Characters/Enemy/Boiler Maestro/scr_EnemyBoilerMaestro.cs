@@ -23,6 +23,10 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	private RaycastHit2D groundHit;
 	//Used in the obstacle check
 	private RaycastHit2D obstacleHit;
+	//Used in the collision check with player
+	private bool playerColliding = false;
+	//Reference do player found is collision
+	private GameObject playerCollisionRef;
 
 	private RaycastHit2D targetRangeHit;
 
@@ -92,6 +96,19 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	void OnTriggerExit2D(Collider2D col){
 		if (col.CompareTag ("Player")) {
 			target = null;
+		}
+	}
+	private void OnCollisionEnter2D(Collision2D other) {
+		if(other.gameObject.tag == ("Player")){
+			playerColliding = true;
+			playerCollisionRef = other.gameObject;
+		}
+	}
+
+	private void OnCollisionExit2D(Collision2D other) {
+		if(other.gameObject.tag == ("Player")){
+			playerColliding = false;
+			playerCollisionRef = null;
 		}
 	}
 		
@@ -192,6 +209,14 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			else
 				return false;
 		}
+	}
+
+	public bool isColidingWithPlayer() {
+		return playerColliding;
+	}
+
+	public GameObject playerCollisionReference(){
+		return playerCollisionRef;
 	}
 		
 	#endregion
