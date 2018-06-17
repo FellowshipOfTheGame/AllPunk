@@ -20,20 +20,26 @@ public class scr_HUDController : MonoBehaviour {
 	private List<scr_Item> playerItemList;
 	private bool playerInSteam;
 
-	[Header("Sliders and Text")]
+	[Header("Health")]
 
 	public Text healthText;
 	public Slider healthSlider;
+	[Header("Energy")]
 
-	public Text energyText;
-	public Slider energySlider;
+	public Text primEnergyText;
+	public Slider primEnergySlider;
+
+	public Text resEnergyText;
+	public Slider resEnergySlider;
+	[Header("Weapons")]
 
 	public Text rightWeaponText;
 	public Slider rightWeaponSlider;
+	[Header("Items")]
 
 	public Text [] itemTexts;
 	public Image[] itemImages;
-	[Header("Images")]
+	[Header("Condensation")]
 	public Image condensationImg;
 
 	#endregion
@@ -148,10 +154,16 @@ public class scr_HUDController : MonoBehaviour {
 		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
 		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
-		energyText.text = "Energy " +
-			((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
+		float playerMaxPrimEnergy = playerEnergy.getMaxResEnergy ();
+		float playerCurrentPrimEnergy = playerEnergy.getCurrentResEnergy ();
 
-		energySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
+		resEnergyText.text = "Reserve " +
+			((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
+		resEnergySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
+
+		primEnergyText.text = "Primary " + 
+			((playerCurrentPrimEnergy / playerMaxPrimEnergy) * 100).ToString ("0.#") + "%";
+		primEnergySlider.value = playerCurrentPrimEnergy / playerMaxPrimEnergy;
 	}
 
 
