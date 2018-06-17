@@ -168,10 +168,8 @@ public class scr_HealthController : MonoBehaviour {
 	#endregion
 
     private IEnumerator waitInvinciTime() {
-        print("Começou");
         canBeHurt = false;
         yield return new WaitForSeconds(invicibilityTime);
-        print("Parou");
         canBeHurt = true;
     }
 

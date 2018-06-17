@@ -15,7 +15,8 @@ public class scr_Smash : FSM.State {
 	float smashForce;
 
 	[SerializeField]
-	Collider2D[] attackColliders;
+	scr_TriggerEnterDamage[] attackColliders;
+
 
 	FSM.State nextState;
 
@@ -57,17 +58,20 @@ public class scr_Smash : FSM.State {
 			}
 		}*/
 
-		foreach (Collider2D hitCollider in attackColliders)
+		foreach (scr_TriggerEnterDamage hitCollider in attackColliders)
 		{
-			if (!hitCollider.isActiveAndEnabled)
-				continue;
-			Collider2D col = Physics2D.OverlapCircle (hitCollider.transform.position, 1f, LayerMask.GetMask ("Player"));
-
+			Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
+			/*if (!hitCollider.isActiveAndEnabled)
+				continue;*/
+			//Collider2D col = Physics2D.OverlapCircle (hitCollider.transform.position, 1f, LayerMask.GetMask ("Player"));
+			//Collider2D col = Physics2D.OverlapBox (hitCollider.transform.position, hitCollider.size, LayerMask.GetMask ("Player"));
+			/*Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
 			if (col != null && col.CompareTag ("Player")) {
 				scr_HealthController life = col.GetComponent<scr_HealthController>();
 				Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
 				life.takeDamage(smashDamage, attackDir*smashForce);
-			}
+			}*/
+			hitCollider.setParameters ("Player", smashDamage, smashForce, attackDir);
 		}
 	}
 

@@ -56,10 +56,18 @@ public class scr_Charge : FSM.State {
 		}
 
 		if(isRunning) {
-			
-			if(boilerMaestro.hasFloor() && !boilerMaestro.hasObstacle()){
+			if(!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle()){
+				boilerMaestro.animator.SetTrigger("FinishCharge");
+				boilerMaestro.animator.SetBool("Charge", false);
+				isRunning = false;
+				healthCont.poise = initialPoise;
+				hasFinishedRunning = true;
+				boilerMaestro.horizontalMove(0);
+			}
+			else{
 				boilerMaestro.horizontalMove(chargeSpeed);
 			}
+
 			if(!hasHit && boilerMaestro.isColidingWithPlayer()){
 				GameObject player = boilerMaestro.playerCollisionReference();
 				if(player != null){
@@ -69,17 +77,7 @@ public class scr_Charge : FSM.State {
 					hasHit = true;
 				}
 			}
-
-			if(!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle()){
-				boilerMaestro.animator.SetTrigger("FinishCharge");
-				boilerMaestro.animator.SetBool("Charge", false);
-				isRunning = false;
-				healthCont.poise = initialPoise;
-				hasFinishedRunning = true;
-				boilerMaestro.horizontalMove(0);
-			}
 		}
-
 	}
 
 	public override void Exit ()

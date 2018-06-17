@@ -13,9 +13,12 @@ public class scr_Hunt : FSM.State{
 	float huntSpeed;
 	[SerializeField]
 	float smashRange;
+	[Tooltip("Maximum distance to begin Charging")]
 	[SerializeField]
-	float chargeRange;
-
+	float maxChargeRange;
+	[Tooltip("Minimum distance to begin Charging")]
+	[SerializeField]
+	float minChargeRange;
 	FSM.State nexState;
 
 	#endregion
@@ -47,7 +50,7 @@ public class scr_Hunt : FSM.State{
 			connectedStates.TryGetValue("Smash", out nexState);
 			stateMachine.transitionToState (nexState);
 		}
-		if (boilerMaestro.targetInRange (chargeRange)) {
+		if (!boilerMaestro.targetInRange (minChargeRange) && boilerMaestro.targetInRange (maxChargeRange)) {
 			connectedStates.TryGetValue("Charge", out nexState);
 			stateMachine.transitionToState (nexState);
 		}
@@ -62,6 +65,7 @@ public class scr_Hunt : FSM.State{
 
 	public override void Exit ()
 	{
+		boilerMaestro.horizontalMove (0f);
 	}
 
 
