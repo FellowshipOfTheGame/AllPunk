@@ -53,6 +53,14 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 		return currResEnergy + currPrimEnergy;
 	}
 
+	public float getCurrentPrimEnergy(){
+		return currPrimEnergy;
+	}
+
+	public float getMaxPrimEnergy(){
+		return maxPrimEnergy;
+	}
+
 	public void setCurrentResEnergy(float newEnergy) {
 		currResEnergy = newEnergy;
 		if(currResEnergy > maxResEnergy)

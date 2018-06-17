@@ -6,67 +6,44 @@ using System;
 [Serializable]
 public class scr_Player_Stats {
 
-	[Header("Player properties")]
-	//Maximo da vida
+	[Header("Propriedades de vida")]
+	[Tooltip("Maximo da vida")]
 	public float maxHp;
-	//Vida atual
+	[Tooltip("Vida atual")]
 	public float currentHp;
-	//Defesa, usada para diminuir dano
+	[Tooltip("Defesa, usada para diminuir dano")]
 	public float defense;
+	[Tooltip("Poise, determina o quanto o jogador pode ser empurrado")]
 	public float poise;
-	//Energy variables - reserve
+	[Header("Propriedades de energia")]
+	[Tooltip("Quantidade atual de energia reserva")]
 	public float currentResEnergy;
+	[Tooltip("Quantidade máxima de enegia reserva")]
 	public float maxResEnergy;
+	[Tooltip("Taxa de recarga de energoa")]
 	public float rechargeRate;
+	[Tooltip("Quantidade atual de energia primária")]
 	//Energy variables - primary
 	public float currentPrimEnergy;
+	[Tooltip("Quantidade maxima de energia primária")]
 	public float maxPrimEnergy;
 
-	[Header("Equipped parts")]
-	public scr_PA_Manager.WeaponPart leftWeaponEquiped;
-	public scr_PA_Manager.WeaponPart rightWeaponEquiped;
-	public scr_PA_Manager.HeadPart headEquiped;
-	public scr_PA_Manager.LegPart legsEquiped;
-	public scr_PA_Manager.TorsoPart torsoEquiped;
+	[Header("Propriedades de equipamento")]
+	[SerializeField]
+	public StringBoleanDictionary unlockedEPs;
+	public string leftWeaponEquiped = "None";
+	public string rightWeaponEquiped = "None";
+	public string headEquiped = "None";
+	public string legsEquiped = "None";
+	public string torsoEquiped = "None";
 
-	[Header("Unlocked parts")]
-	[SerializeField]
-	public List<scr_PA_Manager.WeaponPart> unlockedWeapons;
-	[SerializeField]
-	public List<scr_PA_Manager.LegPart> unlockedLegs;
-	[SerializeField]
-	public List<scr_PA_Manager.TorsoPart> unlockedTorsos;
-	[SerializeField]
-	public List<scr_PA_Manager.HeadPart> unlockedHeads;
-
-	[Header("Save variables")]
-	//Save variables
-	/// <summary>
-	/// Name of the scene where the player saved for the last time
-	/// </summary>
+	[Header("Propriedades de save")]
+	[Tooltip("Nome da cena onde o jogador salvou pela última vez")]
 	public string savePointScene = "null";
-	/// <summary>
-	/// Name of the object which the game had saved
-	/// </summary>
+	[Tooltip("Nome do objecto onde foi salvo o jogo")]
 	public string savePointName = "null";
 
 	public scr_Player_Stats() {
-		leftWeaponEquiped = scr_PA_Manager.WeaponPart.None;
-		rightWeaponEquiped = scr_PA_Manager.WeaponPart.None;
-		headEquiped = scr_PA_Manager.HeadPart.None;
-		legsEquiped = scr_PA_Manager.LegPart.None;
-		torsoEquiped = scr_PA_Manager.TorsoPart.None;
-
-		unlockedWeapons = new List<scr_PA_Manager.WeaponPart>();
-		unlockedWeapons.Add(scr_PA_Manager.WeaponPart.None);
-
-		unlockedHeads = new List<scr_PA_Manager.HeadPart>();
-		unlockedHeads.Add(scr_PA_Manager.HeadPart.None);
-
-		unlockedLegs = new List<scr_PA_Manager.LegPart>();
-		unlockedLegs.Add(scr_PA_Manager.LegPart.None);
-
-		unlockedTorsos = new List<scr_PA_Manager.TorsoPart>();
-		unlockedTorsos.Add(scr_PA_Manager.TorsoPart.None);
+		unlockedEPs = new StringBoleanDictionary();
 	}
 }

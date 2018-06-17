@@ -5,7 +5,7 @@ using UnityEngine;
 //Bibliotecas para escrever e apagar arquivos
 using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+//using System.Runtime.Serialization.Formatters.Binary;
 
 /// <summary>
 /// Classe responsavel pelo gerenciamento de dados do jogador
@@ -40,12 +40,17 @@ public class scr_SaveManager {
     public bool Save(scr_Player_Stats newStats)
     {
         playerStats = newStats;
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/PlayerStatus.dat");
+        //BinaryFormatter bf = new BinaryFormatter();
+        //FileStream file = File.Create(Application.persistentDataPath + "/PlayerStatus.dat");
 
-        bf.Serialize(file, playerStats);
 
-        file.Close();
+        //bf.Serialize(file, playerStats);
+
+        //file.Close();
+
+        string dataAsJason = JsonUtility.ToJson(playerStats);
+
+        File.WriteAllText(Application.persistentDataPath + "/PlayerStatus.dat", dataAsJason);
 
         return true;
     }
@@ -60,11 +65,14 @@ public class scr_SaveManager {
         if (File.Exists(Application.persistentDataPath + "/PlayerStatus.dat"))
         {
 
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/PlayerStatus.dat", FileMode.Open);
+            //BinaryFormatter bf = new BinaryFormatter();
+            //FileStream file = File.Open(Application.persistentDataPath + "/PlayerStatus.dat", FileMode.Open);
+            string dataAsJason = File.ReadAllText(Application.persistentDataPath + "/PlayerStatus.dat");
+            playerStats =  JsonUtility.FromJson<scr_Player_Stats>(dataAsJason);
 
-            playerStats = (scr_Player_Stats)bf.Deserialize(file);
-            file.Close();
+
+            //playerStats = (scr_Player_Stats)bf.Deserialize(file);
+            //file.Close();
             hasLoaded = true;
             return playerStats;
         }

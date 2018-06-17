@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class scr_Equip_Button : MonoBehaviour {
-
+    /*
     public scr_PA_Manager.PartType partType;
     public int partID;
     public bool isRight;
@@ -59,5 +59,5 @@ public class scr_Equip_Button : MonoBehaviour {
             saveStation.equipPart(partType, partID, isRight);
         }
     }
-
+    */
 }
