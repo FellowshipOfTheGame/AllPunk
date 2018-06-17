@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(CircleCollider2D))]
 [RequireComponent(typeof(CapsuleCollider2D))]
 public class scr_GustavProjectile : MonoBehaviour {
 
@@ -26,7 +25,7 @@ public class scr_GustavProjectile : MonoBehaviour {
 		this.entityRigidBody = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
 		this.entityRigidBody.velocity = this.direction.normalized * speed;
 
-		this.Fire (new Vector2 (-1, -1), "Enemy");
+		this.Fire (direction, "Enemy");
 	}
 		
 	/// <summary>
@@ -37,12 +36,14 @@ public class scr_GustavProjectile : MonoBehaviour {
 	public void Fire (Vector2 fireDirection, string ownerTag){
 		this.ownerTag = ownerTag;
 		this.direction = fireDirection;
-		//print ("" + direction);
+
+		this.direction.Normalize ();
+		LookAt (direction);
 
 		if (this.direction.x < 1)
 			GetComponent<SpriteRenderer> ().flipX = true;
 		
-		this.entityRigidBody.velocity = this.direction.normalized * speed;
+		this.entityRigidBody.velocity = this.direction * speed;
 		audioClient.playAudioClip ("Flyby", scr_AudioClient.sources.local);
 	}
 
@@ -53,10 +54,13 @@ public class scr_GustavProjectile : MonoBehaviour {
 	/// <param name="ownerTag">Owner tag.</param>
 	public void FireStraight (Transform targetTransform, string ownerTag){
 		this.direction = targetTransform.position - transform.position;
-		if (this.direction.x < 1)
-			GetComponent<SpriteRenderer> ().flipX = true;
 
-		this.entityRigidBody.velocity = this.direction.normalized * speed;
+		this.direction.Normalize ();
+		LookAt (direction);
+		//if (this.direction.x < 1)
+		//	GetComponent<SpriteRenderer> ().flipX = true;
+
+		this.entityRigidBody.velocity = this.direction * speed;
 		audioClient.playAudioClip ("Flyby", scr_AudioClient.sources.local);
 	}
 
@@ -66,8 +70,8 @@ public class scr_GustavProjectile : MonoBehaviour {
 
 	void Die(){
 		
-		//Destroy (this.gameObject);
-		//Destroy (this);
+		Destroy (this.gameObject);
+		Destroy (this);
 	}
 
 	void OnCollisionEnter2D(Collision2D col){
@@ -96,5 +100,9 @@ public class scr_GustavProjectile : MonoBehaviour {
 	}
 
 
+	void LookAt(Vector2 lookAtDirection){
+		float rot_z = Mathf.Atan2 (lookAtDirection.y, lookAtDirection.x) * Mathf.Rad2Deg;
+		transform.rotation = Quaternion.Euler (0f, 0f, rot_z );
+	}
 
 }

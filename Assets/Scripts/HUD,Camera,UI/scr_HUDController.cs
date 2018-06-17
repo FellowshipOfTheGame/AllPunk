@@ -154,16 +154,21 @@ public class scr_HUDController : MonoBehaviour {
 		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
 		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
-		float playerMaxPrimEnergy = playerEnergy.getMaxResEnergy ();
-		float playerCurrentPrimEnergy = playerEnergy.getCurrentResEnergy ();
+		float playerMaxPrimEnergy = playerEnergy.getMaxPrimEnergy ();
+		float playerCurrentPrimEnergy = playerEnergy.getCurrentPrimEnergy ();
 
 		resEnergyText.text = "Reserve " +
 			((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
 		resEnergySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
 
-		primEnergyText.text = "Primary " + 
+		if (playerMaxPrimEnergy != 0) {
+			primEnergyText.text = "Primary " +
 			((playerCurrentPrimEnergy / playerMaxPrimEnergy) * 100).ToString ("0.#") + "%";
-		primEnergySlider.value = playerCurrentPrimEnergy / playerMaxPrimEnergy;
+			primEnergySlider.value = playerCurrentPrimEnergy / playerMaxPrimEnergy;
+		} else {
+			primEnergyText.text = "Not Equipped ";
+			primEnergySlider.value = 0;
+		}
 	}
 
 

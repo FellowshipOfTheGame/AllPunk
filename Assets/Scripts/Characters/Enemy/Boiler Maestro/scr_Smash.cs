@@ -17,6 +17,8 @@ public class scr_Smash : FSM.State {
 	[SerializeField]
 	scr_TriggerEnterDamage[] attackColliders;
 
+	[SerializeField]
+	scr_AudioClient audioClient;
 
 	FSM.State nextState;
 
@@ -25,6 +27,7 @@ public class scr_Smash : FSM.State {
 	public override void Enter ()
 	{
 		boilerMaestro.animator.SetTrigger ("Attack");
+		audioClient.playAudioClip ("Smash", scr_AudioClient.sources.local);
 	}
 
 	public override void Execute ()
