@@ -90,7 +90,7 @@ public class scr_GustavProjectile : MonoBehaviour {
 		Die ();
 	}
 
-	void OnTriggerStay2D(Collision2D col){
+	void OnTriggerStay2D(Collider2D col){
 		if (explode && !col.gameObject.CompareTag(ownerTag)) {
 			scr_HealthController health = col.gameObject.GetComponent<scr_HealthController> ();
 			if (health != null) {

@@ -14,9 +14,6 @@ public class scr_EnemyTripwireDamage : MonoBehaviour {
     [Tooltip("Forca recebida pelo jogador ao tocar no inimigo")]
 	[SerializeField] float repulseForce = 10f;
 
-	[SerializeField] Transform startPosition;
-	[SerializeField] Transform endPosition;
-
 	private Vector2 resultVector;
 	private RaycastHit2D targetRangeHit;
 
@@ -24,12 +21,9 @@ public class scr_EnemyTripwireDamage : MonoBehaviour {
     private bool canCauseDamage = true;
 
 	void Start(){
-		resultVector = endPosition.position - startPosition.position;
 	}
 
-	void Update(){
-		Debug.DrawLine(startPosition.position, endPosition.position, Color.red);
-		targetRangeHit = Physics2D.Raycast (startPosition.position, resultVector, resultVector.magnitude, LayerMask.GetMask ("Player"));
+	void OnTriggerStay2D(){
 
 		if (targetRangeHit.collider != null && targetRangeHit.collider.CompareTag ("Player")) {
 			scr_HealthController health = targetRangeHit.collider.gameObject.GetComponent<scr_HealthController>();
