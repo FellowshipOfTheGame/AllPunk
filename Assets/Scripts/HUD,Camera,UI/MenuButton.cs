@@ -17,6 +17,10 @@ public class MenuButton : MonoBehaviour
 	[Header("CREDITS")]
 	[SerializeField] GameObject creditsWindow;
 
+	[Header("OPTIONS")]
+	[SerializeField] GameObject optionsWindow;
+
+
     private void Start()
     {
         if(loadButton != null)
@@ -31,7 +35,6 @@ public class MenuButton : MonoBehaviour
     }
 
     public void ExitClick(){
-        print("Clicou em Exit");
         Application.Quit();
     }
 
@@ -50,13 +53,16 @@ public class MenuButton : MonoBehaviour
 
     public void creditsClick()
     {
-		//Opens/Closes the window
 		creditsWindow.SetActive(!creditsWindow.activeInHierarchy);
+		if (optionsWindow.activeInHierarchy)
+			optionsWindow.SetActive (false);
     }
 
     public void optionsClick()
     {
-        print("Clicou em options");
+		optionsWindow.SetActive(!optionsWindow.activeInHierarchy);
+		if (creditsWindow.activeInHierarchy)
+			creditsWindow.SetActive (false);
     }
 
 }
