@@ -5,7 +5,8 @@ using UnityEngine;
 public class scr_MovingPlataform : MonoBehaviour {
 
     [Tooltip("Pontos pelo qual a plataforma vai passar")]
-    public Vector2[] movingPoints;
+    public GameObject[] targetPoints;
+
     [Tooltip("Deve voltar ao ponto inicial e reiniciar o ciclo?")]
     public bool loop = true;
     [Tooltip("Velocidade da plataforma")]
@@ -17,6 +18,7 @@ public class scr_MovingPlataform : MonoBehaviour {
     [Tooltip("Os tags do que a plataforma deve carregar")]
     public string[] carryTag = {"Player", "Enemy"};
 
+    private List<Vector2> movingPoints;
     private Dictionary<Transform, Transform> previousParent;
 
     private Transform myTransform;
@@ -32,6 +34,11 @@ public class scr_MovingPlataform : MonoBehaviour {
         myTransform = transform;
         rb2d = GetComponent<Rigidbody2D>();
         previousParent = new Dictionary<Transform, Transform>();
+        movingPoints = new List<Vector2>();
+        for(int i = 0; i < targetPoints.Length; i++){
+            if(movingPoints != null)
+            movingPoints.Add(targetPoints[i].transform.position);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -69,7 +76,7 @@ public class scr_MovingPlataform : MonoBehaviour {
     //Vai tentar mover a plataforma pelo caminho
     private void Update()
     {
-        if (canMove && movingPoints.Length > 0) {
+        if (canMove && movingPoints.Count > 0) {
 
             //Caso seja o primeiro ponto
             if (currentIndex == -1)
@@ -100,7 +107,7 @@ public class scr_MovingPlataform : MonoBehaviour {
     private void findNewTarget()
     {
         targetIndex = currentIndex + 1;
-        if (targetIndex >= movingPoints.Length)
+        if (targetIndex >= movingPoints.Count)
         {
             if (loop)
             {
@@ -131,25 +138,29 @@ public class scr_MovingPlataform : MonoBehaviour {
     //Desenha o caminho que a plataforma vai fazer na cena
     private void OnDrawGizmos()
     {
-        for(int i = 0; i < movingPoints.Length; i++)
+        for(int i = 0; i < targetPoints.Length; i++)
         {
-            if (i + 1 < movingPoints.Length)
+            if(targetPoints[i] == null)
+                continue;
+            if (i + 1 < targetPoints.Length)
             {
+                if(targetPoints[i + 1] == null)
+                    continue;
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(movingPoints[i], movingPoints[i + 1]);
-                if (i == 0 || i == movingPoints.Length-1)
+                Gizmos.DrawLine(targetPoints[i].transform.position, targetPoints[i + 1].transform.position);
+                if (i == 0 || i == targetPoints.Length-1)
                     Gizmos.color = Color.green;
             }
             else if(loop)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawLine(movingPoints[i], movingPoints[0]);
+                Gizmos.DrawLine(targetPoints[i].transform.position, targetPoints[0].transform.position);
             }
             else
             {
                 Gizmos.color = Color.red;
             }
-            Gizmos.DrawWireSphere(movingPoints[i], 0.5f);
+            Gizmos.DrawWireSphere(targetPoints[i].transform.position, 0.5f);
         }
     }
 
