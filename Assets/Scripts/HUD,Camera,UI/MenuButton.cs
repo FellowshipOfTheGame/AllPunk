@@ -4,10 +4,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Used in the main menu exclusively.
+/// </summary>
+
 public class MenuButton : MonoBehaviour
 {
+	[Header("LOAD GAME")]
     public GameObject loadButton;
     public string scene;
+
+	[Header("CREDITS")]
+	[SerializeField] GameObject creditsWindow;
 
     private void Start()
     {
@@ -42,13 +50,13 @@ public class MenuButton : MonoBehaviour
 
     public void creditsClick()
     {
-        print("Clicou em creditos");
+		//Opens/Closes the window
+		creditsWindow.SetActive(!creditsWindow.activeInHierarchy);
     }
 
     public void optionsClick()
     {
         print("Clicou em options");
     }
-
 
 }
