@@ -11,6 +11,9 @@ public class scr_Gustav_Elevating_Plataform : MonoBehaviour {
 	public GameObject enemyPrefab;
 	[Tooltip("Deve spawnar entidades quando levanta")]
 	public bool shouldSpawn = false;
+	[Tooltip("Nome do objeto que possui o manager da batalha")]
+	public string nameManager = "GustavBattleManager";
+
 
 	public bool DEBUG_GO_UP = false;
 	public bool DEBUG_GO_DOWN = false;
@@ -18,6 +21,7 @@ public class scr_Gustav_Elevating_Plataform : MonoBehaviour {
 	private List<GameObject> spawnedEnemies;
 	private bool isElevated = false;
 	private Animator animator;
+	private scr_Gustav_Battle_Manager batMan;
 
 	private void Awake() {
 		animator = GetComponent<Animator>();
@@ -26,6 +30,15 @@ public class scr_Gustav_Elevating_Plataform : MonoBehaviour {
 			animator.SetBool("Spawn", true);
 		else
 			animator.SetBool("Spawn", false);
+	}
+
+	private void Start() {
+		GameObject manager = GameObject.Find(nameManager);
+		if(manager != null) {
+			batMan = manager.GetComponent<scr_Gustav_Battle_Manager>();
+			if(batMan != null)
+				batMan.addPlataform(this);
+		}
 	}
 
 	/// <summary>
@@ -50,9 +63,16 @@ public class scr_Gustav_Elevating_Plataform : MonoBehaviour {
 	/// Spawn enemies at the spawn points
 	/// </summary>
 	public void spawnEnemy() {
-		for(int i = 0; i < spawnPoints.Length; i++) {
+		int toSpawn = spawnPoints.Length;
+		for(int i = 0; i < spawnedEnemies.Count; i++){
+			if(spawnedEnemies[i] == null){
+				spawnedEnemies.RemoveAt(i);
+			}
+		}
+		toSpawn -= spawnedEnemies.Count;
+		for(int i = 0; i < toSpawn; i++) {
 			GameObject spawn = GameObject.Instantiate(enemyPrefab, spawnPoints[i].position, Quaternion.identity);
-			//spawnedEnemies.Add(spawn);
+			spawnedEnemies.Add(spawn);
 		}
 	}
 
