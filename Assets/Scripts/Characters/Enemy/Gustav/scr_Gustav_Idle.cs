@@ -5,6 +5,8 @@ using UnityEngine;
 public class scr_Gustav_Idle : FSM.State {
 
 	public scr_Gustav_Battle_Manager battleManager;
+	public float runningSpeed = 20;
+	public float transitionTime = 2;
 
 	private void Awake() {
 		stateMachine = GetComponent<FSM.StateMachine>();
@@ -31,6 +33,6 @@ public class scr_Gustav_Idle : FSM.State {
 
 	public override void Exit (){
 		//Começa a mover o cenário
-
+		battleManager.setBackgroundSpeed(runningSpeed, transitionTime);
 	}
 }

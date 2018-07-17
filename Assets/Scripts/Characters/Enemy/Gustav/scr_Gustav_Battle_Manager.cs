@@ -12,6 +12,8 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 	public Vector3 spawnOffset;
 	public float lifePorcent;
 	public scr_Gustav_Background_Scroller scroller;
+	public scr_HealthController healthController;
+
 
 	private FSM.StateMachine stateMachine;
 	private List<scr_Gustav_Elevating_Plataform> plataforms;
@@ -25,6 +27,8 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 
 	private void Start() {
 		player = GameObject.FindGameObjectWithTag("Player");
+		healthController.addHealthChangeCallback(updateLife);
+
 	}
 
 	void FixedUpdate(){
@@ -68,10 +72,33 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 		Debug.Log("TOCA SOM");
 	}
 
+	public void setBackgroundSpeed(float destinySpeed, float timeDelta) {
+		scroller.changeSpeed(destinySpeed,timeDelta);
+	}
+
+	public void setBackgroundImediateSpeed(float destinySpeed){
+		scroller.imediateChangeSpeed(destinySpeed);
+	}
+
 	public void shoot() {
 		GameObject projectile = GameObject.Instantiate(bulletPrefab,player.transform.position+bulletOffset, Quaternion.identity);
 		scr_GustavProjectile pScript = projectile.GetComponent<scr_GustavProjectile>();
 		pScript.FireStraight(player.transform, "Player");
+	}
+
+	public void spawnBattleWave(float quantity) {
+		GameObject toSpawn;
+		for(int i = 0; i < quantity; i++) {
+			bool side = Random.Range(0,1) < 0.5;
+			Vector3 positionToSpawn = spawnOffset;
+			if(side)
+				positionToSpawn.x *= -1;
+			toSpawn = GameObject.Instantiate(batpipperPrefab, player.transform.position + positionToSpawn, Quaternion.identity);
+		}
+	}
+
+	public void updateLife() {
+		lifePorcent = healthController.getCurrentHealth() / healthController.getMaxHealth();
 	}
 
 }
