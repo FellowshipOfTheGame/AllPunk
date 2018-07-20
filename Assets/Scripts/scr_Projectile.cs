@@ -28,7 +28,10 @@ public class scr_Projectile : MonoBehaviour {
 		this.direction = fireDirection;
 		//print ("" + direction);
 
-		if (this.direction.x < 1)
+		this.direction.Normalize ();
+		LookAt (direction);
+
+		if (this.direction.x > 1)
 			GetComponent<SpriteRenderer> ().flipX = true;
 		
 		this.entityRigidBody.velocity = this.direction.normalized * speed;
@@ -63,5 +66,10 @@ public class scr_Projectile : MonoBehaviour {
 		/*if (col.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 			Die ();
 		}*/
+	}
+
+	void LookAt(Vector2 lookAtDirection){
+		float rot_z = Mathf.Atan2 (lookAtDirection.y, lookAtDirection.x) * Mathf.Rad2Deg;
+		transform.rotation = Quaternion.Euler (0f, 0f, rot_z );
 	}
 }

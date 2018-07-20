@@ -58,7 +58,6 @@ public class scr_AudioManager : MonoBehaviour {
 	void Update(){
 		if (Input.GetKeyDown (KeyCode.T)) {
 			sfxSource.PlayOneShot (sfxSource.clip);
-			print ("KKK");
 		}
 	}
 		

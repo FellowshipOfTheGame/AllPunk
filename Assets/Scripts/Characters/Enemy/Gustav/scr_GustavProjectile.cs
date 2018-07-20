@@ -35,12 +35,14 @@ public class scr_GustavProjectile : MonoBehaviour {
 	public void Fire (Vector2 fireDirection, string damageTag){
 		this.damageTag = damageTag;
 		this.direction = fireDirection;
-		//print ("" + direction);
+
+		this.direction.Normalize ();
+		LookAt (direction);
 
 		if (this.direction.x < 1)
 			GetComponent<SpriteRenderer> ().flipX = true;
 		
-		this.entityRigidBody.velocity = this.direction.normalized * speed;
+		this.entityRigidBody.velocity = this.direction * speed;
 		audioClient.playAudioClip ("Flyby", scr_AudioClient.sources.local);
 	}
 
@@ -52,10 +54,13 @@ public class scr_GustavProjectile : MonoBehaviour {
 	public void FireStraight (Transform targetTransform, string damageTag){
 		this.damageTag = damageTag;
 		this.direction = targetTransform.position - transform.position;
-		if (this.direction.x < 1)
-			GetComponent<SpriteRenderer> ().flipX = true;
 
-		this.entityRigidBody.velocity = this.direction.normalized * speed;
+		this.direction.Normalize ();
+		LookAt (direction);
+		//if (this.direction.x < 1)
+		//	GetComponent<SpriteRenderer> ().flipX = true;
+
+		this.entityRigidBody.velocity = this.direction * speed;
 		audioClient.playAudioClip ("Flyby", scr_AudioClient.sources.local);
 
 		float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -101,6 +106,10 @@ public class scr_GustavProjectile : MonoBehaviour {
 			Die();
 	}
 
+	void LookAt(Vector2 lookAtDirection){
+		float rot_z = Mathf.Atan2 (lookAtDirection.y, lookAtDirection.x) * Mathf.Rad2Deg;
+		transform.rotation = Quaternion.Euler (0f, 0f, rot_z );
+	}
 
 
 }
