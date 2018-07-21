@@ -37,7 +37,7 @@ public abstract class scr_EP : MonoBehaviour {
 	public string getKeyName(){
 		return keyName;
 	}
-	public string geEpName(){
+	public string getEpName(){
 		return epName;
 	}
 	public string getDescription(){
