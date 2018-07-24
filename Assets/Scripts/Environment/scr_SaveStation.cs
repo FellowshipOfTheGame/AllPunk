@@ -64,7 +64,7 @@ public class scr_SaveStation : scr_Interactable
         {
             paused = true;
             scr_GameManager.instance.setPauseGame(true);
-            scr_GameManager.instance.canPause = false;
+            scr_HUDController.hudController.canPause = false;
         }
 
 
@@ -316,7 +316,7 @@ public class scr_SaveStation : scr_Interactable
         {
             paused = false;
             scr_GameManager.instance.setPauseGame(false);
-            scr_GameManager.instance.canPause = true;
+            scr_HUDController.hudController.canPause = true;
             animator.SetTrigger("Open");
 
         }

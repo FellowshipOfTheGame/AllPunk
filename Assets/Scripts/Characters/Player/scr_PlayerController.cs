@@ -145,6 +145,7 @@ public class scr_PlayerController : MonoBehaviour {
         if (health != null)
         {
             health.addKnockbackCallback(this.onKnockBack);
+			health.addDeathCallback(onDeath);
         }
     }
 		
@@ -365,6 +366,12 @@ public class scr_PlayerController : MonoBehaviour {
     {
         StartCoroutine(waitKnockback());
     }
+
+	private void onDeath(){
+		StopAllCoroutines();
+		underKnockback = true;
+		scr_GameManager.instance.startGameOver();
+	}
 
     private IEnumerator waitKnockback()
     {

@@ -13,16 +13,18 @@ public class scr_GameManager : MonoBehaviour {
 
 	public GameObject player;
 
-    public bool canPause = true;
+	public bool fadeOutOnLoad = true;
+
+	[Tooltip("Se houver algum outro sigma na cena durante o load, o jogo irá matar")]
+	public bool killRemainingPlayerOnLoad = true;
 
 	private GameObject exit;
-	public bool DEBUG_THEREISAEXIT = true;
 
 	private bool isPause = true;
 	private bool isGameOver;
 
 	//Variaveis responsaveis por tratar a transição de cenas
-	private string previusScene = "Null";
+	private string previusScene = "null";
 	private bool isLoading = false;
 
     private scr_SaveManager saveManager;
@@ -45,8 +47,6 @@ public class scr_GameManager : MonoBehaviour {
 		isPause = false;
 		isGameOver = false;
 
-		if(DEBUG_THEREISAEXIT)
-			exit = transform.Find ("trg_Exit").gameObject;
 
         //Carrega dados salvos
         saveManager = new scr_SaveManager();
@@ -66,28 +66,6 @@ public class scr_GameManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
-		if (!isGameOver) {
-			//Jogador morreu. Ele não pode morrer enquanto o jogo está carregando
-			if (!isLoading && player == null) {
-				endGame();
-			}
-
-			if (Input.GetButtonDown ("Cancel") && canPause) {
-				setPauseGame (isPause);
-			}
-
-
-		}
-
-		else {
-			if(Input.anyKeyDown){
-				//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-				isGameOver = false;
-				LoadGame();
-				GetComponentInChildren<scr_HUDController> ().hideEndGameScreen();
-			}
-		}
 		
 		if(Input.GetKeyDown(KeyCode.X)) {
 			Delete();
@@ -98,13 +76,10 @@ public class scr_GameManager : MonoBehaviour {
 		}
 	}
 
-	public void endGame(){		
-		GetComponentInChildren<scr_HUDController> ().displayEndGameScreen ();
-		isGameOver = true;
-        Delete();
-        AsyncOperation aOp = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
-
-    }
+	
+	public void startGameOver(){
+		scr_HUDController.hudController.displayEndGameScreen();
+	}
 
 	public void setPauseGame(bool pause){
 		isPause = !pause;
@@ -211,7 +186,11 @@ public class scr_GameManager : MonoBehaviour {
 	/// <param name="scene"></param>
 	/// <param name="scene2"></param>
 	private void OnSceneLoaded(Scene scene, Scene scene2) {
-
+		//Fazer com que a tela inicial não apareça HUD
+		if(scene2.name.Equals("MenuInicial")) {
+			setHudVisible(false);
+			return;
+		}
 		if(previusScene == "null")
 			return;
 
@@ -224,6 +203,14 @@ public class scr_GameManager : MonoBehaviour {
         else
         {
             scr_SceneManager sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+
+			//Kill other players that may be in scene
+			if(killRemainingPlayerOnLoad){
+				GameObject[] players;
+				players = GameObject.FindGameObjectsWithTag("Player");
+				foreach(GameObject g in players)
+					Destroy(g);
+			}
 
 			Transform target = sceneScript.positionToSpawnInScene(previusScene, playerStats);
             player = spawnPlayerOnTransform(target);
@@ -239,7 +226,24 @@ public class scr_GameManager : MonoBehaviour {
 		Vector3 playerPos = player.transform.position;
 		playerPos.z = cameraScript.transform.position.z;
 		cameraScript.transform.position = playerPos;
+
+		setHudVisible(true);
+		scr_HUDController.hudController.onLoadLevel();
+
+		if(fadeOutOnLoad){
+			setPauseGame(false);
+			scr_HUDController.hudController.canPause = false;
+			scr_HUDController.hudController.forceFadeOut(onFadeFinish);
+		}
+		else{
+			setPauseGame(false);
+		}
 		print("Scene is Loaded");
+	}
+
+	private void onFadeFinish() {
+		//setPauseGame(false);
+		scr_HUDController.hudController.canPause = true;
 	}
 
 	/// <summary>
@@ -278,7 +282,7 @@ public class scr_GameManager : MonoBehaviour {
 		
 	}
 
-	
+
 	private GameObject spawnPlayerOnTransform(Transform target) {
 		GameObject toSpawn = GameObject.Instantiate(playerPrefab, target.position, target.rotation);
 		
@@ -303,6 +307,17 @@ public class scr_GameManager : MonoBehaviour {
 		epman.applyPlayerStats(playerStats);
 
 		return toSpawn;
+	}
+
+	public void goToMainMenu() {
+		MoveToScene("MenuInicial");
+		previusScene = "null";
+	}
+
+	public void setHudVisible(bool visible){
+		Transform find = transform.Find("hud_Canvas");
+		if(find != null)
+			find.gameObject.SetActive(visible);
 	}
 
 	#endregion

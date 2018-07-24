@@ -177,6 +177,8 @@ public class scr_HealthController : MonoBehaviour {
 			Destroy(this.gameObject);
 		}
 		else{
+			StopAllCoroutines();
+			canBeHurt = false;
 			deathCallBack.Invoke();
 		}
 	}
