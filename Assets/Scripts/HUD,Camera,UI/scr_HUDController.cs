@@ -41,6 +41,7 @@ public class scr_HUDController : MonoBehaviour {
 	public Image[] itemImages;
 	[Header("Condensation")]
 	public Image condensationImg;
+	private bool playerHasGoogles = false;
 
 	[Header("Fade")]
 	public RawImage fadeImg;
@@ -255,9 +256,16 @@ public class scr_HUDController : MonoBehaviour {
 	public void setPlayerInSteam(bool inSteam, float condensationDelta){
 
 		//Verificação de equipamento, se tiver os goggles, sempre falso
+		if(!inSteam || (inSteam && !playerHasGoogles)){
+			playerInSteam = inSteam;
+			this.condensationDelta = condensationDelta;
+		}
+	}
 
-		playerInSteam = inSteam;
-		this.condensationDelta = condensationDelta;
+	public void setPlayerHasGoggles(bool hasGoggles){
+		playerHasGoogles = hasGoggles;
+		if(playerInSteam && playerHasGoogles)
+			playerInSteam = false;
 	}
 
 	/// <summary>
