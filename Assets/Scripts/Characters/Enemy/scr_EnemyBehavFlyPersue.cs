@@ -28,6 +28,9 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     [Range(0, 2)]
     public float knockbackTime = 0.5f;
 
+    [Header("Sound")]
+    public scr_AudioClient audioClient;
+
     //Transform que vai ser rotacionado
     private Transform myTransform;
     //Angulo inicial do personagem de orientacao
@@ -42,6 +45,24 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     private bool underKnockback = false;
     private Animator animator;
 
+
+    [Header("Attack variables")]    
+    [Tooltip("Dano recebido pelo jogador ao tocar no inimigo")]
+	[SerializeField] float touchDamage = 10f;
+    [Tooltip("Forca recebida pelo jogador ao tocar no inimigo")]
+	[SerializeField] float repulseForce = 10f;
+	[Tooltip("Tempo de cooldown entre danos")]
+	[SerializeField]
+	float cooldownTimer = 0.5f;
+    [Tooltip("Deve parar depois de atacar")]
+    public bool stopAfterAttack = true;
+
+	private Vector2 resultVector;
+
+    //O inimigo pode causar dano ou nao (ligado ao tempo de cooldown
+    private bool canCauseDamage = true;
+
+
     private void Awake()
     {
         myTransform = transform;
@@ -55,8 +76,12 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
 
     private void Start()
     {
-        if (!useDetectRange)
+        if (!useDetectRange){
             animator.SetFloat("HorizontalSpeed", 1);
+            if(audioClient != null){
+                audioClient.playAudioClip("Detect",scr_AudioClient.sources.local);
+            }
+        }
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         if (receiveKnockback)
         {
@@ -70,8 +95,12 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Player") {
             canSee = true;
-            if(useDetectRange)
+            if(useDetectRange){
                 animator.SetFloat("HorizontalSpeed", 1);
+                if(audioClient != null){
+                    audioClient.playAudioClip("Detect",scr_AudioClient.sources.local);
+                }
+            }
         }
     }
 
@@ -92,7 +121,7 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
-        if (playerTransform != null && !underKnockback)
+        if (playerTransform != null && !underKnockback && canCauseDamage)
         {
             //Verificar se deve perseguir ou não
             if (!useDetectRange || canSee) {
@@ -155,5 +184,39 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
         }
         underKnockback = false;
     }
+
+
+	private void OnCollisionStay2D(Collision2D targetRangeHit) {
+		
+		if (canCauseDamage && targetRangeHit.collider.CompareTag ("Player")) {
+			scr_HealthController health = targetRangeHit.collider.gameObject.GetComponent<scr_HealthController>();
+			resultVector = targetRangeHit.transform.position - transform.position;
+			resultVector.Normalize();
+			if (health != null)
+			{
+				//health.takeDamage(touchDamage, -1 * targetRangeHit.rigidbody.velocity.normalized * repulseForce);
+				if(resultVector.x >= 0)
+					health.takeDamage(touchDamage, Vector2.right * repulseForce);
+				else
+					health.takeDamage(touchDamage, Vector2.left * repulseForce);		
+			}
+			canCauseDamage = false;
+			StartCoroutine(waitCooldown());
+            if(stopAfterAttack){
+                rb2d.velocity = Vector2.zero;
+                currentVelocity = Vector2.zero;
+            }
+		}
+	}
+
+	private IEnumerator waitCooldown(){
+		float counter = 0;
+		while(counter < cooldownTimer){
+			counter += Time.deltaTime;
+			yield return null;
+		}
+		canCauseDamage = true;
+	}
+		
 
 }

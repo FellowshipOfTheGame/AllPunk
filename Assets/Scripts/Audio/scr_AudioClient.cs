@@ -73,6 +73,34 @@ public class scr_AudioClient : MonoBehaviour {
 
 	}
 
+	public bool playLoopClip(string key, scr_AudioClient.sources source){
+		if (!audioClips.ContainsKey (key)) {
+			Debug.LogWarning ("AudioClient Warning - Key not found!");
+			return false;
+		}
+
+		scr_AudioClipWrapper wrapper;
+		audioClips.TryGetValue (key, out wrapper);
+
+		switch (source) {
+		case sources.local:
+			localAudiosource.clip = wrapper.clip;
+			localAudiosource.loop = wrapper.loop;
+			localAudiosource.pitch = wrapper.pitch;
+			localAudiosource.Play();
+			return true;
+		default:
+			return scr_AudioManager.instance.playClipOnce (wrapper, source);
+		}
+
+	}
+
+	public void stoplocalClip(){
+		if(localAudiosource != null){
+			localAudiosource.Stop();
+		}
+	}
+
 	/// <summary>
 	/// Plays a random clip stored in the dictionary
 	/// </summary>
