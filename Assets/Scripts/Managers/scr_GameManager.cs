@@ -186,6 +186,22 @@ public class scr_GameManager : MonoBehaviour {
 	/// <param name="scene"></param>
 	/// <param name="scene2"></param>
 	private void OnSceneLoaded(Scene scene, Scene scene2) {
+
+		//Fazer tocar a musica da cena
+		GameObject sceneManager = GameObject.Find("SceneManager");
+		scr_SceneManager sceneScript = null;
+		if(sceneManager != null){
+            sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+			if(sceneScript != null && sceneScript.musicClip != null){
+				if(scr_AudioManager.instance.isPlayingMusic()){
+					scr_AudioManager.instance.changeToMusic(sceneScript.musicTransitionTime,sceneScript.musicClip);
+				}
+				else{
+					scr_AudioManager.instance.playClipOnce(sceneScript.musicClip, scr_AudioClient.sources.music);
+				}
+			}
+		}
+
 		//Fazer com que a tela inicial não apareça HUD
 		if(scene2.name.Equals("MenuInicial")) {
 			setHudVisible(false);
@@ -194,7 +210,7 @@ public class scr_GameManager : MonoBehaviour {
 		if(previusScene == "null")
 			return;
 
-		GameObject sceneManager = GameObject.Find("SceneManager");
+		
         if (sceneManager == null)
         {
             print("Cant find Scene Manager");
@@ -202,7 +218,8 @@ public class scr_GameManager : MonoBehaviour {
         }
         else
         {
-            scr_SceneManager sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+			if(sceneScript == null)
+           		sceneScript = sceneManager.GetComponent<scr_SceneManager>();
 
 			//Kill other players that may be in scene
 			if(killRemainingPlayerOnLoad){

@@ -13,6 +13,12 @@ public class scr_SceneManager : MonoBehaviour {
 	/// </summary>
 	public Transform[] neighboorScenesDestination;
 	public GameObject playerPrefab;
+	
+	[Header("Musica")]
+	//Musica principal
+	[SerializeField]
+	public scr_AudioClipWrapper musicClip;
+	public float musicTransitionTime = 1f;
 
 	public Transform positionToSpawnInScene(string originScene, scr_Player_Stats playerStats) {
 		Transform result = null;
