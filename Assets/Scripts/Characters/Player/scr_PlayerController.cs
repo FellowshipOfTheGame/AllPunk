@@ -268,12 +268,12 @@ public class scr_PlayerController : MonoBehaviour {
 
 		/*Array de todos os colliders que colidem com os pés do jogador.
 		 * recebe de argumento um Vector2, raio do círculo*/
-		bool isGrounded = true;
+		bool isGrounded = false;
 
-		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.3f);
+		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.01f);
 
 		foreach (Collider2D obj in array) {
-
+			Debug.Log("Estou tocando: "+ obj.gameObject.name);
 			//Verificação manual da layer
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 				isGrounded = true;
