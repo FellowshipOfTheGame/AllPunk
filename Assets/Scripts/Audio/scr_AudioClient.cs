@@ -48,6 +48,10 @@ public class scr_AudioClient : MonoBehaviour {
 			return false;
 	}
 
+	public void playLocalClip(string key){
+		playAudioClip(key, sources.local);
+	}
+
 	/// <summary>
 	/// Plays an audio clip sotred in the clips dictionary
 	/// </summary>
@@ -65,6 +69,8 @@ public class scr_AudioClient : MonoBehaviour {
 
 		switch (source) {
 		case sources.local:
+			localAudiosource.volume = wrapper.volume;
+			localAudiosource.pitch = wrapper.pitch;
 			localAudiosource.PlayOneShot (wrapper.clip, wrapper.volume);
 			return true;
 		default:
@@ -122,6 +128,12 @@ public class scr_AudioClient : MonoBehaviour {
 		default:
 			return scr_AudioManager.instance.playClipOnce (wrapper, source);
 		}
+	}
+
+	public scr_AudioClipWrapper getWrapper(string key){
+		scr_AudioClipWrapper wrapper;
+		audioClips.TryGetValue (key, out wrapper);
+		return wrapper;
 	}
 		
 }

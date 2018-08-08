@@ -12,6 +12,14 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
     [Tooltip("O personagem possui um trigger para detectar o jogador a distancia")]
     public bool useDetectRange;
 
+    [Tooltip("Deve continuar seguindo o personagem, mesmo tendo perdido visão")]
+    public bool persueAfterSeen = true;
+
+    [Tooltip("Sobrevida após morrer")]
+    public float timeTillDie = 2f;
+
+    private bool hasDetected = false;
+
     [Header("Movimento")]
     [Tooltip("Velocidade desejada de movimento")]
     public float maxMovementSpeed = 5f;
@@ -81,14 +89,18 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
             if(audioClient != null){
                 audioClient.playAudioClip("Detect",scr_AudioClient.sources.local);
             }
+            hasDetected = true;
         }
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        scr_HealthController health = GetComponent<scr_HealthController>();
+
         if (receiveKnockback)
         {
-            scr_HealthController health = GetComponent<scr_HealthController>();
             if (health != null)
                 health.addKnockbackCallback(this.onKnockback);
         }
+
+        health.addDeathCallback(onDeath);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -100,6 +112,7 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
                 if(audioClient != null){
                     audioClient.playAudioClip("Detect",scr_AudioClient.sources.local);
                 }
+                hasDetected = true;
             }
         }
     }
@@ -124,7 +137,7 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
         if (playerTransform != null && !underKnockback && canCauseDamage)
         {
             //Verificar se deve perseguir ou não
-            if (!useDetectRange || canSee) {
+            if (!useDetectRange || canSee || (hasDetected && persueAfterSeen)) {
                 Vector2 diference = playerTransform.position - myTransform.position;
                 currentVelocity += diference.normalized * responseTime * Time.deltaTime;
                 if (currentVelocity.magnitude >= maxMovementSpeed)
@@ -157,6 +170,19 @@ public class scr_EnemyBehavFlyPersue : MonoBehaviour {
             }
         }
 
+    }
+
+    private void onDeath() {
+        animator.SetTrigger("Dead");
+        StopAllCoroutines();
+        underKnockback = true;
+        canCauseDamage = false;
+        gameObject.layer = 14;
+        // gameObject.layer = LayerMask.NameToLayer("Corpse");
+        rb2d.gravityScale = 1;
+        rb2d.freezeRotation = false;
+        Destroy(gameObject, timeTillDie);
+        Destroy(this);
     }
 
     private void onKnockback() {

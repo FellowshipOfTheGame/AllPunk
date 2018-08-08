@@ -84,6 +84,8 @@ abstract public class scr_Weapon : scr_EP {
     protected bool armAnimationPlaying = false;
     //Distancia em forma quadrada (reduzir processamento)
     protected float squaredAnimationDistance;
+    //Corotina sendo usada
+    protected Coroutine playingCoroutine = null; 
 
     #endregion Variables
 
@@ -230,7 +232,7 @@ abstract public class scr_Weapon : scr_EP {
 
             //Verifica se o jogador estava em animação ou não e para a animação caso esteja
             if (armAnimationPlaying)
-                stopArmAnimation();
+                imediateStopArmAnimation();
             else
                 animCounter = timeToAnimate;
 
@@ -273,6 +275,7 @@ abstract public class scr_Weapon : scr_EP {
         this.ik = ik;
         ikLimb = ik.GetComponent<IkLimb2D>();
         ikLimb.weight = 1;
+        Debug.Log("Setou");
 
         if (!followMouse)
         {
@@ -372,13 +375,25 @@ abstract public class scr_Weapon : scr_EP {
     protected void startArmAnimation()
     {
         armAnimationPlaying = true;
-        StartCoroutine(changeIKWeight(1f,0f, animationTransitionTime*2));
+        if(playingCoroutine != null)
+            StopCoroutine(playingCoroutine);
+        playingCoroutine = StartCoroutine(changeIKWeight(1f,0f, animationTransitionTime*2));
     }
 
     protected void stopArmAnimation() {
         animCounter = timeToAnimate;
         armAnimationPlaying = false;
-        StartCoroutine(changeIKWeight(0f, 1f, animationTransitionTime));
+        if(playingCoroutine != null)
+            StopCoroutine(playingCoroutine);
+        playingCoroutine = StartCoroutine(changeIKWeight(0f, 1f, animationTransitionTime));
+    }
+
+    protected void imediateStopArmAnimation() {
+        if(playingCoroutine != null)
+            StopCoroutine(playingCoroutine);
+        animCounter = timeToAnimate;
+        armAnimationPlaying = false;
+        ikLimb.weight = 1;
     }
 
     protected IEnumerator changeIKWeight(float initialValue, float finalValue, float time)

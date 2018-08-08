@@ -11,6 +11,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	[SerializeField] scr_AudioClient audioClient;
 	[SerializeField] scr_HealthController healthController;
 
+	[SerializeField] ParticleSystem particleSystem;
 	public Rigidbody2D rb2D;
 	public Animator animator;
 
@@ -51,6 +52,13 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			target = value;
 		}
 	}
+
+	[Tooltip("Distancia onde é considerado que o inimigo não deve virar")]
+	[SerializeField]
+	float faceThreshold = 1;
+
+	[Tooltip("Tempo de sobrevida depois de morto")]
+	public float timeToDestroy = 1f;
 	#endregion
 
 	#region MonoBehavior methods
@@ -72,6 +80,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	void Start(){
 		height = capCollider.size.y;
 		healthController.addKnockbackCallback (onKnockBack);
+		healthController.addDeathCallback(onDeath);
 		underKnockback = false;
 	}
 
@@ -121,7 +130,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 
 		///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
 		//groundHit = Physics2D.Raycast (transform.position + height, Vector2.down, height, 1 << LayerMask.NameToLayer("Ground"));
-		groundHit = Physics2D.Raycast (groundCheckOrigin.position, Vector2.down, height*1.5f, LayerMask.GetMask("Ground"));
+		groundHit = Physics2D.Raycast (transform.position, Vector2.down, height*1.5f, LayerMask.GetMask("Ground"));
 		Debug.DrawLine (transform.position, transform.position + new Vector3 (0, -height*1.5f, 0), Color.yellow);
 
 		if (groundHit.collider != null) {
@@ -238,9 +247,11 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	/// </summary>
 	public void faceTarget(){
 		if (Target != null) {
-			if (Target.transform.position.x < transform.position.x && IsFacingRight)
+			// if (Target.transform.position.x < transform.position.x && IsFacingRight)
+			if (Target.transform.position.x - transform.position.x < -faceThreshold && IsFacingRight)
 				Flip ();
-			else if (Target.transform.position.x > transform.position.x && !IsFacingRight)
+			// else if (Target.transform.position.x > transform.position.x && !IsFacingRight)
+			else if (Target.transform.position.x - transform.position.x > faceThreshold && !IsFacingRight)
 				Flip ();
 		}
 	}
@@ -261,6 +272,9 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		animator.SetFloat ("VerticalSpeed", rb2D.velocity.y);
 	}
 
+	public void playParticle(){
+		particleSystem.Play();
+	}
 
 	#endregion
 
@@ -279,5 +293,15 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			yield return null;
 		}
 		underKnockback = false;
+	}
+
+	private void onDeath(){
+		StopAllCoroutines();
+		underKnockback = true;
+		gameObject.layer = 14;
+		// gameObject.layer = LayerMask.GetMask("Corpse");
+		animator.SetTrigger("Died");
+		Destroy(gameObject,timeToDestroy);
+		Destroy(this);
 	}
 }

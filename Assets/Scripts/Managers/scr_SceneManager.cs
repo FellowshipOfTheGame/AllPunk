@@ -33,7 +33,7 @@ public class scr_SceneManager : MonoBehaviour {
 				}
 			}
 			if(findIndex == -1) {
-				print("Can't find origin scene in the new Scene. SceneName: " + originScene);
+				Debug.LogWarning("Can't find origin scene in the new Scene. SceneName: " + originScene);
 				return result;
 			}
 

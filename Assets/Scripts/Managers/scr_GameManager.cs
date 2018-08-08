@@ -172,7 +172,10 @@ public class scr_GameManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="newScene">Cena para qual se deseja mover</param>
 	public void MoveToScene(string newScene) {
-		previusScene = SceneManager.GetActiveScene().name;
+		string previusScenePath = SceneManager.GetActiveScene().path;
+		string[] separator = {"Scenes/", ".unity"};
+		previusScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
+
 		updatePlayerStats();
 		string completePath = "Scenes/" + newScene;
 		isLoading = true;
