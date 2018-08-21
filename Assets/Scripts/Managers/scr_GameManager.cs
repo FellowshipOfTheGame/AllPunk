@@ -57,6 +57,9 @@ public class scr_GameManager : MonoBehaviour {
 			Save();
 		}
 		
+		if(player == null) {
+			player = GameObject.FindGameObjectWithTag("Player");
+		}
 
 		previusScene = "null";
 		SceneManager.activeSceneChanged += OnSceneLoaded;
@@ -238,14 +241,21 @@ public class scr_GameManager : MonoBehaviour {
 
 		//Update instances
 		isLoading = false;
-		scr_CameraController cameraScript = Camera.main.GetComponent<scr_CameraController>();
-        cameraScript = Camera.main.GetComponent<scr_CameraController>();
-		cameraScript.player = player;
+		scr_Camera_Follow_Mouse cameraScript = Camera.main.GetComponent<scr_Camera_Follow_Mouse>();
+		if(cameraScript != null) {
+			cameraScript.player = player.transform;
+		}
+		//Legacy
+		else {
+			scr_CameraController oldController =  Camera.main.GetComponent<scr_CameraController>();
+			if(oldController != null)
+				oldController.player = player;
+		}
 
 		//Ajust camera position
 		Vector3 playerPos = player.transform.position;
-		playerPos.z = cameraScript.transform.position.z;
-		cameraScript.transform.position = playerPos;
+		playerPos.z = Camera.main.transform.position.z;
+		Camera.main.transform.position = playerPos;
 
 		setHudVisible(true);
 		scr_HUDController.hudController.onLoadLevel();
