@@ -1,0 +1,432 @@
+fileFormatVersion: 2
+guid: 9ce45040d924df04ea662aca043dc8c1
+timeCreated: 1534978918
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: tile_padrao_branco_0
+    21300002: tile_padrao_branco_1
+    21300004: tile_padrao_branco_2
+    21300006: tile_padrao_branco_3
+    21300008: tile_padrao_branco_4
+    21300010: tile_padrao_branco_5
+    21300012: tile_padrao_branco_6
+    21300014: tile_padrao_branco_7
+    21300016: tile_padrao_branco_8
+    21300018: tile_padrao_branco_9
+    21300020: tile_padrao_branco_10
+    21300022: tile_padrao_branco_11
+    21300024: tile_padrao_branco_12
+    21300026: tile_padrao_branco_13
+    21300028: tile_padrao_branco_14
+  externalObjects: {}
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -1
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 256
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tile_padrao_branco_0
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 768
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: 128}
+        - {x: -128, y: -2}
+        - {x: -53.212677, y: -2}
+        - {x: -18.075348, y: 14.500732}
+        - {x: 2, y: 45.54651}
+        - {x: 2, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_1
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 768
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -2, y: 128}
+        - {x: -1.5147705, y: 52.246338}
+        - {x: 15.142395, y: 17.240723}
+        - {x: 42.9115, y: -0.059020996}
+        - {x: 128, y: -0.5442505}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_2
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 768
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: 128}
+        - {x: -128, y: -2}
+        - {x: 128, y: -2}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -56.511818, y: 2.4852295}
+        - {x: -128, y: 2}
+        - {x: -128, y: -128}
+        - {x: 2, y: -128}
+        - {x: 2, y: -47.646057}
+        - {x: -20.764023, y: -10.160767}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 2, y: -128}
+        - {x: 2, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_5
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -51.705017, y: 2}
+        - {x: -128, y: 2}
+        - {x: -128, y: -128}
+        - {x: 2, y: -128}
+        - {x: 2, y: -51.439575}
+        - {x: -17.190308, y: -18.088501}
+      - - {x: -2, y: 128}
+        - {x: -2, y: 51.82013}
+        - {x: 19.376953, y: 14.437988}
+        - {x: 53.983765, y: -2}
+        - {x: 128, y: -2}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_6
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 512
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 2, y: -128}
+        - {x: 0.080322266, y: -53.72003}
+        - {x: 16.60962, y: -19.998474}
+        - {x: 48.735413, y: -2.3763428}
+        - {x: 128, y: -3}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 47.557526, y: 2.48526}
+        - {x: 15.042786, y: -19.42627}
+        - {x: -2, y: -54.954285}
+        - {x: -2, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 2}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_8
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 52.51181, y: 2}
+        - {x: 13.17395, y: -20.056335}
+        - {x: -2.48526, y: -57.013306}
+        - {x: -2, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 2}
+      - - {x: -128, y: 128}
+        - {x: -128, y: -2}
+        - {x: -55.498535, y: -2.48526}
+        - {x: -16.802216, y: 16.626984}
+        - {x: 1.51474, y: 52.93808}
+        - {x: 2, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_9
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -2, y: 128}
+        - {x: -2, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_10
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: 128}
+        - {x: -128, y: -2}
+        - {x: -54.70575, y: -2.0213318}
+        - {x: -18.41858, y: -16.311768}
+        - {x: -1.7015991, y: -51.369263}
+        - {x: -2, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 2}
+        - {x: -128, y: 2}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_12
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 2}
+        - {x: 47.62097, y: 2.5600586}
+        - {x: 18.304108, y: 19.828339}
+        - {x: 0.7329712, y: 50.656357}
+        - {x: 2, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_13
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -2, y: 128}
+        - {x: -2.4385376, y: 52.802094}
+        - {x: -19.816895, y: 17.815125}
+        - {x: -55.85681, y: 3.619995}
+        - {x: -128, y: 3}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tile_padrao_branco_14
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: 128}
+      tessellationDetail: 0
+    outline: []
+    physicsShape: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
