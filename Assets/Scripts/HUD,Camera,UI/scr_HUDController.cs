@@ -51,6 +51,7 @@ public class scr_HUDController : MonoBehaviour {
 
 	[Header("Pause")]
 	public GameObject pausePanel;
+	public GameObject optionsPanel;
 	public float alphaWhenPaused = 0.6f;
 	public float pausedTransition = 0.5f;
 	public bool canPause = true;
@@ -328,6 +329,7 @@ public class scr_HUDController : MonoBehaviour {
 	public void onClickResume(){
 		scr_GameManager.instance.setPauseGame(false);
 		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
 		isFading = true;
 		isPaused = false;
 		StartCoroutine(fadeTo(0,pausedTransition));
