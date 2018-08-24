@@ -227,16 +227,22 @@ public class scr_GameManager : MonoBehaviour {
 			if(sceneScript == null)
            		sceneScript = sceneManager.GetComponent<scr_SceneManager>();
 
-			//Kill other players that may be in scene
-			if(killRemainingPlayerOnLoad){
-				GameObject[] players;
-				players = GameObject.FindGameObjectsWithTag("Player");
-				foreach(GameObject g in players)
-					Destroy(g);
-			}
-
 			Transform target = sceneScript.positionToSpawnInScene(previusScene, playerStats);
-            player = spawnPlayerOnTransform(target);
+
+			if(target == null) {
+				player = GameObject.FindGameObjectWithTag("Player");
+			}
+			else{
+				//Kill other players that may be in scene
+				if(killRemainingPlayerOnLoad){
+					GameObject[] players;
+					players = GameObject.FindGameObjectsWithTag("Player");
+					foreach(GameObject g in players)
+						Destroy(g);
+				}
+
+				player = spawnPlayerOnTransform(target);
+			}
         }
 
 		//Update instances
@@ -280,6 +286,8 @@ public class scr_GameManager : MonoBehaviour {
 	/// Funçao utilizada para atualizar stats relacionados ao jogador, como vida e energia
 	/// </summary>
 	public void updatePlayerStats() {
+		if(player == null)
+			return ;
         //Atualizar stats de vida
 		scr_HealthController health = player.GetComponent<scr_HealthController>();
 		playerStats.maxHp = health.getMaxHealth();

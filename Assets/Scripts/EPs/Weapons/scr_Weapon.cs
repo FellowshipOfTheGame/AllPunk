@@ -34,9 +34,12 @@ abstract public class scr_Weapon : scr_EP {
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 
-    //A ordem do sprite a ser utilizado quando no sentido normal
+    [Header("Sprite")]
+    [Tooltip("Sprite da arma")]
+    public SpriteRenderer sprite;
+    [Tooltip("A ordem do sprite a ser utilizado quando no sentido normal")]
     public int frontLayer = 8;
-    //A ordem do sprite a ser utilizado quando inverte
+    [Tooltip("A ordem do sprite a ser utilizado quando inverte")]
     public int backLayer = -4;
     [Header("Animation transition ")]
     [Tooltip("Minima distancia que move o mouse para parar animação e retomar mira")]
@@ -60,8 +63,6 @@ abstract public class scr_Weapon : scr_EP {
     protected GameObject ik;
     //O animador do personagem
     protected Animator animator;
-    //Sprite da arma
-    protected SpriteRenderer sprite;
     //Se o botão do ataque foi clicado
     protected bool clicked;
     //Se o botão de ataque foi segurado
@@ -94,7 +95,8 @@ abstract public class scr_Weapon : scr_EP {
      */
     protected void Awake()
     {
-        this.sprite = GetComponent<SpriteRenderer>();
+        if(sprite == null)
+            this.sprite = GetComponent<SpriteRenderer>();
         ik = null;
         animator = null;
 		currCooldownTime = 0;
