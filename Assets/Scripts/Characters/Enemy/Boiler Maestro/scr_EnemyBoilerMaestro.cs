@@ -301,6 +301,10 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		gameObject.layer = 14;
 		// gameObject.layer = LayerMask.GetMask("Corpse");
 		animator.SetTrigger("Died");
+		scr_TriggerDamage trigger = GetComponentInChildren<scr_TriggerDamage>();
+		if(trigger != null) {
+			Destroy(trigger);
+		}
 		Destroy(gameObject,timeToDestroy);
 		Destroy(this);
 	}

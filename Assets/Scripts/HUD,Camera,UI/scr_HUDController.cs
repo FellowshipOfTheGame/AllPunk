@@ -350,6 +350,8 @@ public class scr_HUDController : MonoBehaviour {
 		if(isGameOver){
 			hideEndGameScreen();
 		}
+		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
 
 		scr_GameManager.instance.goToMainMenu();
 	}
