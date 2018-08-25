@@ -15,8 +15,10 @@ public class scr_Smash : FSM.State {
 	float smashForce;
 
 	[SerializeField]
-	scr_TriggerEnterDamage[] attackColliders;
+	scr_TriggerDamage[] attackColliders;
 
+	[SerializeField]
+	scr_AudioClient audioClient;
 
 	FSM.State nextState;
 
@@ -25,6 +27,8 @@ public class scr_Smash : FSM.State {
 	public override void Enter ()
 	{
 		boilerMaestro.animator.SetTrigger ("Attack");
+		audioClient.playAudioClip ("Smash", scr_AudioClient.sources.local);
+		boilerMaestro.playParticle();
 	}
 
 	public override void Execute ()
@@ -58,7 +62,7 @@ public class scr_Smash : FSM.State {
 			}
 		}*/
 
-		foreach (scr_TriggerEnterDamage hitCollider in attackColliders)
+		foreach (scr_TriggerDamage hitCollider in attackColliders)
 		{
 			Vector2 attackDir = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
 			/*if (!hitCollider.isActiveAndEnabled)

@@ -15,7 +15,14 @@ public class scr_TransitionArea : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col){
 		if(col.gameObject.tag == "Player") {
 			print("Trocou");
-			scr_GameManager.instance.MoveToScene(destinyScene);
+			// scr_GameManager.instance.MoveToScene(destinyScene);
+			scr_HUDController.hudController.fadeIn(finishedFading);
+			scr_HUDController.hudController.canPause = false;
+			scr_GameManager.instance.setPauseGame(true);
 		}
+	}
+
+	private void finishedFading(){
+		scr_GameManager.instance.MoveToScene(destinyScene);
 	}
 }

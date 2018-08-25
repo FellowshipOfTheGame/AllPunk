@@ -34,9 +34,12 @@ abstract public class scr_Weapon : scr_EP {
 	//Tempo entre ativações da arma
 	public float cooldownTime = 0;
 
-    //A ordem do sprite a ser utilizado quando no sentido normal
+    [Header("Sprite")]
+    [Tooltip("Sprite da arma")]
+    public SpriteRenderer sprite;
+    [Tooltip("A ordem do sprite a ser utilizado quando no sentido normal")]
     public int frontLayer = 8;
-    //A ordem do sprite a ser utilizado quando inverte
+    [Tooltip("A ordem do sprite a ser utilizado quando inverte")]
     public int backLayer = -4;
     [Header("Animation transition ")]
     [Tooltip("Minima distancia que move o mouse para parar animação e retomar mira")]
@@ -60,8 +63,6 @@ abstract public class scr_Weapon : scr_EP {
     protected GameObject ik;
     //O animador do personagem
     protected Animator animator;
-    //Sprite da arma
-    protected SpriteRenderer sprite;
     //Se o botão do ataque foi clicado
     protected bool clicked;
     //Se o botão de ataque foi segurado
@@ -84,6 +85,8 @@ abstract public class scr_Weapon : scr_EP {
     protected bool armAnimationPlaying = false;
     //Distancia em forma quadrada (reduzir processamento)
     protected float squaredAnimationDistance;
+    //Corotina sendo usada
+    protected Coroutine playingCoroutine = null; 
 
     #endregion Variables
 
@@ -92,7 +95,8 @@ abstract public class scr_Weapon : scr_EP {
      */
     protected void Awake()
     {
-        this.sprite = GetComponent<SpriteRenderer>();
+        if(sprite == null)
+            this.sprite = GetComponent<SpriteRenderer>();
         ik = null;
         animator = null;
 		currCooldownTime = 0;
@@ -230,7 +234,7 @@ abstract public class scr_Weapon : scr_EP {
 
             //Verifica se o jogador estava em animação ou não e para a animação caso esteja
             if (armAnimationPlaying)
-                stopArmAnimation();
+                imediateStopArmAnimation();
             else
                 animCounter = timeToAnimate;
 
@@ -273,6 +277,7 @@ abstract public class scr_Weapon : scr_EP {
         this.ik = ik;
         ikLimb = ik.GetComponent<IkLimb2D>();
         ikLimb.weight = 1;
+        Debug.Log("Setou");
 
         if (!followMouse)
         {
@@ -372,13 +377,25 @@ abstract public class scr_Weapon : scr_EP {
     protected void startArmAnimation()
     {
         armAnimationPlaying = true;
-        StartCoroutine(changeIKWeight(1f,0f, animationTransitionTime*2));
+        if(playingCoroutine != null)
+            StopCoroutine(playingCoroutine);
+        playingCoroutine = StartCoroutine(changeIKWeight(1f,0f, animationTransitionTime*2));
     }
 
     protected void stopArmAnimation() {
         animCounter = timeToAnimate;
         armAnimationPlaying = false;
-        StartCoroutine(changeIKWeight(0f, 1f, animationTransitionTime));
+        if(playingCoroutine != null)
+            StopCoroutine(playingCoroutine);
+        playingCoroutine = StartCoroutine(changeIKWeight(0f, 1f, animationTransitionTime));
+    }
+
+    protected void imediateStopArmAnimation() {
+        if(playingCoroutine != null)
+            StopCoroutine(playingCoroutine);
+        animCounter = timeToAnimate;
+        armAnimationPlaying = false;
+        ikLimb.weight = 1;
     }
 
     protected IEnumerator changeIKWeight(float initialValue, float finalValue, float time)

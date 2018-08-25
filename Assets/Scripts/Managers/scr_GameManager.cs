@@ -13,16 +13,18 @@ public class scr_GameManager : MonoBehaviour {
 
 	public GameObject player;
 
-    public bool canPause = true;
+	public bool fadeOutOnLoad = true;
+
+	[Tooltip("Se houver algum outro sigma na cena durante o load, o jogo irá matar")]
+	public bool killRemainingPlayerOnLoad = true;
 
 	private GameObject exit;
-	public bool DEBUG_THEREISAEXIT = true;
 
 	private bool isPause = true;
 	private bool isGameOver;
 
 	//Variaveis responsaveis por tratar a transição de cenas
-	private string previusScene = "Null";
+	private string previusScene = "null";
 	private bool isLoading = false;
 
     private scr_SaveManager saveManager;
@@ -45,8 +47,6 @@ public class scr_GameManager : MonoBehaviour {
 		isPause = false;
 		isGameOver = false;
 
-		if(DEBUG_THEREISAEXIT)
-			exit = transform.Find ("trg_Exit").gameObject;
 
         //Carrega dados salvos
         saveManager = new scr_SaveManager();
@@ -57,6 +57,9 @@ public class scr_GameManager : MonoBehaviour {
 			Save();
 		}
 		
+		if(player == null) {
+			player = GameObject.FindGameObjectWithTag("Player");
+		}
 
 		previusScene = "null";
 		SceneManager.activeSceneChanged += OnSceneLoaded;
@@ -66,28 +69,6 @@ public class scr_GameManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
-		if (!isGameOver) {
-			//Jogador morreu. Ele não pode morrer enquanto o jogo está carregando
-			if (!isLoading && player == null) {
-				endGame();
-			}
-
-			if (Input.GetButtonDown ("Cancel") && canPause) {
-				setPauseGame (isPause);
-			}
-
-
-		}
-
-		else {
-			if(Input.anyKeyDown){
-				//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-				isGameOver = false;
-				LoadGame();
-				GetComponentInChildren<scr_HUDController> ().hideEndGameScreen();
-			}
-		}
 		
 		if(Input.GetKeyDown(KeyCode.X)) {
 			Delete();
@@ -98,13 +79,10 @@ public class scr_GameManager : MonoBehaviour {
 		}
 	}
 
-	public void endGame(){		
-		GetComponentInChildren<scr_HUDController> ().displayEndGameScreen ();
-		isGameOver = true;
-        Delete();
-        AsyncOperation aOp = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
-
-    }
+	
+	public void startGameOver(){
+		scr_HUDController.hudController.displayEndGameScreen();
+	}
 
 	public void setPauseGame(bool pause){
 		isPause = !pause;
@@ -197,7 +175,10 @@ public class scr_GameManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="newScene">Cena para qual se deseja mover</param>
 	public void MoveToScene(string newScene) {
-		previusScene = SceneManager.GetActiveScene().name;
+		string previusScenePath = SceneManager.GetActiveScene().path;
+		string[] separator = {"Scenes/", ".unity"};
+		previusScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
+
 		updatePlayerStats();
 		string completePath = "Scenes/" + newScene;
 		isLoading = true;
@@ -212,10 +193,30 @@ public class scr_GameManager : MonoBehaviour {
 	/// <param name="scene2"></param>
 	private void OnSceneLoaded(Scene scene, Scene scene2) {
 
+		//Fazer tocar a musica da cena
+		GameObject sceneManager = GameObject.Find("SceneManager");
+		scr_SceneManager sceneScript = null;
+		if(sceneManager != null){
+            sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+			if(sceneScript != null && sceneScript.musicClip != null){
+				if(scr_AudioManager.instance.isPlayingMusic()){
+					scr_AudioManager.instance.changeToMusic(sceneScript.musicTransitionTime,sceneScript.musicClip);
+				}
+				else{
+					scr_AudioManager.instance.playClipOnce(sceneScript.musicClip, scr_AudioClient.sources.music);
+				}
+			}
+		}
+
+		//Fazer com que a tela inicial não apareça HUD
+		if(scene2.name.Equals("MenuInicial")) {
+			setHudVisible(false);
+			return;
+		}
 		if(previusScene == "null")
 			return;
 
-		GameObject sceneManager = GameObject.Find("SceneManager");
+		
         if (sceneManager == null)
         {
             print("Cant find Scene Manager");
@@ -223,29 +224,70 @@ public class scr_GameManager : MonoBehaviour {
         }
         else
         {
-            scr_SceneManager sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+			if(sceneScript == null)
+           		sceneScript = sceneManager.GetComponent<scr_SceneManager>();
 
 			Transform target = sceneScript.positionToSpawnInScene(previusScene, playerStats);
-            player = spawnPlayerOnTransform(target);
+
+			if(target == null) {
+				player = GameObject.FindGameObjectWithTag("Player");
+			}
+			else{
+				//Kill other players that may be in scene
+				if(killRemainingPlayerOnLoad){
+					GameObject[] players;
+					players = GameObject.FindGameObjectsWithTag("Player");
+					foreach(GameObject g in players)
+						Destroy(g);
+				}
+
+				player = spawnPlayerOnTransform(target);
+			}
         }
 
 		//Update instances
 		isLoading = false;
-		scr_CameraController cameraScript = Camera.main.GetComponent<scr_CameraController>();
-        cameraScript = Camera.main.GetComponent<scr_CameraController>();
-		cameraScript.player = player;
+		scr_Camera_Follow_Mouse cameraScript = Camera.main.GetComponent<scr_Camera_Follow_Mouse>();
+		if(cameraScript != null) {
+			cameraScript.player = player.transform;
+		}
+		//Legacy
+		else {
+			scr_CameraController oldController =  Camera.main.GetComponent<scr_CameraController>();
+			if(oldController != null)
+				oldController.player = player;
+		}
 
 		//Ajust camera position
 		Vector3 playerPos = player.transform.position;
-		playerPos.z = cameraScript.transform.position.z;
-		cameraScript.transform.position = playerPos;
+		playerPos.z = Camera.main.transform.position.z;
+		Camera.main.transform.position = playerPos;
+
+		setHudVisible(true);
+		scr_HUDController.hudController.onLoadLevel();
+
+		if(fadeOutOnLoad){
+			setPauseGame(false);
+			scr_HUDController.hudController.canPause = false;
+			scr_HUDController.hudController.forceFadeOut(onFadeFinish);
+		}
+		else{
+			setPauseGame(false);
+		}
 		print("Scene is Loaded");
+	}
+
+	private void onFadeFinish() {
+		//setPauseGame(false);
+		scr_HUDController.hudController.canPause = true;
 	}
 
 	/// <summary>
 	/// Funçao utilizada para atualizar stats relacionados ao jogador, como vida e energia
 	/// </summary>
 	public void updatePlayerStats() {
+		if(player == null)
+			return ;
         //Atualizar stats de vida
 		scr_HealthController health = player.GetComponent<scr_HealthController>();
 		playerStats.maxHp = health.getMaxHealth();
@@ -278,7 +320,7 @@ public class scr_GameManager : MonoBehaviour {
 		
 	}
 
-	
+
 	private GameObject spawnPlayerOnTransform(Transform target) {
 		GameObject toSpawn = GameObject.Instantiate(playerPrefab, target.position, target.rotation);
 		
@@ -303,6 +345,17 @@ public class scr_GameManager : MonoBehaviour {
 		epman.applyPlayerStats(playerStats);
 
 		return toSpawn;
+	}
+
+	public void goToMainMenu() {
+		MoveToScene("MenuInicial");
+		previusScene = "null";
+	}
+
+	public void setHudVisible(bool visible){
+		Transform find = transform.Find("hud_Canvas");
+		if(find != null)
+			find.gameObject.SetActive(visible);
 	}
 
 	#endregion

@@ -21,6 +21,9 @@ public class scr_EnemyOniTurret : MonoBehaviour {
     //Angulo inicial
     private float initialAngle;
 
+    //Tamanho máximo da linha
+    public float maxLineSize = 0.5f;
+
 
 	private float currTimeToFire;
 	private float currSetUpTime;
@@ -41,6 +44,8 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 
 	//Direção do projétil
 	private Vector3 direction;
+
+    private scr_AudioClient audioClient;
 
 	#endregion
 
@@ -68,6 +73,7 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 
 		lineRen = GetComponentInChildren<LineRenderer>();
 		triggerZone = GetComponent<BoxCollider2D> ();
+        audioClient = GetComponent<scr_AudioClient>();
 
         //Pega referencia publica do barril, não vai usar a abaixo
         //barrel = this.gameObject.transform.GetChild (0).gameObject;
@@ -80,6 +86,7 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 		lineRen.SetPosition (1, barrel.transform.position);
 
 		direction = Vector3.zero;
+
 	}
 
 	/**
@@ -108,7 +115,7 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 
             lineRen.SetPosition(0, barrel.transform.position);
             lineRen.SetPosition(1, barrel.transform.position);
-			lineRen.widthMultiplier = 1;
+			lineRen.widthMultiplier = maxLineSize;
 
 			resetTimer(ref currSetUpTime, setUpTime);
 			resetTimer (ref currTimeToFire, rateOfFire);
@@ -178,7 +185,7 @@ public class scr_EnemyOniTurret : MonoBehaviour {
                 if (currTimeToFire > 0 && currSetUpTime <= 0)
                 {
                     decrementTimer(ref currTimeToFire);
-                    lineRen.widthMultiplier = currTimeToFire / rateOfFire;
+                    lineRen.widthMultiplier = maxLineSize * currTimeToFire / rateOfFire;
                 }
 
                 //Setup pronto, pode atirar
@@ -192,6 +199,8 @@ public class scr_EnemyOniTurret : MonoBehaviour {
                     scr_Projectile projectileScr = projectile.GetComponent<scr_Projectile>();
 
                     projectileScr.Fire(direction, this.tag);
+
+                    audioClient.playAudioClip("Shoot", scr_AudioClient.sources.local);
 
                     //reseta tempo para atirar
                     resetTimer(ref currTimeToFire, rateOfFire);

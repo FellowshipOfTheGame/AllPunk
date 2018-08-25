@@ -8,7 +8,7 @@ public class scr_AudioManager : MonoBehaviour {
 	#region variables
 	public static scr_AudioManager instance = null;
 	public AudioSource sfxSource;
-	public AudioSource musicSoruce;
+	public AudioSource musicSource;
 	public AudioSource voiceSource;
 	#endregion
 
@@ -25,11 +25,11 @@ public class scr_AudioManager : MonoBehaviour {
 			sfxSource.PlayOneShot (wrapper.clip, wrapper.volume);
 			return true;
 		case scr_AudioClient.sources.music:
-			musicSoruce.clip = wrapper.clip;
-			musicSoruce.volume = wrapper.volume;
-			musicSoruce.pitch = wrapper.pitch;
-			musicSoruce.loop = wrapper.loop;
-			musicSoruce.Play ();
+			musicSource.clip = wrapper.clip;
+			musicSource.volume = wrapper.volume;
+			musicSource.pitch = wrapper.pitch;
+			musicSource.loop = wrapper.loop;
+			musicSource.Play();
 			return true;
 		case scr_AudioClient.sources.voice:
 			voiceSource.pitch = wrapper.pitch;
@@ -50,7 +50,7 @@ public class scr_AudioManager : MonoBehaviour {
 
 		DontDestroyOnLoad(gameObject);
 
-		if (sfxSource == null || musicSoruce == null || voiceSource == null)
+		if (sfxSource == null || musicSource == null || voiceSource == null)
 			Debug.LogError ("AudioManager Error: null AudioSources");
 
 	}
@@ -58,9 +58,53 @@ public class scr_AudioManager : MonoBehaviour {
 	void Update(){
 		if (Input.GetKeyDown (KeyCode.T)) {
 			sfxSource.PlayOneShot (sfxSource.clip);
-			print ("KKK");
 		}
 	}
-		
+
+	public bool isPlayingMusic(){
+		return musicSource.isPlaying;
+	}
+
+	public void changeToMusic(float duration, scr_AudioClipWrapper wrapper){
+		if(musicSource.clip != wrapper.clip){
+			StartCoroutine(fadeBetweenMusic(duration,wrapper));
+		}
+	}
+	
+	/// <summary>
+	/// Realiza a transição entre duas músicas
+	/// </summary>
+	/// <param name="duration"></param>
+	/// <param name="wrapper"></param>
+	/// <returns></returns>
+	private IEnumerator fadeBetweenMusic(float duration, scr_AudioClipWrapper wrapper){
+		float volumeSpeed = 2*musicSource.volume/duration, currentVolume = musicSource.volume, delta, counter = 0;
+		bool increasing = false;
+
+		while(counter < duration){
+			delta = Time.unscaledDeltaTime;
+			counter += delta;
+			if(!increasing) {
+				currentVolume -= volumeSpeed * delta;
+				if(currentVolume <= 0){
+					increasing = true;
+					musicSource.clip = wrapper.clip;
+					musicSource.pitch = wrapper.pitch;
+					musicSource.loop = wrapper.loop;
+					volumeSpeed = 2*wrapper.volume/duration;
+					currentVolume = 0;
+					musicSource.Play();
+				}
+			} 
+			else {
+				currentVolume += volumeSpeed * delta;
+			}
+			musicSource.volume = currentVolume;
+			yield return null;
+		}
+
+		musicSource.volume = wrapper.volume;
+
+	}
 
 }

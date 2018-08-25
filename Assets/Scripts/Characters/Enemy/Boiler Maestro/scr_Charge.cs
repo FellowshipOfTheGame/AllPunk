@@ -24,6 +24,8 @@ public class scr_Charge : FSM.State {
 	scr_HealthController healthCont;
 	float initialPoise;
 
+	[SerializeField]
+	scr_AudioClient audioClient;
 	#endregion
 
 	public override void Enter ()
@@ -44,7 +46,9 @@ public class scr_Charge : FSM.State {
 	{
 		if(!isRunning) {
 			if(!hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Running")){
+				audioClient.playAudioClip ("Charge", scr_AudioClient.sources.local);
 				isRunning = true;
+				boilerMaestro.playParticle();
 			}
 			if(hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Move")){
 				FSM.State huntState;

@@ -48,6 +48,10 @@ public class scr_AudioClient : MonoBehaviour {
 			return false;
 	}
 
+	public void playLocalClip(string key){
+		playAudioClip(key, sources.local);
+	}
+
 	/// <summary>
 	/// Plays an audio clip sotred in the clips dictionary
 	/// </summary>
@@ -65,12 +69,42 @@ public class scr_AudioClient : MonoBehaviour {
 
 		switch (source) {
 		case sources.local:
+			localAudiosource.volume = wrapper.volume;
+			localAudiosource.pitch = wrapper.pitch;
 			localAudiosource.PlayOneShot (wrapper.clip, wrapper.volume);
 			return true;
 		default:
 			return scr_AudioManager.instance.playClipOnce (wrapper, source);
 		}
 
+	}
+
+	public bool playLoopClip(string key, scr_AudioClient.sources source){
+		if (!audioClips.ContainsKey (key)) {
+			Debug.LogWarning ("AudioClient Warning - Key not found!");
+			return false;
+		}
+
+		scr_AudioClipWrapper wrapper;
+		audioClips.TryGetValue (key, out wrapper);
+
+		switch (source) {
+		case sources.local:
+			localAudiosource.clip = wrapper.clip;
+			localAudiosource.loop = wrapper.loop;
+			localAudiosource.pitch = wrapper.pitch;
+			localAudiosource.Play();
+			return true;
+		default:
+			return scr_AudioManager.instance.playClipOnce (wrapper, source);
+		}
+
+	}
+
+	public void stoplocalClip(){
+		if(localAudiosource != null){
+			localAudiosource.Stop();
+		}
 	}
 
 	/// <summary>
@@ -94,6 +128,12 @@ public class scr_AudioClient : MonoBehaviour {
 		default:
 			return scr_AudioManager.instance.playClipOnce (wrapper, source);
 		}
+	}
+
+	public scr_AudioClipWrapper getWrapper(string key){
+		scr_AudioClipWrapper wrapper;
+		audioClips.TryGetValue (key, out wrapper);
+		return wrapper;
 	}
 		
 }

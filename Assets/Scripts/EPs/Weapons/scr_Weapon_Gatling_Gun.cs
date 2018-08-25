@@ -18,6 +18,8 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
     public float bulletForce = 2f;
     [Tooltip("Referência para o ponto de onde começa o tiro")]
     public Transform targetPoint;
+    [Tooltip("Variação angular entre a direção correta e o alvo (Em graus)")]
+    public float angularVariation = 0;
 
     [Header("Cosmedic")]
     [Tooltip("Maxima distancia que deve ser desenhada a linha de tiro")]
@@ -29,6 +31,7 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
     private bool animationIsShooting = false;
     private LineRenderer line;
     private Animator gunAnimator;
+    private bool hasBegunShootingSound = false;
 
     private void Awake()
     {
@@ -60,14 +63,21 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
         {
             if(fireCounter <= 0)
             {
-                //print("Atirou");
-
+                //Começa a toca o som se não tinha
+                if(!hasBegunShootingSound){
+                    audioClient.playLoopClip("Firing", scr_AudioClient.sources.local);
+                    hasBegunShootingSound = true;
+                }
                 //Drena energia
                 useEnergy();
 
                 //Pega a direcao do tiro
                 Vector3 direction = targetPoint.position - transform.position;
-                direction.Normalize();
+                float angle = Mathf.Atan2(direction.y,direction.x);
+                //Faz a mudança do angulo
+                angle += (UnityEngine.Random.Range(-angularVariation,angularVariation) * Mathf.Deg2Rad);
+                direction = new Vector3(Mathf.Cos(angle),Mathf.Sin(angle),0); 
+                //direction.Normalize();
 
                 //Verifica se colidiu com alguma coisa
                 RaycastHit2D hit = Physics2D.Raycast(targetPoint.position, direction, maxAttackDistance);
@@ -120,6 +130,8 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
             {
                 animationIsShooting = false;
                 gunAnimator.SetBool("Shooting", false);
+                audioClient.stoplocalClip();
+                hasBegunShootingSound = false;
             }
         }
 	}
@@ -138,10 +150,10 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
             line.startColor = initialColor;
 
             //Ajust position
-            Vector3 direction = targetPoint.position - transform.position;
-            direction.Normalize();
-            line.SetPosition(0, targetPoint.position);
-            line.SetPosition(1, targetPoint.position + direction * lineDistanceMax);
+            // Vector3 direction = targetPoint.position - transform.position;
+            // direction.Normalize();
+            // line.SetPosition(0, targetPoint.position);
+            // line.SetPosition(1, targetPoint.position + direction * lineDistanceMax);
 
             counter -= Time.deltaTime;
             yield return null;

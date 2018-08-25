@@ -46,6 +46,14 @@ public class scr_HealthController : MonoBehaviour {
 	/// The change callback, used to update the HUD
 	/// </summary>
 	UnityEvent healthChangeCallback;
+
+	/// <summary>
+	/// Callback de morte, deve deletar o objeto se utilizado
+	/// </summary>
+	UnityEvent deathCallBack;
+	//Utilizado para indicar se houve substituição de morte
+	private bool hasDeathCallback = false;
+	private Vector2 lastHitDirection;
     #endregion variables
 
 	#region Monobehaviour methods
@@ -113,9 +121,10 @@ public class scr_HealthController : MonoBehaviour {
 		} 
 		else {
 			
+			lastHitDirection = direction;
 			//print("dir1 " + direction);
 			direction = direction * (1 - poise);//Poise para reduzir knockback
-            
+
 			///Effect Knockback
 			if (direction.magnitude != 0) {
 				this.entityRigidBody.velocity = Vector2.zero;
@@ -161,11 +170,23 @@ public class scr_HealthController : MonoBehaviour {
 	 * @return void
 	 */
 	private void die (){
-		audioClient.playAudioClip ("Die", scr_AudioClient.sources.sfx);
+		if(audioClient != null)
+			audioClient.playAudioClip ("Die", scr_AudioClient.sources.sfx);
 		StartCoroutine(waitInvinciTime());
-		Destroy(this.gameObject);
+		if(!hasDeathCallback){
+			Destroy(this.gameObject);
+		}
+		else{
+			StopAllCoroutines();
+			canBeHurt = false;
+			deathCallBack.Invoke();
+		}
 	}
 	#endregion
+
+	public Vector2 getLastHitDirection(){
+		return lastHitDirection;
+	}
 
     private IEnumerator waitInvinciTime() {
         canBeHurt = false;
@@ -196,6 +217,21 @@ public class scr_HealthController : MonoBehaviour {
 	{
 		if(healthChangeCallback != null)
 			healthChangeCallback.RemoveListener(call);
+	}
+
+	public void addDeathCallback(UnityAction call) {
+		if(deathCallBack == null)
+			deathCallBack = new UnityEvent();
+		deathCallBack.AddListener(call);
+		hasDeathCallback = true;
+	}
+
+	public void removeDeathCallback(UnityAction call) {
+		if(deathCallBack != null) {
+			deathCallBack.RemoveListener(call);
+			if(deathCallBack.GetPersistentEventCount() < 1)
+				hasDeathCallback = false;
+		}
 	}
 	#endregion
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class scr_HUDController : MonoBehaviour {
 
@@ -9,7 +10,6 @@ public class scr_HUDController : MonoBehaviour {
 	public static scr_HUDController hudController;
 
 	[Header("Player")]
-
 	public GameObject player;
 	//Incremento ou decremento no alfa da condensação
 	private float condensationDelta = 0.001f;
@@ -41,6 +41,35 @@ public class scr_HUDController : MonoBehaviour {
 	public Image[] itemImages;
 	[Header("Condensation")]
 	public Image condensationImg;
+	private bool playerHasGoogles = false;
+
+	[Header("Fade")]
+	public RawImage fadeImg;
+	public float fadeDuration = 1f;
+	private bool isFading = false;
+	private UnityEvent fadeCallback;
+
+	[Header("Pause")]
+	public GameObject pausePanel;
+	public GameObject optionsPanel;
+	public float alphaWhenPaused = 0.6f;
+	public float pausedTransition = 0.5f;
+	public bool canPause = true;
+	private bool isPaused = false;
+
+	[Header("GameOver")]
+	public GameObject gameOverPanel;
+	public Text[] gameOverText;
+	public Button gameOverLoadButton;
+	public float timeToFadeGameOverScreen;
+	public float timeToAppearGameOverText;
+	public Color textColor;
+	private bool isGameOver;
+
+	[Header("Sound")]
+	public float gameOverTransitionTime = 0.5f;
+
+	private scr_AudioClient audioClient;
 
 	#endregion
 
@@ -48,15 +77,13 @@ public class scr_HUDController : MonoBehaviour {
 	void Awake () {
 		if (hudController == null) {
 			hudController = this;
-			if(player == null)
-				player = scr_GameManager.instance.player;
-			playerHealth = player.GetComponent<scr_HealthController> ();
-			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
-			playerItemsScript = player.GetComponent<scr_PlayerItemController> ();
 			playerInSteam = false;
+			audioClient = GetComponent<scr_AudioClient>();
 
+			fadeCallback = new UnityEvent();
 			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
 			//condensationImg.transform.SetParent (player.transform);
+			
 		} else if (hudController != this) {
 			Destroy (this.gameObject);
 		}
@@ -64,10 +91,8 @@ public class scr_HUDController : MonoBehaviour {
 	}
 
 	void Start(){
-		playerEnergy.addEnergyChangeCallback (updateEnergyBars);
-		playerHealth.addHealthChangeCallback (updateHealthBar);
-		playerItemsScript.addItemChangeCallback (updateItems);
-		playerItemList = playerItemsScript.getAllItems ();
+		recoverPlayerReference();
+		
 	}
 
 	// Update is called once per frame
@@ -92,6 +117,21 @@ public class scr_HUDController : MonoBehaviour {
 			c.a-= condensationDelta * Time.deltaTime;
 			condensationImg.color = c;
 		}
+
+		//Pause menu
+		if(canPause && Input.GetButtonDown ("Cancel")) {
+			if(!isPaused){
+				scr_GameManager.instance.setPauseGame(true);
+				pausePanel.SetActive(true);
+				isFading = true;
+				StartCoroutine(fadeTo(alphaWhenPaused,pausedTransition));
+				isPaused = true;
+				audioClient.playAudioClip("Open", scr_AudioClient.sources.sfx);
+			}
+			else {
+				onClickResume();
+			}
+		}
 	}
 
 	#endregion
@@ -101,7 +141,41 @@ public class scr_HUDController : MonoBehaviour {
 			child.gameObject.SetActive(false);
 		}
 
-		transform.Find ("endGameText").gameObject.SetActive(true);
+		fadeImg.gameObject.SetActive(true);
+
+		canPause = false;
+		isFading = true;
+		isGameOver = true;
+		fadeCallback.AddListener(showGameOverText);
+		StartCoroutine(fadeTo(1,timeToFadeGameOverScreen));
+	}
+
+	private void showGameOverText(){
+		gameOverPanel.SetActive(true);
+		StartCoroutine(changeGameOverText());
+		gameOverLoadButton.interactable = scr_GameManager.instance.hasSaveGame();
+		scr_AudioManager.instance.changeToMusic(gameOverTransitionTime, audioClient.getWrapper("GameOver"));
+	}
+
+	private IEnumerator changeGameOverText(){
+		float delta, counter = 0, speed = 1/timeToAppearGameOverText;
+		Color color = textColor;
+		color.a = 0;
+		while (counter < timeToAppearGameOverText) {
+			delta = Time.unscaledDeltaTime;
+			color.a += delta * speed;
+			counter += delta;
+			foreach(Text t in gameOverText){
+				t.color = color;
+			}
+
+			yield return null;
+		}
+		color.a = 1;
+		foreach(Text t in gameOverText){
+			t.color = color;
+		}
+
 	}
 
 	public void hideEndGameScreen(){
@@ -109,7 +183,9 @@ public class scr_HUDController : MonoBehaviour {
 			child.gameObject.SetActive(true);
 		}
 
-		transform.Find ("endGameText").gameObject.SetActive(false);
+		pausePanel.SetActive(false);
+		gameOverPanel.SetActive(false);
+		isGameOver = false;
 	}
 
 	void updateWeaponTimers(){
@@ -154,16 +230,21 @@ public class scr_HUDController : MonoBehaviour {
 		float playerMaxResEnergy = playerEnergy.getMaxResEnergy ();
 		float playerCurrentResEnergy = playerEnergy.getCurrentResEnergy ();
 
-		float playerMaxPrimEnergy = playerEnergy.getMaxResEnergy ();
-		float playerCurrentPrimEnergy = playerEnergy.getCurrentResEnergy ();
+		float playerMaxPrimEnergy = playerEnergy.getMaxPrimEnergy ();
+		float playerCurrentPrimEnergy = playerEnergy.getCurrentPrimEnergy ();
 
 		resEnergyText.text = "Reserve " +
 			((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
 		resEnergySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
 
-		primEnergyText.text = "Primary " + 
+		if (playerMaxPrimEnergy != 0) {
+			primEnergyText.text = "Primary " +
 			((playerCurrentPrimEnergy / playerMaxPrimEnergy) * 100).ToString ("0.#") + "%";
-		primEnergySlider.value = playerCurrentPrimEnergy / playerMaxPrimEnergy;
+			primEnergySlider.value = playerCurrentPrimEnergy / playerMaxPrimEnergy;
+		} else {
+			primEnergyText.text = "Not Equipped ";
+			primEnergySlider.value = 0;
+		}
 	}
 
 
@@ -185,10 +266,97 @@ public class scr_HUDController : MonoBehaviour {
 	public void setPlayerInSteam(bool inSteam, float condensationDelta){
 
 		//Verificação de equipamento, se tiver os goggles, sempre falso
-
-		playerInSteam = inSteam;
-		this.condensationDelta = condensationDelta;
+		if(!inSteam || (inSteam && !playerHasGoogles)){
+			playerInSteam = inSteam;
+			this.condensationDelta = condensationDelta;
+		}
 	}
+
+	public void setPlayerHasGoggles(bool hasGoggles){
+		playerHasGoogles = hasGoggles;
+		if(playerInSteam && playerHasGoogles)
+			playerInSteam = false;
+	}
+
+	/// <summary>
+	/// Realiza um fade in na hud e chama a função enviada quando acabar
+	/// </summary>
+	/// <param name="callback">Método a ser chamado quando acabar o fade in</param>
+	public void fadeIn(UnityAction callback) {
+		if(!isFading){
+			isFading = true;
+			//fadeImg.color = new Color(0,0,0,0);
+			if(callback != null && fadeCallback != null)
+				fadeCallback.AddListener(callback);
+			StartCoroutine(fadeTo(1,fadeDuration));
+		}
+	}
+
+	/// <summary>
+	/// Realiza um fade out na hud e chama a função enviada quando acabar
+	/// </summary>
+	/// <param name="callback">Método a ser chamado quando acabar o fade out</param>
+	public void fadeOut(UnityAction callback) {
+		if(!isFading) {
+			isFading = true;
+			if(callback != null && fadeCallback != null)
+				fadeCallback.AddListener(callback);
+			StartCoroutine(fadeTo(0,fadeDuration));
+		}
+	}
+
+	/// <summary>
+	/// Realiza um fade out começando do preto na hud e chama a função enviada quando acabar
+	/// </summary>
+	/// <param name="callback">Método a ser chamado quando acabar o fade out</param>
+	public void forceFadeOut(UnityAction callback) {
+		if(!isFading) {
+			isFading = true;
+			fadeImg.color = new Color(0,0,0,1);
+			if(callback != null && fadeCallback != null)
+				fadeCallback.AddListener(callback);
+			StartCoroutine(fadeTo(0,fadeDuration));
+		}
+	}
+
+	public void onLoadLevel(){
+		recoverPlayerReference();
+		playerInSteam = false;
+	}
+
+	#region ButtonFunctions
+
+	public void onClickResume(){
+		scr_GameManager.instance.setPauseGame(false);
+		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
+		isFading = true;
+		isPaused = false;
+		StartCoroutine(fadeTo(0,pausedTransition));
+		audioClient.playAudioClip("Open", scr_AudioClient.sources.sfx);
+
+	}
+
+	public void onClickLoad(){
+		if(isGameOver){
+			hideEndGameScreen();
+		}
+
+		scr_GameManager.instance.LoadGame();
+
+	}
+
+	public void onClickExit(){
+		if(isGameOver){
+			hideEndGameScreen();
+		}
+		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
+
+		scr_GameManager.instance.goToMainMenu();
+	}
+
+	#endregion
 
 	/// <summary>
 	/// Função utilizada para quando a HUD não consegue achar um player
@@ -198,8 +366,31 @@ public class scr_HUDController : MonoBehaviour {
 		if(player != null) {
 			playerHealth = player.GetComponent<scr_HealthController> ();
 			playerEnergy = player.GetComponent<scr_PlayerEnergyController> ();
-            //updateWeaponTimers();
+			playerItemsScript = player.GetComponent<scr_PlayerItemController> ();
 			updateHealthBar();
+			playerEnergy.addEnergyChangeCallback (updateEnergyBars);
+			playerHealth.addHealthChangeCallback (updateHealthBar);
+			playerItemsScript.addItemChangeCallback (updateItems);
+			playerItemList = playerItemsScript.getAllItems ();
         }
+	}
+
+	private IEnumerator fadeTo(float finalAlpha, float duration) {
+		float deltaFade = (finalAlpha - fadeImg.color.a)/duration;
+		Color color = fadeImg.color;
+		float counter = 0, delta;
+		while(counter < duration){
+			delta = Time.unscaledDeltaTime;
+			color.a += delta * deltaFade;
+			counter += delta;
+			fadeImg.color = color;
+			yield return null;
+		}
+		color.a = finalAlpha;
+		isFading = false;
+		if(fadeCallback != null){
+			fadeCallback.Invoke();
+			fadeCallback.RemoveAllListeners();
+		}
 	}
 }

@@ -4,10 +4,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Used in the main menu exclusively.
+/// </summary>
+
 public class MenuButton : MonoBehaviour
 {
+	[Header("LOAD GAME")]
     public GameObject loadButton;
     public string scene;
+
+	[Header("CREDITS")]
+	[SerializeField] GameObject creditsWindow;
+
+	[Header("OPTIONS")]
+	[SerializeField] GameObject optionsWindow;
+
 
     private void Start()
     {
@@ -23,15 +35,15 @@ public class MenuButton : MonoBehaviour
     }
 
     public void ExitClick(){
-        print("Clicou em Exit");
         Application.Quit();
     }
 
 	public void newGameClick()
     {
         print("Clicou em New Game");
-        Destroy(scr_GameManager.instance);
-        SceneManager.LoadScene(scene);
+        scr_GameManager.instance.MoveToScene(scene);
+        // Destroy(scr_GameManager.instance);
+        // SceneManager.LoadScene(scene);
     }
 
     public void loadGameClick()
@@ -42,13 +54,16 @@ public class MenuButton : MonoBehaviour
 
     public void creditsClick()
     {
-        print("Clicou em creditos");
+		creditsWindow.SetActive(!creditsWindow.activeInHierarchy);
+		if (optionsWindow.activeInHierarchy)
+			optionsWindow.SetActive (false);
     }
 
     public void optionsClick()
     {
-        print("Clicou em options");
+		optionsWindow.SetActive(!optionsWindow.activeInHierarchy);
+		if (creditsWindow.activeInHierarchy)
+			creditsWindow.SetActive (false);
     }
-
 
 }

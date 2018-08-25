@@ -47,6 +47,7 @@ public class scr_Weapon_Sword : scr_Weapon {
         {
             useEnergy();
             StartAttackAnimation();
+            audioClient.playAudioClip("Fire",scr_AudioClient.sources.local);
         }
 
     }

@@ -5,18 +5,28 @@ using UnityEngine;
 public class scr_MovingPlataform : MonoBehaviour {
 
     [Tooltip("Pontos pelo qual a plataforma vai passar")]
-    public Vector2[] movingPoints;
+    public GameObject[] targetPoints;
+
     [Tooltip("Deve voltar ao ponto inicial e reiniciar o ciclo?")]
     public bool loop = true;
     [Tooltip("Velocidade da plataforma")]
     public float speed = 10;
     [Tooltip("A plataforma pode se mexer")]
     public bool canMove = true;
-    [Tooltip("A plataforma deve levar o jogador (AINDA NAO IMPLEMENTADO)")]
+    [Tooltip("A plataforma deve levar o jogador")]
     public bool shouldCarry = true;
     [Tooltip("Os tags do que a plataforma deve carregar")]
     public string[] carryTag = {"Player", "Enemy"};
 
+    [Header("Start Variables")]
+    [Tooltip("Começa a se mover assim que for tocada pelo jogador")]
+    public bool startOnTouch = true;
+    [Tooltip("Começa do ponto que for mais próximo do jogador")]
+    public bool startCloseToPlayer = true;
+    [Tooltip("Posição inicial para começar")]
+    public int startingIndex = 0;
+
+    private List<Vector3> movingPoints;
     private Dictionary<Transform, Transform> previousParent;
 
     private Transform myTransform;
@@ -26,12 +36,44 @@ public class scr_MovingPlataform : MonoBehaviour {
     private int currentIndex = -1;
     private int targetIndex = -1;
     private Rigidbody2D rb2d;
+    private bool hasStartedMoving = false;
 
     private void Awake()
     {
         myTransform = transform;
         rb2d = GetComponent<Rigidbody2D>();
         previousParent = new Dictionary<Transform, Transform>();
+        movingPoints = new List<Vector3>();
+        for(int i = 0; i < targetPoints.Length; i++){
+            if(movingPoints != null)
+            movingPoints.Add(targetPoints[i].transform.position);
+        }
+    }
+
+    private void Start() {
+        if(!startOnTouch)
+            hasStartedMoving = true;
+        if(startingIndex > 0) {
+            goToIndex(startingIndex);
+        }
+        else if(startCloseToPlayer){
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if(playerObj != null) {
+                Transform player = playerObj.transform;
+                int closest = -1;
+                float lowerDistance = float.PositiveInfinity;
+                for(int i = 0; i < movingPoints.Count; i++){
+                    float dist = (player.position - movingPoints[i]).sqrMagnitude;
+                    if(dist < lowerDistance) {
+                        closest = i;
+                        lowerDistance = dist;
+                    }
+                }
+
+                goToIndex(closest);
+                
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -44,9 +86,12 @@ public class scr_MovingPlataform : MonoBehaviour {
                 break;
             }
         }
-        if(canCarry && !previousParent.ContainsKey(otherTrans)){
+        if(shouldCarry && canCarry && !previousParent.ContainsKey(otherTrans)){
             previousParent.Add(otherTrans,otherTrans.parent);
             otherTrans.SetParent(myTransform);
+            if(startOnTouch && !hasStartedMoving){
+                hasStartedMoving = true;
+            }
         }
     }
 
@@ -66,10 +111,28 @@ public class scr_MovingPlataform : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Make plataform go to the given index position
+    /// </summary>
+    /// <param name="index"></param>
+    public void goToIndex(int index) {
+        currentIndex = index;
+        myTransform.position = movingPoints[index];
+        findNewTarget();
+    }
+
+    public void stopPlataform() {
+        canMove = false;
+    }
+
+    public void resumePlataform(){
+        canMove = true;
+    }
+
     //Vai tentar mover a plataforma pelo caminho
     private void Update()
     {
-        if (canMove && movingPoints.Length > 0) {
+        if (canMove && hasStartedMoving && movingPoints.Count > 0) {
 
             //Caso seja o primeiro ponto
             if (currentIndex == -1)
@@ -100,7 +163,7 @@ public class scr_MovingPlataform : MonoBehaviour {
     private void findNewTarget()
     {
         targetIndex = currentIndex + 1;
-        if (targetIndex >= movingPoints.Length)
+        if (targetIndex >= movingPoints.Count)
         {
             if (loop)
             {
@@ -131,25 +194,29 @@ public class scr_MovingPlataform : MonoBehaviour {
     //Desenha o caminho que a plataforma vai fazer na cena
     private void OnDrawGizmos()
     {
-        for(int i = 0; i < movingPoints.Length; i++)
+        for(int i = 0; i < targetPoints.Length; i++)
         {
-            if (i + 1 < movingPoints.Length)
+            if(targetPoints[i] == null)
+                continue;
+            if (i + 1 < targetPoints.Length)
             {
+                if(targetPoints[i + 1] == null)
+                    continue;
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(movingPoints[i], movingPoints[i + 1]);
-                if (i == 0 || i == movingPoints.Length-1)
+                Gizmos.DrawLine(targetPoints[i].transform.position, targetPoints[i + 1].transform.position);
+                if (i == 0 || i == targetPoints.Length-1)
                     Gizmos.color = Color.green;
             }
             else if(loop)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawLine(movingPoints[i], movingPoints[0]);
+                Gizmos.DrawLine(targetPoints[i].transform.position, targetPoints[0].transform.position);
             }
             else
             {
                 Gizmos.color = Color.red;
             }
-            Gizmos.DrawWireSphere(movingPoints[i], 0.5f);
+            Gizmos.DrawWireSphere(targetPoints[i].transform.position, 0.5f);
         }
     }
 
