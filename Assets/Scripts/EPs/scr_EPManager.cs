@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Anima2D;
 
 public class scr_EPManager : MonoBehaviour {
@@ -59,6 +60,8 @@ public class scr_EPManager : MonoBehaviour {
 	
 	//Variavel pra saber se está virado ou não
 	private bool flipped = false;
+
+	private UnityEvent flipCallback;
 
 	/// <summary>
 	/// Retorna a string da parte atualmente equipada
@@ -201,8 +204,19 @@ public class scr_EPManager : MonoBehaviour {
 			meshLeftArm.Add(part.GetComponent<SpriteMeshAnimation>());
 		}
 
+		flipCallback = new UnityEvent();
 	}
 	
+	public void addFlipCallback(UnityAction action){
+		flipCallback.AddListener(action);
+		if(flipped)
+			action.Invoke();
+	}
+
+	public void removeFlipCallback(UnityAction action){
+		flipCallback.RemoveListener(action);
+	}
+
 	/// <summary>
 	/// Realiza a troca de sprites e posição do braço
 	/// </summary>
@@ -214,6 +228,8 @@ public class scr_EPManager : MonoBehaviour {
 		if(refLeftArm != null){
 			((scr_Weapon) refLeftArm).flipHand();
 		}
+
+		flipCallback.Invoke();
 
 		//Fix right sprite at arm
 		int curRightFrame = meshRightArm[0].frame;

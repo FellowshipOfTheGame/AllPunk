@@ -48,6 +48,7 @@ public class scr_Charge : FSM.State {
 			if(!hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Running")){
 				audioClient.playAudioClip ("Charge", scr_AudioClient.sources.local);
 				isRunning = true;
+				boilerMaestro.playParticle();
 			}
 			if(hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Move")){
 				FSM.State huntState;

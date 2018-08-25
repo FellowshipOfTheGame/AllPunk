@@ -51,6 +51,7 @@ public class scr_HUDController : MonoBehaviour {
 
 	[Header("Pause")]
 	public GameObject pausePanel;
+	public GameObject optionsPanel;
 	public float alphaWhenPaused = 0.6f;
 	public float pausedTransition = 0.5f;
 	public bool canPause = true;
@@ -65,6 +66,11 @@ public class scr_HUDController : MonoBehaviour {
 	public Color textColor;
 	private bool isGameOver;
 
+	[Header("Sound")]
+	public float gameOverTransitionTime = 0.5f;
+
+	private scr_AudioClient audioClient;
+
 	#endregion
 
 	#region Monobehavior Methods
@@ -72,10 +78,12 @@ public class scr_HUDController : MonoBehaviour {
 		if (hudController == null) {
 			hudController = this;
 			playerInSteam = false;
+			audioClient = GetComponent<scr_AudioClient>();
 
 			fadeCallback = new UnityEvent();
 			//Seta o pai da imagem para o jogador - dessa forma a imagem sempre seguirá o jogador
 			//condensationImg.transform.SetParent (player.transform);
+			
 		} else if (hudController != this) {
 			Destroy (this.gameObject);
 		}
@@ -118,6 +126,7 @@ public class scr_HUDController : MonoBehaviour {
 				isFading = true;
 				StartCoroutine(fadeTo(alphaWhenPaused,pausedTransition));
 				isPaused = true;
+				audioClient.playAudioClip("Open", scr_AudioClient.sources.sfx);
 			}
 			else {
 				onClickResume();
@@ -145,6 +154,7 @@ public class scr_HUDController : MonoBehaviour {
 		gameOverPanel.SetActive(true);
 		StartCoroutine(changeGameOverText());
 		gameOverLoadButton.interactable = scr_GameManager.instance.hasSaveGame();
+		scr_AudioManager.instance.changeToMusic(gameOverTransitionTime, audioClient.getWrapper("GameOver"));
 	}
 
 	private IEnumerator changeGameOverText(){
@@ -319,9 +329,12 @@ public class scr_HUDController : MonoBehaviour {
 	public void onClickResume(){
 		scr_GameManager.instance.setPauseGame(false);
 		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
 		isFading = true;
 		isPaused = false;
 		StartCoroutine(fadeTo(0,pausedTransition));
+		audioClient.playAudioClip("Open", scr_AudioClient.sources.sfx);
+
 	}
 
 	public void onClickLoad(){
@@ -337,6 +350,8 @@ public class scr_HUDController : MonoBehaviour {
 		if(isGameOver){
 			hideEndGameScreen();
 		}
+		pausePanel.SetActive(false);
+		optionsPanel.SetActive(false);
 
 		scr_GameManager.instance.goToMainMenu();
 	}

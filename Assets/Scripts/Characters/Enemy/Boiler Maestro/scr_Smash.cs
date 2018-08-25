@@ -28,6 +28,7 @@ public class scr_Smash : FSM.State {
 	{
 		boilerMaestro.animator.SetTrigger ("Attack");
 		audioClient.playAudioClip ("Smash", scr_AudioClient.sources.local);
+		boilerMaestro.playParticle();
 	}
 
 	public override void Execute ()

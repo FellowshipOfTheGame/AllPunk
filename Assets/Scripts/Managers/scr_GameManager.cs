@@ -57,6 +57,9 @@ public class scr_GameManager : MonoBehaviour {
 			Save();
 		}
 		
+		if(player == null) {
+			player = GameObject.FindGameObjectWithTag("Player");
+		}
 
 		previusScene = "null";
 		SceneManager.activeSceneChanged += OnSceneLoaded;
@@ -172,7 +175,10 @@ public class scr_GameManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="newScene">Cena para qual se deseja mover</param>
 	public void MoveToScene(string newScene) {
-		previusScene = SceneManager.GetActiveScene().name;
+		string previusScenePath = SceneManager.GetActiveScene().path;
+		string[] separator = {"Scenes/", ".unity"};
+		previusScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
+
 		updatePlayerStats();
 		string completePath = "Scenes/" + newScene;
 		isLoading = true;
@@ -221,28 +227,41 @@ public class scr_GameManager : MonoBehaviour {
 			if(sceneScript == null)
            		sceneScript = sceneManager.GetComponent<scr_SceneManager>();
 
-			//Kill other players that may be in scene
-			if(killRemainingPlayerOnLoad){
-				GameObject[] players;
-				players = GameObject.FindGameObjectsWithTag("Player");
-				foreach(GameObject g in players)
-					Destroy(g);
-			}
-
 			Transform target = sceneScript.positionToSpawnInScene(previusScene, playerStats);
-            player = spawnPlayerOnTransform(target);
+
+			if(target == null) {
+				player = GameObject.FindGameObjectWithTag("Player");
+			}
+			else{
+				//Kill other players that may be in scene
+				if(killRemainingPlayerOnLoad){
+					GameObject[] players;
+					players = GameObject.FindGameObjectsWithTag("Player");
+					foreach(GameObject g in players)
+						Destroy(g);
+				}
+
+				player = spawnPlayerOnTransform(target);
+			}
         }
 
 		//Update instances
 		isLoading = false;
-		scr_CameraController cameraScript = Camera.main.GetComponent<scr_CameraController>();
-        cameraScript = Camera.main.GetComponent<scr_CameraController>();
-		cameraScript.player = player;
+		scr_Camera_Follow_Mouse cameraScript = Camera.main.GetComponent<scr_Camera_Follow_Mouse>();
+		if(cameraScript != null) {
+			cameraScript.player = player.transform;
+		}
+		//Legacy
+		else {
+			scr_CameraController oldController =  Camera.main.GetComponent<scr_CameraController>();
+			if(oldController != null)
+				oldController.player = player;
+		}
 
 		//Ajust camera position
 		Vector3 playerPos = player.transform.position;
-		playerPos.z = cameraScript.transform.position.z;
-		cameraScript.transform.position = playerPos;
+		playerPos.z = Camera.main.transform.position.z;
+		Camera.main.transform.position = playerPos;
 
 		setHudVisible(true);
 		scr_HUDController.hudController.onLoadLevel();
@@ -267,6 +286,8 @@ public class scr_GameManager : MonoBehaviour {
 	/// Funçao utilizada para atualizar stats relacionados ao jogador, como vida e energia
 	/// </summary>
 	public void updatePlayerStats() {
+		if(player == null)
+			return ;
         //Atualizar stats de vida
 		scr_HealthController health = player.GetComponent<scr_HealthController>();
 		playerStats.maxHp = health.getMaxHealth();

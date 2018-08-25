@@ -41,8 +41,9 @@ public class MenuButton : MonoBehaviour
 	public void newGameClick()
     {
         print("Clicou em New Game");
-        Destroy(scr_GameManager.instance);
-        SceneManager.LoadScene(scene);
+        scr_GameManager.instance.MoveToScene(scene);
+        // Destroy(scr_GameManager.instance);
+        // SceneManager.LoadScene(scene);
     }
 
     public void loadGameClick()

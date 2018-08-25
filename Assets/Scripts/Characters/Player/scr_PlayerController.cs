@@ -371,6 +371,9 @@ public class scr_PlayerController : MonoBehaviour {
 		StopAllCoroutines();
 		underKnockback = true;
 		scr_GameManager.instance.startGameOver();
+		gameObject.layer = 14;
+		// gameObject.layer = LayerMask.NameToLayer("Corpse");
+		animator.SetTrigger("Dead");
 	}
 
     private IEnumerator waitKnockback()
