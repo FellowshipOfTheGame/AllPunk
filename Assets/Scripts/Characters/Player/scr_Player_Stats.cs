@@ -37,6 +37,9 @@ public class scr_Player_Stats {
 	public string legsEquiped = "None";
 	public string torsoEquiped = "None";
 
+	[Header("Pickups unicos")]
+	public StringBoleanDictionary takenPickups;
+
 	[Header("Propriedades de save")]
 	[Tooltip("Nome da cena onde o jogador salvou pela última vez")]
 	public string savePointScene = "null";
