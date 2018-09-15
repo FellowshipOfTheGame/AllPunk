@@ -42,6 +42,8 @@ public class scr_EnemyOniTurret : MonoBehaviour {
     //Se a turret está virada para direita ou pra esquerda
     public bool isFacingRight;
 
+    public bool flippedY;
+
 	//Direção do projétil
 	private Vector3 direction;
 
@@ -145,17 +147,20 @@ public class scr_EnemyOniTurret : MonoBehaviour {
 
             //Verifica se o angulo está dentro dos limites
             Vector3 targetDirection = target.transform.position - barrel.transform.position;
-            float targetAngle = Mathf.Atan2(targetDirection.y, targetDirection.x);
+            float targetAngle = Mathf.Atan2(targetDirection.y, Mathf.Abs(targetDirection.x));
             targetAngle *= Mathf.Rad2Deg;
-            if (facingDirection == -1)
-                targetAngle = 180 - targetAngle;
-            //print(targetAngle);
+            // if (facingDirection == -1)
+            //     targetAngle = 180 - targetAngle;
+            Debug.Log(targetAngle);
 
             //(targetAngle <= maxUpperAngle) && (targetAngle >= maxLowerAngle)
             if ((targetAngle <= maxUpperAngle) && (targetAngle >= maxLowerAngle))
             {
                 //Rotaciona a ponta da arma
-                rotationAxis.transform.localRotation = Quaternion.Euler(0,0,initialAngle - targetAngle);
+                if(!flippedY)
+                    rotationAxis.transform.localRotation = Quaternion.Euler(0,0,initialAngle - targetAngle);
+                else
+                    rotationAxis.transform.localRotation = Quaternion.Euler(0,0,initialAngle + targetAngle);
 
                 //Atualiza a posição do line renderer
                 lineRen.SetPosition(0, barrel.transform.position);
