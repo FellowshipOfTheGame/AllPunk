@@ -19,7 +19,7 @@ public class scr_Weapon_SteamBreath : scr_Weapon {
 	public override bool Unequip ()
 	{
 		Debug.Log("Removed: "+ epName);
-		return true;
+		return base.Unequip();
 	}
 
 	public void Awake()

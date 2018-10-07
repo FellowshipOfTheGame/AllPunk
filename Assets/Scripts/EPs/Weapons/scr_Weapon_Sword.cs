@@ -10,7 +10,7 @@ public class scr_Weapon_Sword : scr_Weapon {
 	public override bool Unequip ()
 	{
 		Debug.Log("Removed: "+ epName);
-		return true;
+		return base.Unequip();
 	}
 
     private void Update()

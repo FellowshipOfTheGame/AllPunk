@@ -12,7 +12,7 @@ public class scr_Weapon_Gun : scr_Weapon
 	public override bool Unequip ()
 	{
 		Debug.Log("Removed: "+ epName);
-		return true;
+		return base.Unequip();
 	}
 
     private void Awake()

@@ -340,25 +340,39 @@ public class scr_SaveStation : scr_Interactable
         {
             Dropdown drop = rightHandLayout.GetComponentInChildren<Dropdown>();
             int selected = drop.value;
-            epMan.equipPart(equipArm[selected], scr_EPManager.ArmToEquip.RightArm);
-            print(origin + " " + drop.value);
-            epMan.pauseWeaponScripts(false);
+            if(selected == 0){
+                epMan.removeBodyPart(scr_EP.EpType.Arm, scr_EPManager.ArmToEquip.RightArm);
+            }
+            else {
+                epMan.equipPart(equipArm[selected], scr_EPManager.ArmToEquip.RightArm);
+                print(origin + " " + drop.value);
+                epMan.pauseWeaponScripts(false);
+            }
         }
         //Left Hand
         else if(origin == 1)
         {
             Dropdown drop = leftHandLayout.GetComponentInChildren<Dropdown>();
             int selected = drop.value;
-            epMan.equipPart(equipArm[selected], scr_EPManager.ArmToEquip.LeftArm);
-            print(origin + " " + drop.value);
-            epMan.pauseWeaponScripts(false);
+            if(selected == 0){
+                epMan.removeBodyPart(scr_EP.EpType.Arm, scr_EPManager.ArmToEquip.LeftArm);
+            }
+            else {
+                epMan.equipPart(equipArm[selected], scr_EPManager.ArmToEquip.LeftArm);
+                print(origin + " " + drop.value);
+                epMan.pauseWeaponScripts(false);
+            }
         }
         //Head
         else if(origin == 2)
         {
             Dropdown drop = headLayout.GetComponentInChildren<Dropdown>();
             int selected = drop.value;
-            epMan.equipPart(equipHead[selected]);
+            if(selected == 0) {
+                epMan.removeBodyPart(scr_EP.EpType.Head);
+            }
+            else
+                epMan.equipPart(equipHead[selected]);
             print(origin + " " + drop.value);
         }
         //Torso
@@ -366,7 +380,11 @@ public class scr_SaveStation : scr_Interactable
         {
             Dropdown drop = torsoLayout.GetComponentInChildren<Dropdown>();
             int selected = drop.value;
-            epMan.equipPart(equipTorso[selected]);
+            if(selected == 0) {
+                epMan.removeBodyPart(scr_EP.EpType.Torso);
+            }
+            else
+                epMan.equipPart(equipTorso[selected]);
             print(origin + " " + drop.value);
         }
         //Legs
@@ -374,7 +392,11 @@ public class scr_SaveStation : scr_Interactable
         {
             Dropdown drop = legsLayout.GetComponentInChildren<Dropdown>();
             int selected = drop.value;
-            epMan.equipPart(equipLegs[selected]);
+            if(selected == 0) {
+                epMan.removeBodyPart(scr_EP.EpType.Legs);
+            }
+            else
+                epMan.equipPart(equipLegs[selected]);
             print(origin + " " + drop.value);
         }
 

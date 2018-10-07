@@ -140,6 +140,12 @@ abstract public class scr_Weapon : scr_EP {
         return true;
     }
 
+    public override bool Unequip() {
+        StopAllCoroutines();
+        ikLimb.weight = 0;
+        return true;
+    }
+
 	protected void Update()
 
 	{

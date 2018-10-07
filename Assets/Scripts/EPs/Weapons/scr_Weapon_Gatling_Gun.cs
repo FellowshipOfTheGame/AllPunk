@@ -47,7 +47,7 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
 	public override bool Unequip ()
 	{
 		Debug.Log("Removed: "+ epName);
-		return true;
+		return base.Unequip();
 	}
 
     protected override void AttackAction(bool noAnimation)
