@@ -21,6 +21,7 @@ public class scr_EP_Boiler : scr_EP {
 		playerEnergy = playerReference.GetComponent<scr_PlayerEnergyController>();
 		if (playerEnergy != null) {
 			playerEnergy.setMaxPrimEnergy (boilerEnergy);
+			scr_HUDController.hudController.equipPrimaryEnergyBar(this.keyName);
 			return true;
 		} else
 			return false;
@@ -30,6 +31,7 @@ public class scr_EP_Boiler : scr_EP {
 	{
 		if (playerEnergy != null) {
 			playerEnergy.setMaxPrimEnergy (0);
+			scr_HUDController.hudController.removePrimaryEnergyBar();
 			return true;
 		} else
 			return false;

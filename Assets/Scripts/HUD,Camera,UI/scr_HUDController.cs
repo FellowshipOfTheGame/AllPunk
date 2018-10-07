@@ -25,9 +25,12 @@ public class scr_HUDController : MonoBehaviour {
 	public Text healthText;
 	public Slider healthSlider;
 	[Header("Energy")]
+	public StringGameObjectDictionary primBarObject;
 
-	public Text primEnergyText;
-	public Slider primEnergySlider;
+	private Text primEnergyText = null;
+	private Slider primEnergySlider = null;
+	private string currentPrimBar = "null";
+	
 
 	public Text resEnergyText;
 	public Slider resEnergySlider;
@@ -217,6 +220,7 @@ public class scr_HUDController : MonoBehaviour {
 		float playerMaxHp = playerHealth.getMaxHealth ();
 		float playerCurrentHp = playerHealth.getCurrentHealth ();
 
+		if(healthText != null)
 		healthText.text = "Integrity " +
 			((playerCurrentHp / playerMaxHp) * 100).ToString ("0.#") + "%";
 
@@ -233,16 +237,22 @@ public class scr_HUDController : MonoBehaviour {
 		float playerMaxPrimEnergy = playerEnergy.getMaxPrimEnergy ();
 		float playerCurrentPrimEnergy = playerEnergy.getCurrentPrimEnergy ();
 
+		if(resEnergyText != null)
 		resEnergyText.text = "Reserve " +
 			((playerCurrentResEnergy / playerMaxResEnergy) * 100).ToString ("0.#") + "%";
+		if(resEnergySlider != null)
 		resEnergySlider.value = playerCurrentResEnergy / playerMaxResEnergy;
 
 		if (playerMaxPrimEnergy != 0) {
-			primEnergyText.text = "Primary " +
-			((playerCurrentPrimEnergy / playerMaxPrimEnergy) * 100).ToString ("0.#") + "%";
+			if(primEnergyText != null)
+				primEnergyText.text = "Primary " +
+				((playerCurrentPrimEnergy / playerMaxPrimEnergy) * 100).ToString ("0.#") + "%";
+			if(primEnergySlider != null)
 			primEnergySlider.value = playerCurrentPrimEnergy / playerMaxPrimEnergy;
 		} else {
-			primEnergyText.text = "Not Equipped ";
+			if(primEnergyText != null)
+				primEnergyText.text = "Not Equipped ";
+			if(primEnergySlider != null)
 			primEnergySlider.value = 0;
 		}
 	}
@@ -260,6 +270,33 @@ public class scr_HUDController : MonoBehaviour {
 			} else
 				itemTexts [index].text = "N/A";
 			index++;
+		}
+	}
+
+	public void equipPrimaryEnergyBar(string newBar) {
+		if(newBar != currentPrimBar){
+			if(newBar == "null"){
+				removePrimaryEnergyBar();
+			}
+			if(primBarObject.ContainsKey(newBar)){
+				if(currentPrimBar != "null"){
+					primBarObject[currentPrimBar].SetActive(false);
+				}
+				currentPrimBar = newBar;
+				primBarObject[currentPrimBar].SetActive(true);
+				GameObject bar = primBarObject[currentPrimBar];
+				primEnergyText = bar.GetComponentInChildren<Text>();
+				primEnergySlider = bar.GetComponentInChildren<Slider>();
+			}
+		}
+	}
+
+	public void removePrimaryEnergyBar(){
+		if(currentPrimBar != "null"){
+			primBarObject[currentPrimBar].SetActive(false);
+			primEnergyText = null;
+			primEnergySlider = null;
+			currentPrimBar = "null";
 		}
 	}
 
