@@ -13,6 +13,7 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 	public float lifePorcent;
 	public scr_Gustav_Background_Scroller scroller;
 	public scr_HealthController healthController;
+	public scr_AudioClient bulletSoundClient;
 
 
 	private FSM.StateMachine stateMachine;
@@ -69,6 +70,7 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 	}
 
 	public void playSound() {
+		bulletSoundClient.playLocalClip("Shoot");
 		Debug.Log("TOCA SOM");
 	}
 
