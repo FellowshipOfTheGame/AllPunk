@@ -5,10 +5,18 @@ using UnityEngine;
 public class scr_Gustav_Battle : FSM.State {
 
 	public scr_Gustav_Battle_Manager battleManager;
-	[Tooltip("Quantidade de inimigos spawnados por wave")]
-	public int spawnQuantity = 5;
-	[Tooltip("Tempo entre spawns")]
-	public float spawnTimer = 10;
+
+	[Header("Steam spawn")]
+	[Tooltip("Intervalo entre qual pode acontecer vapor")]
+	public float minRandTime = 5;
+	[Tooltip("Intervalo entre qual pode acontecer vapor")]
+	public float maxRandTime = 15;
+	[Tooltip("Duração do vapor")]
+	public float duration = 5;
+	[Tooltip("Velocidade com que a tela embaça sem o óculos")]
+	public float alphaToCondensate = 0.5f;
+	[Tooltip("Quantidade de bagpipers para spawnar")]
+	public int spawnQuatity = 5;
 
 	private float timer;
 
@@ -21,17 +29,11 @@ public class scr_Gustav_Battle : FSM.State {
 	public override void Enter (){
 		Debug.Log("MODO BATALHA");
 		timer = 0;
+		battleManager.startSteamCoroutine(scr_Gustav_Particle_Emitters.Instant.battle,minRandTime,maxRandTime,duration,alphaToCondensate,spawnQuatity);
 	}
 
 	public override void Execute () {
-		if(battleManager.lifePorcent > 0){
-			timer -= Time.deltaTime;
-			if(timer <= 0) {
-				battleManager.spawnBattleWave(spawnQuantity);
-				timer = spawnTimer;
-			}
-		}
-		else {
+		if(battleManager.lifePorcent <= 0){
 			FSM.State state;
 			bool sucess = connectedStates.TryGetValue("Dead", out state);
 			if(sucess){
@@ -46,5 +48,7 @@ public class scr_Gustav_Battle : FSM.State {
 	public override void Exit (){
 		//Parar cenário
 		Debug.Log("Batalha acabou!");
+		battleManager.stopSteamCoroutine();
+
 	}
 }
