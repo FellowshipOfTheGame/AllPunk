@@ -22,7 +22,7 @@ public class scr_EnemyDropItem : MonoBehaviour {
 	}
 	
 	private void onDeath(){
-		float random =  UnityEngine.Random.Range(0,1);
+		float random =  UnityEngine.Random.Range(0.0f,1.0f);
 		float aux = 0;
 		for(int i = 0; i < dropChance.Length; i++){
 			aux += dropChance[i];
