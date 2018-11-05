@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class scr_Gustav_Battle : FSM.State {
+public class scr_Gustav_Locomotive : FSM.State {
 
 	public scr_Gustav_Battle_Manager battleManager;
 
@@ -18,6 +18,8 @@ public class scr_Gustav_Battle : FSM.State {
 	[Tooltip("Quantidade de bagpipers para spawnar")]
 	public int spawnQuatity = 5;
 
+	public float timeToStop = 10;
+
 	private float timer;
 
 	private void Awake() {
@@ -29,13 +31,13 @@ public class scr_Gustav_Battle : FSM.State {
 	public override void Enter (){
 		Debug.Log("MODO BATALHA");
 		timer = 0;
-		battleManager.startSteamCoroutine(scr_Gustav_Particle_Emitters.Instant.gun,minRandTime,maxRandTime,duration,alphaToCondensate,spawnQuatity);
+		battleManager.startSteamCoroutine(scr_Gustav_Particle_Emitters.Instant.locomotive,minRandTime,maxRandTime,duration,alphaToCondensate,spawnQuatity);
 	}
 
 	public override void Execute () {
-		if(battleManager.lifePorcentGun <= 0){
+		if(battleManager.lifePorcentLocomotive <= 0){
 			FSM.State state;
-			bool sucess = connectedStates.TryGetValue("Pause", out state);
+			bool sucess = connectedStates.TryGetValue("Dead", out state);
 			if(sucess){
 				stateMachine.transitionToState(state);
 			}
@@ -49,7 +51,9 @@ public class scr_Gustav_Battle : FSM.State {
 		//Parar cenário
 		Debug.Log("Batalha acabou!");
 		battleManager.stopSteamCoroutine();
-		battleManager.lowerBridge();
-		battleManager.spawnExplosionGun();
+		battleManager.spawnExplosionLocomotive();
+		battleManager.locomotivePlataform.resumePlataform();
+		battleManager.setBackgroundSpeed(0, timeToStop);
+		battleManager.locomotiveParticle.Stop();
 	}
 }

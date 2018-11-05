@@ -20,7 +20,17 @@ public class scr_Gustav_Pause : FSM.State {
 	}
 
 	public override void Execute () {
-		if(battleManager.hasReachedEnd){
+		if (battleManager.hasReachedLocomotive){
+			FSM.State state;
+			bool sucess = connectedStates.TryGetValue("Locomotive", out state);
+			if(sucess){
+				stateMachine.transitionToState(state);
+			}
+			else{
+				Debug.LogWarning("Can't find next state");
+			}
+		}
+		else if(battleManager.hasReachedEnd && battleManager.lifePorcentGun > 0){
 			FSM.State state;
 			bool sucess = connectedStates.TryGetValue("Battle", out state);
 			if(sucess){

@@ -7,9 +7,10 @@ public class scr_Gustav_Particle_Emitters : MonoBehaviour {
 	public string nameManager = "GustavBattleManager";
 	public enum Instant
 	{
-		chase, battle
+		chase, gun, locomotive
 	};
 	public Instant battleInstant = Instant.chase;
+	public scr_AudioClient audioClient;
 
 	private scr_Gustav_Battle_Manager batMan;
 	private ParticleSystem particles;
@@ -47,6 +48,10 @@ public class scr_Gustav_Particle_Emitters : MonoBehaviour {
 		main.duration = time/2;
 		main.startLifetime = time/2;
 		particles.Play();
+
+		if(audioClient != null) {
+			audioClient.playLocalClip("Steam");
+		}
 	}
 
 }

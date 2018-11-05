@@ -7,13 +7,14 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 	public bool hasReachedStart = false;
 	public bool hasReachedEnd = false;
 	public bool hasReachedPause = false;
+	public bool hasReachedLocomotive = false;
 	public GameObject bulletPrefab;
 	public Vector3 bulletOffset;
 		
-	public float lifePorcent;
 	public scr_Gustav_Background_Scroller scroller;
-	public scr_HealthController healthController;
 	public scr_AudioClient bulletSoundClient;
+	public GameObject explosionPrefab;
+	public float explosionTimeToLive = 2f;
 
 	[Header("Spawn Steam and Bats")]
 	public GameObject batpipperPrefab;
@@ -32,6 +33,21 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 	private float currentSteamCounter = 0;
 	private Coroutine steamCoroutine = null;
 
+	[Header("Gustav gun")]
+	public scr_HealthController healthControllerGun;
+	public float lifePorcentGun;
+	public Animator gustavGunAnimator;
+	public Transform[] gunExplosionSpawnPoints;
+	public float explosionIntervalGun = 0.2f;
+
+
+	[Header("Locomotive")]
+	public scr_MovingPlataform locomotivePlataform;
+	public scr_HealthController healthControllerLocomotive;
+	public float lifePorcentLocomotive;
+	public Transform[] locomotiveExplosionSpawnPoints;
+	public float explosionIntervalLocomotive = 0.2f;
+	public ParticleSystem locomotiveParticle;
 
 	private FSM.StateMachine stateMachine;
 	private List<scr_Gustav_Elevating_Plataform> plataforms;
@@ -47,8 +63,10 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 
 	private void Start() {
 		player = GameObject.FindGameObjectWithTag("Player");
-		healthController.addHealthChangeCallback(updateLife);
-
+		healthControllerGun.addHealthChangeCallback(updateGunLife);
+		healthControllerLocomotive.addHealthChangeCallback(updateLocomotiveLife);
+		updateGunLife();
+		updateLocomotiveLife();
 	}
 
 	void FixedUpdate(){
@@ -86,6 +104,10 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 
 	public void setReachedEnd(bool hasReached) {
 		hasReachedEnd = hasReached;
+	}
+
+	public void setReachedLocomotive(bool hasReached) {
+		hasReachedLocomotive = hasReached;
 	}
 
 	public void elevate(){
@@ -130,8 +152,16 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 		}
 	}
 
-	public void updateLife() {
-		lifePorcent = healthController.getCurrentHealth() / healthController.getMaxHealth();
+	public void updateGunLife() {
+		lifePorcentGun = healthControllerGun.getCurrentHealth() / healthControllerGun.getMaxHealth();
+	}
+
+	public void updateLocomotiveLife() {
+		lifePorcentLocomotive = healthControllerLocomotive.getCurrentHealth() / healthControllerLocomotive.getMaxHealth();
+	}
+
+	public void lowerBridge(){
+		gustavGunAnimator.SetTrigger("Lower");
 	}
 
 	public void startSteamCoroutine(scr_Gustav_Particle_Emitters.Instant instant, float minRandTime, float maxRandTime, float duration, float alphaToCondensate, int spawnQuatity){
@@ -153,6 +183,22 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 			StopCoroutine(steamCoroutine);
 			scr_HUDController.hudController.setPlayerInSteam(false, alphaCondesation);
 			steamCoroutine = null;
+		}
+	}
+
+	public void spawnExplosionGun(){
+		StartCoroutine(spawnExplosionOnIntervals(gunExplosionSpawnPoints, explosionIntervalGun));
+	}
+
+	public void spawnExplosionLocomotive(){
+		StartCoroutine(spawnExplosionOnIntervals(locomotiveExplosionSpawnPoints, explosionIntervalLocomotive));
+	}
+
+	private IEnumerator spawnExplosionOnIntervals(Transform[] location, float timeInterval) {
+		for(int i = 0; i< location.Length; i++) {
+			GameObject toSpawn = GameObject.Instantiate(explosionPrefab, location[i].position, Quaternion.identity);
+			Destroy(toSpawn, explosionTimeToLive);
+			yield return new WaitForSeconds(timeInterval);
 		}
 	}
 
