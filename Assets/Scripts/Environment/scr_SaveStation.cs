@@ -155,11 +155,11 @@ public class scr_SaveStation : scr_Interactable
         List<Dropdown.OptionData> optionsLegs = new List<Dropdown.OptionData>();
 
         //Adicionar a opção de não equipar nada
-        optionsRight.Add(new Dropdown.OptionData("Nada"));
-        optionsLeft.Add(new Dropdown.OptionData("Nada"));
-        optionsTorso.Add(new Dropdown.OptionData("Nada"));
-        optionsHead.Add(new Dropdown.OptionData("Nada"));
-        optionsLegs.Add(new Dropdown.OptionData("Nada"));
+        optionsRight.Add(new Dropdown.OptionData("None"));
+        optionsLeft.Add(new Dropdown.OptionData("None"));
+        optionsTorso.Add(new Dropdown.OptionData("None"));
+        optionsHead.Add(new Dropdown.OptionData("None"));
+        optionsLegs.Add(new Dropdown.OptionData("None"));
         
         //Manter keynames seguros
         equipArm.Add("None");
@@ -289,6 +289,7 @@ public class scr_SaveStation : scr_Interactable
         {
             scr_PlayerEnergyController energy = interactor.GetComponent<scr_PlayerEnergyController>();
 			energy.setCurrentResEnergy(energy.getMaxResEnergy());
+            energy.setMaxPrimEnergy(energy.getMaxPrimEnergy());
         }
     }
 
