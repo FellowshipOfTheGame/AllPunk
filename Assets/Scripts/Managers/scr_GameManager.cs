@@ -198,14 +198,7 @@ public class scr_GameManager : MonoBehaviour {
 		scr_SceneManager sceneScript = null;
 		if(sceneManager != null){
             sceneScript = sceneManager.GetComponent<scr_SceneManager>();
-			if(sceneScript != null && sceneScript.musicClip != null){
-				if(scr_AudioManager.instance.isPlayingMusic()){
-					scr_AudioManager.instance.changeToMusic(sceneScript.musicTransitionTime,sceneScript.musicClip);
-				}
-				else{
-					scr_AudioManager.instance.playClipOnce(sceneScript.musicClip, scr_AudioClient.sources.music);
-				}
-			}
+			makeMusicTransition(sceneScript);
 		}
 
 		//Fazer com que a tela inicial não apareça HUD
@@ -275,6 +268,22 @@ public class scr_GameManager : MonoBehaviour {
 			setPauseGame(false);
 		}
 		print("Scene is Loaded");
+	}
+
+	public void makeMusicTransition(scr_SceneManager sceneScript) {
+		if(sceneScript != null && sceneScript.musicClip != null){
+				if(scr_AudioManager.instance.isPlayingMusic()){
+					if(sceneScript.shouldTransitionMusic == scr_SceneManager.MusicMode.Transition)
+						scr_AudioManager.instance.changeToMusic(sceneScript.musicTransitionTime,sceneScript.musicClip);
+					else if (sceneScript.shouldTransitionMusic == scr_SceneManager.MusicMode.Stop){
+						scr_AudioManager.instance.stopMusic(sceneScript.musicTransitionTime);
+					}
+				}
+				else{
+					if(sceneScript.shouldTransitionMusic == scr_SceneManager.MusicMode.Transition)
+						scr_AudioManager.instance.startMusic(sceneScript.musicClip, sceneScript.musicTransitionTime);
+					}
+			}
 	}
 
 	private void onFadeFinish() {
