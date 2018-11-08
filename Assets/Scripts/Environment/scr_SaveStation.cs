@@ -13,6 +13,10 @@ public class scr_SaveStation : scr_Interactable
     [Tooltip("Esse save point recupera a energia do jogador")]
     public bool recoverEnergy = false;
 
+    [Header("Force scene name")]
+    public bool shouldForceSceneName = false;
+    public string sceneToForce;
+
     [Header("Referencias de HUD")]
     public GameObject rightHandLayout;
     public GameObject leftHandLayout;
@@ -298,10 +302,15 @@ public class scr_SaveStation : scr_Interactable
         scr_GameManager.instance.updatePlayerStats();
         scr_Player_Stats playerStats = scr_GameManager.instance.playerStats;
 
-		string previusScenePath = SceneManager.GetActiveScene().path;
-        string[] separator = {"Scenes/", ".unity"};
-		playerStats.savePointScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
-        playerStats.savePointName = gameObject.name;
+        if(!shouldForceSceneName) {
+            string previusScenePath = SceneManager.GetActiveScene().path;
+            string[] separator = {"Scenes/", ".unity"};
+            playerStats.savePointScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
+            playerStats.savePointName = gameObject.name;
+        }
+        else{
+            playerStats.savePointName = sceneToForce;
+        }
         scr_GameManager.instance.playerStats = playerStats;
         bool result = scr_GameManager.instance.Save();
 

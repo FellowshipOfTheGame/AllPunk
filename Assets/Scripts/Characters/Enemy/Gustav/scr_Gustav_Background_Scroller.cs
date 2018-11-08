@@ -24,11 +24,12 @@ public class scr_Gustav_Background_Scroller : MonoBehaviour {
 		//slideObject1.localPosition = new Vector3(-xToScroll/2,0,0);
 		//slideObject2.localPosition = new Vector3(0,0,0);		
 		//slideObject3.localPosition = new Vector3(xToScroll/2,0,0);
-		player = GameObject.FindGameObjectWithTag("Player");
+		player = scr_GameManager.instance.player;
 		initialPosition = slideObject1.transform.localPosition;
 		if(player!= null)
 			rb2dPlayer = player.GetComponent<Rigidbody2D>();
 	}
+
 	
 	// Update is called once per frame
 	void Update () {

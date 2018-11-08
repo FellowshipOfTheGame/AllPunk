@@ -62,7 +62,7 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 	}
 
 	private void Start() {
-		player = GameObject.FindGameObjectWithTag("Player");
+		player = scr_GameManager.instance.player;
 		healthControllerGun.addHealthChangeCallback(updateGunLife);
 		healthControllerLocomotive.addHealthChangeCallback(updateLocomotiveLife);
 		updateGunLife();
