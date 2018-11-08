@@ -7,7 +7,7 @@ public class scr_Energy_Pickup : MonoBehaviour {
 	public float energyToRecover;
 	public string boylerKey = "torso_boiler";
 	
-	private void OnCollisionEnter2D(Collision2D other) {
+	private void OnTriggerEnter2D(Collider2D other) {
 		if(other.gameObject.tag == "Player"){
 			scr_EPManager epMan = other.gameObject.GetComponent<scr_EPManager>();
 			if(epMan != null) {

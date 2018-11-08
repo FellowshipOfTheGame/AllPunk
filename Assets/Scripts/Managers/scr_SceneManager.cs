@@ -14,7 +14,13 @@ public class scr_SceneManager : MonoBehaviour {
 	public Transform[] neighboorScenesDestination;
 	public GameObject playerPrefab;
 	
+
+	public enum MusicMode
+	{
+		Transition, Stop, Continue
+	};
 	[Header("Musica")]
+	public MusicMode shouldTransitionMusic = MusicMode.Transition;
 	//Musica principal
 	[SerializeField]
 	public scr_AudioClipWrapper musicClip;
@@ -53,5 +59,10 @@ public class scr_SceneManager : MonoBehaviour {
 			result = spawnPoint.transform;
 		}
 		return result;
+	}
+
+	public void forceMusicTransition() {
+		shouldTransitionMusic = MusicMode.Transition;
+		scr_GameManager.instance.makeMusicTransition(this);
 	}
 }

@@ -11,6 +11,8 @@ public class scr_GustavProjectile : MonoBehaviour {
 	[SerializeField] float damage = 10;
 	[SerializeField] float timeToLive = 10; //em Segundos
 	[SerializeField] float force = 10;
+	[SerializeField] public GameObject explosionPrefab;
+	[SerializeField] float explosionTimeToDestroy = 1;
 
 	private Rigidbody2D entityRigidBody;
 	[SerializeField]
@@ -43,7 +45,7 @@ public class scr_GustavProjectile : MonoBehaviour {
 			GetComponent<SpriteRenderer> ().flipX = true;
 		
 		this.entityRigidBody.velocity = this.direction * speed;
-		audioClient.playAudioClip ("Flyby", scr_AudioClient.sources.local);
+		//audioClient.playAudioClip ("Flyby", scr_AudioClient.sources.local);
 	}
 
 	/// <summary>
@@ -72,6 +74,11 @@ public class scr_GustavProjectile : MonoBehaviour {
 	}
 
 	void Die(){
+		GameObject explosion = GameObject.Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+		Destroy(explosion, explosionTimeToDestroy);
+
+		audioClient.playLocalClip("Explode");
+
 		Destroy(this.gameObject);
 		//Destroy (this.gameObject);
 		//Destroy (this);

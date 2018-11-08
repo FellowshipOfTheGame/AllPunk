@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
+using Anima2D;
 
 /**
  * Script genérico para gerenciar o estado de saude e defesa de objetos do jogo
@@ -23,6 +24,25 @@ public class scr_HealthController : MonoBehaviour {
 	//Usada para reduzir a força do knockback
 	[Range(0,1)]
 	public float poise;
+
+	public enum ColorMode
+	{
+		Mesh, Sprite, Both, None
+	};
+	[Header("Color change")]
+	[Tooltip("Selecionar qual parte irá mudar de cor quando acertado")]
+	public ColorMode targetToColor = ColorMode.Both;
+	[Tooltip("Ponto da invicibilidade em que muda de cor")]
+	[Range(0,1)]
+	public float porcentWhenColor = 0.5f;
+	[Tooltip("Cor que vai mudar")]
+	public Color targetColor = Color.red;
+
+	//Privados
+	private SpriteRenderer[] spritesToColor;
+	private SpriteMeshInstance[] meshesToColor;
+	private List<Color> spritesOriginalColor;
+	private List<Color> meshesOriginalColor;
 	//To play Audio
 	[SerializeField] scr_AudioClient audioClient;
 	//Referencia ao Rigidbody2D da entidade
@@ -69,6 +89,22 @@ public class scr_HealthController : MonoBehaviour {
         }
 		if (healthChangeCallback == null)
 			healthChangeCallback = new UnityEvent ();
+		if(targetToColor != ColorMode.None){
+			if(targetToColor == ColorMode.Sprite || targetToColor == ColorMode.Both){
+				spritesToColor = GetComponentsInChildren<SpriteRenderer>();
+				spritesOriginalColor = new List<Color>();
+				for(int i = 0; i < spritesToColor.Length; i++) {
+					spritesOriginalColor.Add(spritesToColor[i].color);
+				}
+			}
+			if(targetToColor == ColorMode.Mesh || targetToColor == ColorMode.Both){
+				meshesToColor = GetComponentsInChildren<SpriteMeshInstance>();
+				meshesOriginalColor = new List<Color>();
+				for(int i = 0; i < meshesToColor.Length; i++) {
+					meshesOriginalColor.Add(meshesToColor[i].color);
+				}
+			}
+		}
     }
 
 	private void OnDestroy()
@@ -190,8 +226,36 @@ public class scr_HealthController : MonoBehaviour {
 
     private IEnumerator waitInvinciTime() {
         canBeHurt = false;
-        yield return new WaitForSeconds(invicibilityTime);
+		float delta = 0;
+		float midTime = porcentWhenColor * invicibilityTime;
+		//Avoid division by zero
+		if(midTime == 0) midTime = 0.1f;
+		float normalizedTime;
+		while(delta < invicibilityTime){
+			normalizedTime = (delta < midTime) ? (delta/midTime): ((invicibilityTime - delta)/(invicibilityTime-midTime));
+
+			if(targetToColor != ColorMode.None){
+				if(targetToColor == ColorMode.Sprite || targetToColor == ColorMode.Both)
+					for(int i =0 ; i < spritesToColor.Length; i++)
+						spritesToColor[i].color = Color.Lerp(spritesOriginalColor[i], targetColor, normalizedTime);
+				if(targetToColor == ColorMode.Mesh || targetToColor == ColorMode.Both)
+					for(int i =0 ; i < meshesToColor.Length; i++)
+						meshesToColor[i].color = Color.Lerp(meshesOriginalColor[i], targetColor, normalizedTime);
+			}
+
+			delta += Time.deltaTime;
+			yield return null;
+		}
+        //yield return new WaitForSeconds(invicibilityTime);
         canBeHurt = true;
+		if(targetToColor != ColorMode.None){
+			if(targetToColor == ColorMode.Sprite || targetToColor == ColorMode.Both)
+				for(int i =0 ; i < spritesToColor.Length; i++)
+					spritesToColor[i].color = spritesOriginalColor[i];
+			if(targetToColor == ColorMode.Mesh || targetToColor == ColorMode.Both)
+				for(int i =0 ; i < meshesToColor.Length; i++)
+					meshesToColor[i].color = meshesOriginalColor[i];
+		}
     }
 
 	#region callback Methods

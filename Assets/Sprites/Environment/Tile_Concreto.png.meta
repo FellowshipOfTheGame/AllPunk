@@ -62,7 +62,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 590
+  spritePixelsToUnits: 588
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -119,12 +119,12 @@ TextureImporter:
       name: tile_padrao_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1770
-        width: 590
-        height: 590
+        x: 1
+        y: 1771
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -133,12 +133,12 @@ TextureImporter:
       name: tile_padrao_1
       rect:
         serializedVersion: 2
-        x: 590
-        y: 1770
-        width: 590
-        height: 590
+        x: 591
+        y: 1771
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -151,12 +151,12 @@ TextureImporter:
       name: tile_padrao_2
       rect:
         serializedVersion: 2
-        x: 1180
-        y: 1770
-        width: 590
-        height: 590
+        x: 1181
+        y: 1771
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -169,12 +169,12 @@ TextureImporter:
       name: tile_padrao_3
       rect:
         serializedVersion: 2
-        x: 1770
-        y: 1770
-        width: 590
-        height: 590
+        x: 1771
+        y: 1771
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -187,12 +187,12 @@ TextureImporter:
       name: tile_padrao_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1180
-        width: 590
-        height: 590
+        x: 1
+        y: 1181
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -205,12 +205,12 @@ TextureImporter:
       name: tile_padrao_5
       rect:
         serializedVersion: 2
-        x: 590
-        y: 1180
-        width: 590
-        height: 590
+        x: 591
+        y: 1181
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -223,12 +223,12 @@ TextureImporter:
       name: tile_padrao_6
       rect:
         serializedVersion: 2
-        x: 1180
-        y: 1180
-        width: 590
-        height: 590
+        x: 1181
+        y: 1181
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -246,12 +246,12 @@ TextureImporter:
       name: tile_padrao_7
       rect:
         serializedVersion: 2
-        x: 1770
-        y: 1180
-        width: 590
-        height: 590
+        x: 1771
+        y: 1181
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -267,12 +267,12 @@ TextureImporter:
       name: tile_padrao_8
       rect:
         serializedVersion: 2
-        x: 0
-        y: 590
-        width: 590
-        height: 590
+        x: 1
+        y: 591
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -285,12 +285,12 @@ TextureImporter:
       name: tile_padrao_9
       rect:
         serializedVersion: 2
-        x: 590
-        y: 590
-        width: 590
-        height: 590
+        x: 591
+        y: 591
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -307,12 +307,12 @@ TextureImporter:
       name: tile_padrao_10
       rect:
         serializedVersion: 2
-        x: 1180
-        y: 590
-        width: 590
-        height: 590
+        x: 1181
+        y: 591
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -325,12 +325,12 @@ TextureImporter:
       name: tile_padrao_11
       rect:
         serializedVersion: 2
-        x: 1770
-        y: 590
-        width: 590
-        height: 590
+        x: 1771
+        y: 591
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -346,12 +346,12 @@ TextureImporter:
       name: tile_padrao_12
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 590
-        height: 590
+        x: 1
+        y: 1
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -364,12 +364,12 @@ TextureImporter:
       name: tile_padrao_13
       rect:
         serializedVersion: 2
-        x: 590
-        y: 0
-        width: 590
-        height: 590
+        x: 591
+        y: 1
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -385,12 +385,12 @@ TextureImporter:
       name: tile_padrao_14
       rect:
         serializedVersion: 2
-        x: 1180
-        y: 0
-        width: 590
-        height: 590
+        x: 1181
+        y: 1
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
@@ -406,12 +406,12 @@ TextureImporter:
       name: tile_padrao_15
       rect:
         serializedVersion: 2
-        x: 1770
-        y: 0
-        width: 590
-        height: 590
+        x: 1771
+        y: 1
+        width: 588
+        height: 588
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:

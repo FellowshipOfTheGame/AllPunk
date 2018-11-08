@@ -18,6 +18,18 @@ public class scr_Gustav_Running : FSM.State {
 	[Tooltip("Quantos ciclos de subir e descer precisam para que ele atire")]
 	public float ciclesTillFire = 2;
 
+	[Header("Steam spawn")]
+	[Tooltip("Intervalo entre qual pode acontecer vapor")]
+	public float minRandTime = 5;
+	[Tooltip("Intervalo entre qual pode acontecer vapor")]
+	public float maxRandTime = 15;
+	[Tooltip("Duração do vapor")]
+	public float duration = 5;
+	[Tooltip("Velocidade com que a tela embaça sem o óculos")]
+	public float alphaToCondensate = 0.5f;
+	[Tooltip("Quantidade de bagpipers para spawnar")]
+	public int spawnQuatity = 2;
+
 
 	private enum SubState
 	{
@@ -40,20 +52,21 @@ public class scr_Gustav_Running : FSM.State {
 		nextState = SubState.Up;
 		timer = timerUp;
 		currentCicle = 0;
+		battleManager.startSteamCoroutine(scr_Gustav_Particle_Emitters.Instant.chase,minRandTime,maxRandTime,duration,alphaToCondensate,spawnQuatity);
 	}
 
 	public override void Execute () {
 		//Realiza a transição para o modo de batalha
-		if(battleManager.hasReachedEnd) {
+		if(battleManager.hasReachedPause || battleManager.hasReachedEnd) {
 			FSM.State state;
-			bool sucess = connectedStates.TryGetValue("Battle", out state);
+			bool sucess = connectedStates.TryGetValue("Pause", out state);
 			if(sucess){
 				stateMachine.transitionToState(state);
 			}
 			else{
 				Debug.LogWarning("Can't find next state");
 			}
-		} 
+		}
 		//Realiza lógica
 		else {
 			//Timer estorou
@@ -98,6 +111,7 @@ public class scr_Gustav_Running : FSM.State {
 	}
 
 	public override void Exit (){
+		battleManager.stopSteamCoroutine();
 		battleManager.descent();
 	}
 

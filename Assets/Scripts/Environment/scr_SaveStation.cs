@@ -13,6 +13,10 @@ public class scr_SaveStation : scr_Interactable
     [Tooltip("Esse save point recupera a energia do jogador")]
     public bool recoverEnergy = false;
 
+    [Header("Force scene name")]
+    public bool shouldForceSceneName = false;
+    public string sceneToForce;
+
     [Header("Referencias de HUD")]
     public GameObject rightHandLayout;
     public GameObject leftHandLayout;
@@ -155,11 +159,11 @@ public class scr_SaveStation : scr_Interactable
         List<Dropdown.OptionData> optionsLegs = new List<Dropdown.OptionData>();
 
         //Adicionar a opção de não equipar nada
-        optionsRight.Add(new Dropdown.OptionData("Nada"));
-        optionsLeft.Add(new Dropdown.OptionData("Nada"));
-        optionsTorso.Add(new Dropdown.OptionData("Nada"));
-        optionsHead.Add(new Dropdown.OptionData("Nada"));
-        optionsLegs.Add(new Dropdown.OptionData("Nada"));
+        optionsRight.Add(new Dropdown.OptionData("None"));
+        optionsLeft.Add(new Dropdown.OptionData("None"));
+        optionsTorso.Add(new Dropdown.OptionData("None"));
+        optionsHead.Add(new Dropdown.OptionData("None"));
+        optionsLegs.Add(new Dropdown.OptionData("None"));
         
         //Manter keynames seguros
         equipArm.Add("None");
@@ -289,6 +293,7 @@ public class scr_SaveStation : scr_Interactable
         {
             scr_PlayerEnergyController energy = interactor.GetComponent<scr_PlayerEnergyController>();
 			energy.setCurrentResEnergy(energy.getMaxResEnergy());
+            energy.setMaxPrimEnergy(energy.getMaxPrimEnergy());
         }
     }
 
@@ -297,10 +302,15 @@ public class scr_SaveStation : scr_Interactable
         scr_GameManager.instance.updatePlayerStats();
         scr_Player_Stats playerStats = scr_GameManager.instance.playerStats;
 
-		string previusScenePath = SceneManager.GetActiveScene().path;
-        string[] separator = {"Scenes/", ".unity"};
-		playerStats.savePointScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
-        playerStats.savePointName = gameObject.name;
+        if(!shouldForceSceneName) {
+            string previusScenePath = SceneManager.GetActiveScene().path;
+            string[] separator = {"Scenes/", ".unity"};
+            playerStats.savePointScene = previusScenePath.Split(separator, System.StringSplitOptions.None)[1];
+            playerStats.savePointName = gameObject.name;
+        }
+        else{
+            playerStats.savePointName = sceneToForce;
+        }
         scr_GameManager.instance.playerStats = playerStats;
         bool result = scr_GameManager.instance.Save();
 

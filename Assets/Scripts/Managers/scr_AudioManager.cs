@@ -70,6 +70,58 @@ public class scr_AudioManager : MonoBehaviour {
 			StartCoroutine(fadeBetweenMusic(duration,wrapper));
 		}
 	}
+
+	public void startMusic(scr_AudioClipWrapper wrapper, float transition) {
+		musicSource.clip = wrapper.clip;
+		musicSource.volume = 0;
+		musicSource.pitch = wrapper.pitch;
+		musicSource.loop = wrapper.loop;
+		musicSource.Play();
+		StartCoroutine(fadeInStartMusic(transition, wrapper));
+	}
+
+	private IEnumerator fadeInStartMusic(float duration, scr_AudioClipWrapper wrapper){
+		float volumeSpeed = wrapper.volume/duration, currentVolume = 0, delta, counter = 0;
+		musicSource.volume = 0;
+		musicSource.Play();
+
+		while(counter < duration){
+			delta = Time.unscaledDeltaTime;
+			counter += delta;
+			currentVolume += delta * volumeSpeed;
+
+			musicSource.volume = currentVolume;
+			yield return null;
+		}
+
+		musicSource.volume = wrapper.volume;
+
+	}
+
+	public void stopMusic() {
+		if(musicSource.isPlaying) {
+			musicSource.Stop();
+		}
+	}
+
+	public void stopMusic(float timeToStop) {
+		if(musicSource.isPlaying){
+			StartCoroutine(fadeStopMusic(timeToStop));
+		}
+	}
+
+	private IEnumerator fadeStopMusic(float duration) {
+		float volumeSpeed = musicSource.volume/duration, currentVolume = musicSource.volume, delta, counter =0;
+		while(counter < duration) {
+			delta = Time.unscaledDeltaTime;
+			counter += delta;
+			currentVolume -= volumeSpeed * delta;
+			musicSource.volume = currentVolume;
+			yield return null;
+		}
+		musicSource.volume = 0;
+		musicSource.Stop();
+	}
 	
 	/// <summary>
 	/// Realiza a transição entre duas músicas
