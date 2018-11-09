@@ -24,6 +24,9 @@ public class scr_Charge : FSM.State {
 	scr_HealthController healthCont;
 	float initialPoise;
 
+	//TIMER PARA DAR UM TEMPO PARA ELE PEGAR VELOCIDADE ANTES DE VERIFICAR SE ESTA PARADO
+	float timerTillEvaluate;
+
 	[SerializeField]
 	scr_AudioClient audioClient;
 	#endregion
@@ -40,10 +43,13 @@ public class scr_Charge : FSM.State {
 		initialPoise = healthCont.poise;
 		healthCont.poise = 1;
 		
+		timerTillEvaluate = 2;
+
 	}
 
 	public override void Execute ()
 	{
+		timerTillEvaluate -= Time.deltaTime;
 		if(!isRunning) {
 			if(!hasFinishedRunning && boilerMaestro.animator.GetCurrentAnimatorStateInfo(0).IsName("Running")){
 				audioClient.playAudioClip ("Charge", scr_AudioClient.sources.local);
@@ -60,7 +66,7 @@ public class scr_Charge : FSM.State {
 		}
 
 		if(isRunning) {
-			if(!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle()){
+			if(!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle() || (timerTillEvaluate < 0 && boilerMaestro.isStopped())){
 				boilerMaestro.animator.SetTrigger("FinishCharge");
 				boilerMaestro.animator.SetBool("Charge", false);
 				isRunning = false;

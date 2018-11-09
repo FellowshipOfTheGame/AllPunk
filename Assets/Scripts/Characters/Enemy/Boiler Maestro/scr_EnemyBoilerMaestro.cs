@@ -130,8 +130,8 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 
 		///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
 		//groundHit = Physics2D.Raycast (transform.position + height, Vector2.down, height, 1 << LayerMask.NameToLayer("Ground"));
-		groundHit = Physics2D.Raycast (transform.position, Vector2.down, height*1.5f, LayerMask.GetMask("Ground"));
-		Debug.DrawLine (transform.position, transform.position + new Vector3 (0, -height*1.5f, 0), Color.yellow);
+		groundHit = Physics2D.Raycast (transform.position, Vector2.down, height*1.0f, LayerMask.GetMask("Ground"));
+		Debug.DrawLine (transform.position, transform.position + new Vector3 (0, -height*1.0f, 0), Color.yellow);
 
 		if (groundHit.collider != null) {
 			return true;
@@ -224,6 +224,10 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	public GameObject playerCollisionReference(){
 		return playerCollisionRef;
 	}
+
+	public bool isStopped() {
+		return (Mathf.Abs(rb2D.velocity.x) < 1f);
+	}
 		
 	#endregion
 
@@ -261,13 +265,14 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	/// </summary>
 	/// <param name="speed">Speed.</param>
 	public void horizontalMove(float speed){
-		if (!underKnockback) {
+		bool grounded = isGrounded();
+		if (!underKnockback && grounded) {
 			if (IsFacingRight)
 				rb2D.velocity = new Vector2 (1 * speed, rb2D.velocity.y);
 			else
 				rb2D.velocity = new Vector2 (-1 * speed, rb2D.velocity.y);
 		}
-		animator.SetBool ("IsGrounded", isGrounded ());
+		animator.SetBool ("IsGrounded", grounded);
 		animator.SetFloat ("HorizontalSpeed", Mathf.Abs (rb2D.velocity.x));
 		animator.SetFloat ("VerticalSpeed", rb2D.velocity.y);
 	}

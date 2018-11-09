@@ -86,6 +86,8 @@ public class scr_MovingPlataform : MonoBehaviour {
                 break;
             }
         }
+        if((other.transform.position - myTransform.position).y < 0)
+            canCarry = false;
         if(shouldCarry && canCarry && !previousParent.ContainsKey(otherTrans)){
             previousParent.Add(otherTrans,otherTrans.parent);
             otherTrans.SetParent(myTransform);
