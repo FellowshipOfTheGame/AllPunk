@@ -186,6 +186,7 @@ public class scr_HUDController : MonoBehaviour {
 			child.gameObject.SetActive(true);
 		}
 
+		optionsPanel.SetActive(false);
 		pausePanel.SetActive(false);
 		gameOverPanel.SetActive(false);
 		isGameOver = false;

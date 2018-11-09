@@ -69,7 +69,7 @@ public class scr_GameManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+		/*
 		if(Input.GetKeyDown(KeyCode.X)) {
 			Delete();
 		}
@@ -77,6 +77,7 @@ public class scr_GameManager : MonoBehaviour {
 		if(Input.GetKeyDown(KeyCode.L)) {
 			LoadGame();
 		}
+		*/
 	}
 
 	
