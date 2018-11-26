@@ -151,6 +151,15 @@ public class scr_EPManager : MonoBehaviour {
 		return UnlockedEPs;
 	}
 
+	public bool hasEquipped(string key) {
+		bool hasEquipped = false;
+		if(currentHead == key) hasEquipped = true;
+		else if(currentLeftArm == key) hasEquipped = true;
+		else if(currentRightArm == key) hasEquipped = true;
+		else if(currentLegs == key) hasEquipped = true;
+		else if(currentTorso == key) hasEquipped = true;
+		return hasEquipped;
+	}
 
 	// Use this for initialization
 	void Awake () {

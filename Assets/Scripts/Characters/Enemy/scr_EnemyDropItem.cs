@@ -9,6 +9,8 @@ public class scr_EnemyDropItem : MonoBehaviour {
 	public float[] dropChance;
 	[Tooltip("Prefabs dos itens, seguindo a ordem")]
 	public GameObject[] prefabs;
+	[Tooltip("Nome da parte necessária para dropar")]
+	public string[] requirePart;
 	[Tooltip("Deve matar o personagem depois de spawnar item")]
 	public bool shouldKill = true;
 
@@ -25,6 +27,8 @@ public class scr_EnemyDropItem : MonoBehaviour {
 		float random =  UnityEngine.Random.Range(0.0f,1.0f);
 		float aux = 0;
 		for(int i = 0; i < dropChance.Length; i++){
+			if(!hasPart(requirePart[i]))
+				continue;
 			aux += dropChance[i];
 			if(random <= aux){
 				spawnPrefab(prefabs[i]);
@@ -37,5 +41,18 @@ public class scr_EnemyDropItem : MonoBehaviour {
 
 	private void spawnPrefab(GameObject prefab){
 		GameObject.Instantiate(prefab, transform.position, Quaternion.identity);
+	}
+
+	private bool hasPart(string part){
+		if(part == "")
+			return true;
+		if(scr_GameManager.instance != null) {
+			if(scr_GameManager.instance.player != null) {
+				scr_EPManager epMan = scr_GameManager.instance.player.GetComponent<scr_EPManager>();
+				return epMan.hasEquipped(part);
+
+			}
+		}
+		return false;
 	}
 }

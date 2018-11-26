@@ -42,6 +42,7 @@ public class MenuButton : MonoBehaviour
     {
         print("Clicou em New Game");
         scr_GameManager.instance.playerStats = new scr_Player_Stats();
+        scr_GameManager.instance.Delete();
         // scr_GameManager.instance.MoveToScene(scene);
         Destroy(scr_GameManager.instance.gameObject);
         SceneManager.LoadScene("Scenes/" + scene);

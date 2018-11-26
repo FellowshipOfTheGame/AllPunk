@@ -150,8 +150,8 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
 			//groundHit = Physics2D.Raycast (transform.position + Vector3.right*height + Vector3.down, Vector2.down, height*2,
 			//	LayerMask.GetMask("Ground"));
-		groundHit = Physics2D.Raycast (groundCheckOrigin.position, Vector2.down, height * 1.5f, LayerMask.GetMask ("Ground"));
-		Debug.DrawLine (groundCheckOrigin.position, groundCheckOrigin.position + new Vector3 (0, -height*1.5f, 0), Color.green);
+		groundHit = Physics2D.Raycast (groundCheckOrigin.position, Vector2.down, height * 1.0f, LayerMask.GetMask ("Ground"));
+		Debug.DrawLine (groundCheckOrigin.position, groundCheckOrigin.position + new Vector3 (0, -height*1.0f, 0), Color.green);
 
 		if (groundHit.collider != null) {
 			groundHitPoint = groundHit.point;

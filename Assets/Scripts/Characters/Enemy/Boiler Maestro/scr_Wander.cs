@@ -36,7 +36,7 @@ public class scr_Wander : FSM.State {
 
 
 		//ObstacleCheck
-		if (!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle())
+		if (boilerMaestro.isGrounded() && (!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle()))
 			boilerMaestro.Flip ();
 
 		boilerMaestro.horizontalMove (wanderSpeed);

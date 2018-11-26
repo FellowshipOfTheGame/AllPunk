@@ -293,7 +293,7 @@ public class scr_SaveStation : scr_Interactable
         {
             scr_PlayerEnergyController energy = interactor.GetComponent<scr_PlayerEnergyController>();
 			energy.setCurrentResEnergy(energy.getMaxResEnergy());
-            energy.setMaxPrimEnergy(energy.getMaxPrimEnergy());
+            energy.currPrimEnergy = (energy.getMaxPrimEnergy());
         }
     }
 
@@ -309,7 +309,8 @@ public class scr_SaveStation : scr_Interactable
             playerStats.savePointName = gameObject.name;
         }
         else{
-            playerStats.savePointName = sceneToForce;
+            playerStats.savePointScene = sceneToForce;
+            playerStats.savePointName =  gameObject.name;
         }
         scr_GameManager.instance.playerStats = playerStats;
         bool result = scr_GameManager.instance.Save();

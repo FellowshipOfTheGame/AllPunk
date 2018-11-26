@@ -226,7 +226,11 @@ public class scr_GameManager : MonoBehaviour {
 			if(target == null) {
 				player = GameObject.FindGameObjectWithTag("Player");
 			}
-			else{
+			if(target == null && player == null) {
+				Debug.LogWarning("Can't locate or spawn player");
+				return ;
+			}
+			if(target != null){
 				//Kill other players that may be in scene
 				if(killRemainingPlayerOnLoad){
 					GameObject[] players;
@@ -363,7 +367,7 @@ public class scr_GameManager : MonoBehaviour {
 	}
 
 	public void setHudVisible(bool visible){
-		Transform find = transform.Find("hud_Canvas");
+		Transform find = instance.transform.Find("hud_Canvas");
 		if(find != null)
 			find.gameObject.SetActive(visible);
 	}
