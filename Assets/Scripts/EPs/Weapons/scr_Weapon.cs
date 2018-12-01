@@ -335,6 +335,9 @@ abstract public class scr_Weapon : scr_EP {
      */
     public void setRightHand(bool RightHand) {
         this.rightHand = RightHand;
+        if(!rightHand){
+            flipHand();
+        }
     }
 
     

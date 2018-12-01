@@ -89,22 +89,7 @@ public class scr_HealthController : MonoBehaviour {
         }
 		if (healthChangeCallback == null)
 			healthChangeCallback = new UnityEvent ();
-		if(targetToColor != ColorMode.None){
-			if(targetToColor == ColorMode.Sprite || targetToColor == ColorMode.Both){
-				spritesToColor = GetComponentsInChildren<SpriteRenderer>();
-				spritesOriginalColor = new List<Color>();
-				for(int i = 0; i < spritesToColor.Length; i++) {
-					spritesOriginalColor.Add(spritesToColor[i].color);
-				}
-			}
-			if(targetToColor == ColorMode.Mesh || targetToColor == ColorMode.Both){
-				meshesToColor = GetComponentsInChildren<SpriteMeshInstance>();
-				meshesOriginalColor = new List<Color>();
-				for(int i = 0; i < meshesToColor.Length; i++) {
-					meshesOriginalColor.Add(meshesToColor[i].color);
-				}
-			}
-		}
+		updateSpritesToColor();
     }
 
 	private void OnDestroy()
@@ -222,6 +207,25 @@ public class scr_HealthController : MonoBehaviour {
 
 	public Vector2 getLastHitDirection(){
 		return lastHitDirection;
+	}
+
+	public void updateSpritesToColor(){
+		if(targetToColor != ColorMode.None){
+			if(targetToColor == ColorMode.Sprite || targetToColor == ColorMode.Both){
+				spritesToColor = GetComponentsInChildren<SpriteRenderer>();
+				spritesOriginalColor = new List<Color>();
+				for(int i = 0; i < spritesToColor.Length; i++) {
+					spritesOriginalColor.Add(spritesToColor[i].color);
+				}
+			}
+			if(targetToColor == ColorMode.Mesh || targetToColor == ColorMode.Both){
+				meshesToColor = GetComponentsInChildren<SpriteMeshInstance>();
+				meshesOriginalColor = new List<Color>();
+				for(int i = 0; i < meshesToColor.Length; i++) {
+					meshesOriginalColor.Add(meshesToColor[i].color);
+				}
+			}
+		}
 	}
 
     private IEnumerator waitInvinciTime() {

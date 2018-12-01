@@ -15,10 +15,10 @@ public class scr_DeathPit : MonoBehaviour {
         if(triggerMode == triggerType.trigger) {
             if(collision.gameObject.tag == "Player")
                 scr_GameManager.instance.startGameOver();
-            else {
-                scr_HealthController entity = collision.gameObject.GetComponent<scr_HealthController>();
-                entity.takeDamage(damage, Vector2.zero);
-            }
+            
+            scr_HealthController entity = collision.gameObject.GetComponent<scr_HealthController>();
+            entity.takeDamage(damage, Vector2.zero);
+            
         }
     }
 
@@ -26,10 +26,8 @@ public class scr_DeathPit : MonoBehaviour {
         if(triggerMode == triggerType.contact) {
             if(collision.gameObject.tag == "Player")
                 scr_GameManager.instance.startGameOver();
-            else {
-                scr_HealthController entity = collision.gameObject.GetComponent<scr_HealthController>();
-                entity.takeDamage(damage, Vector2.zero);
-            }
+            scr_HealthController entity = collision.gameObject.GetComponent<scr_HealthController>();
+            entity.takeDamage(damage, Vector2.zero);
         }
     }
 

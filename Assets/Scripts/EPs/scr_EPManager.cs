@@ -339,6 +339,8 @@ public class scr_EPManager : MonoBehaviour {
 					break;				
 			}
 
+			//Updates sprites which need to change color
+			GetComponent<scr_HealthController>().updateSpritesToColor();
 			return true;
 		}
 		return false;
