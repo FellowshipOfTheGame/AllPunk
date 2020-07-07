@@ -273,7 +273,7 @@ public class scr_PlayerController : MonoBehaviour {
 		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.01f);
 
 		foreach (Collider2D obj in array) {
-			Debug.Log("Estou tocando: "+ obj.gameObject.name);
+			// Debug.Log("Estou tocando: "+ obj.gameObject.name);
 			//Verificação manual da layer
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 				isGrounded = true;

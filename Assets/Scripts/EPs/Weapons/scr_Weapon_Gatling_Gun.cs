@@ -27,6 +27,7 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
     [Tooltip("Tempo que leva para a linha desaparecer após o tiro")]
     public float fadeOfTime = 0.1f;
 
+    private bool shouldFire = false;
     private float fireCounter = 0f;
     private bool animationIsShooting = false;
     private LineRenderer line;
@@ -58,10 +59,11 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
             fireCounter = initialWindUp;
             animationIsShooting = true;
             gunAnimator.SetBool("Shooting", true);
+            shouldFire = true;
         }
         else if (holding)
         {
-            if(fireCounter <= 0)
+            if(shouldFire && fireCounter <= 0)
             {
                 //Começa a toca o som se não tinha
                 if(!hasBegunShootingSound){
@@ -80,7 +82,8 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
                 //direction.Normalize();
 
                 //Verifica se colidiu com alguma coisa
-                RaycastHit2D hit = Physics2D.Raycast(targetPoint.position, direction, maxAttackDistance);
+                int layer = LayerMask.GetMask("Ground", "Enemy", "Default");
+                RaycastHit2D hit = Physics2D.Raycast(targetPoint.position, direction, maxAttackDistance, layer);
                 if(hit.collider != null)
                 {
                     if(hit.transform.gameObject.tag == "Enemy")
@@ -99,7 +102,10 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
                 {
                     line.enabled = true;
                     line.SetPosition(0, targetPoint.position);
-                    line.SetPosition(1, targetPoint.position + direction * lineDistanceMax);
+                    if(hit.collider != null)
+                        line.SetPosition(1, hit.point);
+                    else
+                        line.SetPosition(1, targetPoint.position + direction * lineDistanceMax);
                     StartCoroutine(fadeOfLine());
                 }
 
@@ -118,10 +124,14 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
         base.Update();
 
         //Verifica se o jogador está segurando o botao ou nao
-        if (holding)
+        if (holding && shouldFire)
         {
             //Atualiza timers
             fireCounter -= Time.deltaTime;
+            if(playerEnergy.getTotalCurrentEnergy() < energyDrain)
+            {
+                shouldFire = false;
+            }
         }
         else
         {
@@ -168,7 +178,22 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
         if (Application.isPlaying)
         {
             Vector3 direction = targetPoint.position - transform.position;
+            //Faz a mudança do angulo
+            // angle += (UnityEngine.Random.Range(-angularVariation,angularVariation) * Mathf.Deg2Rad);
+            float originalAngle = Mathf.Atan2(direction.y,direction.x);
+            direction = new Vector3(Mathf.Cos(originalAngle),Mathf.Sin(originalAngle),0); 
+            Gizmos.color = Color.red;
             Gizmos.DrawRay(targetPoint.position, direction.normalized * maxAttackDistance);
+
+            // float newAngle = originalAngle + angularVariation * Mathf.Deg2Rad;
+            // direction = new Vector3(Mathf.Cos(newAngle),Mathf.Sin(newAngle),0); 
+            // Gizmos.color = Color.green;
+            // Gizmos.DrawRay(targetPoint.position, direction.normalized * maxAttackDistance);   
+
+            // newAngle = originalAngle - angularVariation * Mathf.Deg2Rad;
+            // direction = new Vector3(Mathf.Cos(newAngle),Mathf.Sin(newAngle),0); 
+            // Gizmos.color = Color.green;
+            // Gizmos.DrawRay(targetPoint.position, direction.normalized * maxAttackDistance);     
         }
         
     }

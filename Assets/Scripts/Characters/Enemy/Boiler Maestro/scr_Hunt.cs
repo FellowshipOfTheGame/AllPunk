@@ -37,7 +37,7 @@ public class scr_Hunt : FSM.State{
 
 	public override void Execute ()
 	{
-		print ("Execute Hunt");
+		// print ("Execute Hunt");
 
 		if(boilerMaestro.Target == null){
 			connectedStates.TryGetValue("Wander", out nexState);

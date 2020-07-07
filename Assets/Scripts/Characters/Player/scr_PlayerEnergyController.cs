@@ -30,6 +30,8 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	/// </summary>
 	private bool canRechargeReserve = true;
 
+	private Coroutine reserveRechargeCoroutine;
+
 	/// <summary>
 	/// The change callback, used to update the HUD
 	/// </summary>
@@ -131,7 +133,9 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 		//Reserve energy alone is enough
 		if (currResEnergy >= drain) {
 			currResEnergy -= drain;
-			StartCoroutine (reserveRechargeWarmUp ());
+			if(reserveRechargeCoroutine != null)
+				StopCoroutine(reserveRechargeCoroutine);
+			reserveRechargeCoroutine = StartCoroutine (reserveRechargeWarmUp ());
 			if(energyChangeCallback != null)
 				energyChangeCallback.Invoke ();
 			return true;
@@ -143,7 +147,9 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 				currPrimEnergy += currResEnergy;
 				currResEnergy = 0;
 			}
-			StartCoroutine (reserveRechargeWarmUp ());
+			if(reserveRechargeCoroutine != null)
+				StopCoroutine(reserveRechargeCoroutine);
+			reserveRechargeCoroutine = StartCoroutine (reserveRechargeWarmUp ());
 			return true;
 		} else
 			return false;
