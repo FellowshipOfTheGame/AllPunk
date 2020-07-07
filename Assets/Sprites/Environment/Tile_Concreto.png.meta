@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: eacb06d36f5a2b642aca1c83ce42c059
-timeCreated: 1529189237
-licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: tile_padrao_0
@@ -21,7 +19,7 @@ TextureImporter:
     21300028: tile_padrao_14
     21300030: tile_padrao_15
   externalObjects: {}
-  serializedVersion: 4
+  serializedVersion: 9
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -39,6 +37,8 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -49,7 +49,7 @@ TextureImporter:
     serializedVersion: 2
     filterMode: 0
     aniso: -1
-    mipBias: -1
+    mipBias: -100
     wrapU: 2
     wrapV: 2
     wrapW: 2
@@ -61,18 +61,21 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 588
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
+  singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - buildTarget: DefaultTexturePlatform
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -82,7 +85,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Standalone
+  - serializedVersion: 2
+    buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -92,7 +96,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Android
+  - serializedVersion: 2
+    buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -102,7 +107,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: WebGL
+  - serializedVersion: 2
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -129,6 +135,12 @@ TextureImporter:
       outline: []
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 8891ecfd7d593f74fbddb82fa497f378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_1
       rect:
@@ -147,6 +159,12 @@ TextureImporter:
         - {x: -2.7546997, y: -0.18359375}
         - {x: 0, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 757b203f538679b489dd572ae8f752ba
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_2
       rect:
@@ -165,6 +183,12 @@ TextureImporter:
         - {x: 295, y: -1.1523438}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: a7185802240527c4daa207bbe3137df3
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_3
       rect:
@@ -183,6 +207,12 @@ TextureImporter:
         - {x: 295, y: -1.1523438}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 2b53c621f80561b4a9606d472a49ef21
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_4
       rect:
@@ -201,6 +231,12 @@ TextureImporter:
         - {x: 1.1523438, y: -295}
         - {x: 1.1523438, y: -0.24816895}
       tessellationDetail: 0
+      bones: []
+      spriteID: 41e4e6e1ee368054db2eb701e2d84241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_5
       rect:
@@ -219,6 +255,12 @@ TextureImporter:
         - {x: -295, y: 295}
         - {x: -295, y: -295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 461fca993cea53a4d9900e627b2b4758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_6
       rect:
@@ -242,6 +284,12 @@ TextureImporter:
         - {x: 295, y: -1.1523438}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 4686a40a419bcea439739ef204351f21
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_7
       rect:
@@ -263,6 +311,12 @@ TextureImporter:
         - {x: 295, y: -2.3046875}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: b7987b4b87af0294d92010b26dedbe43
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_8
       rect:
@@ -281,6 +335,12 @@ TextureImporter:
         - {x: 295, y: -295}
         - {x: 295, y: 2.3046875}
       tessellationDetail: 0
+      bones: []
+      spriteID: 2c21b7ff294d8dd45886aa99dc342b0d
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_9
       rect:
@@ -303,6 +363,12 @@ TextureImporter:
         - {x: 0.6593628, y: -2.0755005}
         - {x: 1.1523438, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 9bdc66cae9105c34194a652565ae7c65
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_10
       rect:
@@ -321,6 +387,12 @@ TextureImporter:
         - {x: 295, y: -295}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 8631568e3ef8b9b4e89dbd1ce92526bd
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_11
       rect:
@@ -342,6 +414,12 @@ TextureImporter:
         - {x: 295, y: -295}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 21a28c2087fc9d540b790c3ef79bbd69
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_12
       rect:
@@ -360,6 +438,12 @@ TextureImporter:
         - {x: 295, y: 0}
         - {x: -295, y: 0}
       tessellationDetail: 0
+      bones: []
+      spriteID: 0b44b97e5b4ebae48a05dfdc500ebb90
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_13
       rect:
@@ -381,6 +465,12 @@ TextureImporter:
         - {x: 2.1625366, y: 134.15079}
         - {x: 0, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: 0f45e41ab9375034f8ea8952bb2bfbaa
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_14
       rect:
@@ -402,6 +492,12 @@ TextureImporter:
         - {x: 295, y: -295}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: e4fa86a8a3b42e84a8381503edd164e3
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_15
       rect:
@@ -420,9 +516,23 @@ TextureImporter:
         - {x: 295, y: -295}
         - {x: 295, y: 295}
       tessellationDetail: 0
+      bones: []
+      spriteID: b42297207c73bcc4ca54e1f4253dab7f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
+    bones: []
+    spriteID: 
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
   spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

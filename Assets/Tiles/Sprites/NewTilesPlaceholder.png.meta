@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 98eaaf305bfce1840adab73b5176a340
-timeCreated: 1528168418
-licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: NewTilesPlaceholder_0
@@ -20,7 +18,7 @@ TextureImporter:
     21300026: NewTilesPlaceholder_13
     21300028: NewTilesPlaceholder_14
   externalObjects: {}
-  serializedVersion: 4
+  serializedVersion: 9
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -38,6 +36,8 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -48,7 +48,7 @@ TextureImporter:
     serializedVersion: 2
     filterMode: 0
     aniso: -1
-    mipBias: -1
+    mipBias: -100
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -60,18 +60,21 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
+  singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - buildTarget: DefaultTexturePlatform
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -81,7 +84,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Standalone
+  - serializedVersion: 2
+    buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -91,7 +95,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Android
+  - serializedVersion: 2
+    buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -101,7 +106,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: WebGL
+  - serializedVersion: 2
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -132,6 +138,12 @@ TextureImporter:
         - {x: 0, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 1be71cc6389787e44a418f0061cffd1f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_1
       rect:
@@ -150,6 +162,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: ff790fc691e286b409293dd2d5736214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_2
       rect:
@@ -168,6 +186,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 1032ef7f74876944f989fe4e003c7293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_3
       rect:
@@ -190,6 +214,12 @@ TextureImporter:
         - {x: 0, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: a1078680966a2364496a2cd9cdaf5863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_4
       rect:
@@ -208,6 +238,12 @@ TextureImporter:
         - {x: -8, y: 0}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 3f1a0e4196c3e304e8199f5dc29e9347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_5
       rect:
@@ -226,6 +262,12 @@ TextureImporter:
         - {x: -8, y: -8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 85600e8175e8fa047aae81accd31c6a3
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_6
       rect:
@@ -248,6 +290,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 6c1e885e2f39d94439ef3c7fa1bfeba5
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_7
       rect:
@@ -269,6 +317,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: c3a1ad03f5533d445b5e7f04825d5b5b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_8
       rect:
@@ -287,6 +341,12 @@ TextureImporter:
         - {x: 8, y: 0}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: bd503562aa71a414fa87dc1ef414bcfb
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_9
       rect:
@@ -305,6 +365,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: e00e32e0ba0fc4940a03ea702e134f7f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_10
       rect:
@@ -326,6 +392,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: e8a01675009bbbf43b8702093b1852b5
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_11
       rect:
@@ -344,6 +416,12 @@ TextureImporter:
         - {x: -8, y: 0}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 6faceb98c0772dc468fe43442782b7dd
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_12
       rect:
@@ -364,6 +442,12 @@ TextureImporter:
         - {x: 0, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 272d0b5e55b0c7b4d8ec1adbccaba3d8
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_13
       rect:
@@ -384,6 +468,12 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 616387cbfb8f2cb43805a705fe3a1a96
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: NewTilesPlaceholder_14
       rect:
@@ -402,9 +492,23 @@ TextureImporter:
         - {x: 8, y: 8}
       physicsShape: []
       tessellationDetail: 0
+      bones: []
+      spriteID: 1fdb280dde6a6d84ba2b8ddde56cf9f6
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
+    bones: []
+    spriteID: 
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
   spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

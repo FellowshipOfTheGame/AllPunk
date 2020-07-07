@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 9ce45040d924df04ea662aca043dc8c1
-timeCreated: 1534978918
-licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: tile_padrao_branco_0
@@ -20,7 +18,7 @@ TextureImporter:
     21300026: tile_padrao_branco_13
     21300028: tile_padrao_branco_14
   externalObjects: {}
-  serializedVersion: 4
+  serializedVersion: 9
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -38,6 +36,8 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -48,7 +48,7 @@ TextureImporter:
     serializedVersion: 2
     filterMode: 0
     aniso: -1
-    mipBias: -1
+    mipBias: -100
     wrapU: 2
     wrapV: 2
     wrapW: 2
@@ -60,18 +60,21 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 254
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
+  singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-  - buildTarget: DefaultTexturePlatform
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -81,7 +84,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Standalone
+  - serializedVersion: 2
+    buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -91,7 +95,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: Android
+  - serializedVersion: 2
+    buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -101,7 +106,8 @@ TextureImporter:
     allowsAlphaSplitting: 0
     overridden: 0
     androidETC2FallbackOverride: 0
-  - buildTarget: WebGL
+  - serializedVersion: 2
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -134,6 +140,12 @@ TextureImporter:
         - {x: 2, y: 45.54651}
         - {x: 2, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: ea92d79f9342a0d42ba2d58f7283702c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_1
       rect:
@@ -154,6 +166,12 @@ TextureImporter:
         - {x: 128, y: -0.5442505}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: dc4b142986a577a4a9a2155751ea5104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_2
       rect:
@@ -172,6 +190,12 @@ TextureImporter:
         - {x: 128, y: -2}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: 0f220ba92e8f63c46afc282ac7694e4c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_3
       rect:
@@ -192,6 +216,12 @@ TextureImporter:
         - {x: 2, y: -47.646057}
         - {x: -20.764023, y: -10.160767}
       tessellationDetail: 0
+      bones: []
+      spriteID: 13e90dcff17a7fe4e9e15c1492be6934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_4
       rect:
@@ -210,6 +240,12 @@ TextureImporter:
         - {x: -128, y: 128}
         - {x: -128, y: -128}
       tessellationDetail: 0
+      bones: []
+      spriteID: 3a85cd60adebfc340862715bba25ea64
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_5
       rect:
@@ -236,6 +272,12 @@ TextureImporter:
         - {x: 128, y: -2}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: 71f6d0bf11965c5428539e44d5bc99b8
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_6
       rect:
@@ -258,6 +300,12 @@ TextureImporter:
         - {x: 128, y: -3}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: f61d800362b131541aa6aacb67fa5b08
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_7
       rect:
@@ -278,6 +326,12 @@ TextureImporter:
         - {x: 128, y: -128}
         - {x: 128, y: 2}
       tessellationDetail: 0
+      bones: []
+      spriteID: 47b73ee3b7c37f142a190941ae896a85
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_8
       rect:
@@ -304,6 +358,12 @@ TextureImporter:
         - {x: 1.51474, y: 52.93808}
         - {x: 2, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: 194dcd7a824504841987a2b31640b0ef
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_9
       rect:
@@ -322,6 +382,12 @@ TextureImporter:
         - {x: 128, y: -128}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: 242107e41087be44b9c107028a1a66ab
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_10
       rect:
@@ -344,6 +410,12 @@ TextureImporter:
         - {x: 128, y: -128}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: b1eeafa09c831564d9bc71c93494c764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_11
       rect:
@@ -362,6 +434,12 @@ TextureImporter:
         - {x: 128, y: 2}
         - {x: -128, y: 2}
       tessellationDetail: 0
+      bones: []
+      spriteID: eb9f329c42ff3934dae22a0409fc84ce
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_12
       rect:
@@ -381,6 +459,12 @@ TextureImporter:
         - {x: 128, y: 2}
         - {x: 2, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: da953710ca83c064e857b34643689626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_13
       rect:
@@ -400,6 +484,12 @@ TextureImporter:
         - {x: 128, y: -128}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: abeb7c988e37b0e4fa25fee312fc64dc
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     - serializedVersion: 2
       name: tile_padrao_branco_14
       rect:
@@ -418,9 +508,23 @@ TextureImporter:
         - {x: 128, y: -128}
         - {x: 128, y: 128}
       tessellationDetail: 0
+      bones: []
+      spriteID: 9bf6fb437514b9e4f96dd5c60de27384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
+    bones: []
+    spriteID: 
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
   spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
