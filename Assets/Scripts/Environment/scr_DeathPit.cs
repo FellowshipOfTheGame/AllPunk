@@ -17,7 +17,8 @@ public class scr_DeathPit : MonoBehaviour {
                 scr_GameManager.instance.startGameOver();
             
             scr_HealthController entity = collision.gameObject.GetComponent<scr_HealthController>();
-            entity.takeDamage(damage, Vector2.zero);
+            if(entity)
+                entity.takeDamage(damage, Vector2.zero);
             
         }
     }

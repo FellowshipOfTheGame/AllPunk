@@ -72,6 +72,8 @@ public class scr_HUDController : MonoBehaviour {
 	[Header("Sound")]
 	public float gameOverTransitionTime = 0.5f;
 
+	protected Coroutine fadeCoroutine = null;
+
 	private scr_AudioClient audioClient;
 
 	#endregion
@@ -150,7 +152,13 @@ public class scr_HUDController : MonoBehaviour {
 		isFading = true;
 		isGameOver = true;
 		fadeCallback.AddListener(showGameOverText);
-		StartCoroutine(fadeTo(1,timeToFadeGameOverScreen));
+		if(fadeCoroutine != null)
+		{
+			StopCoroutine(fadeCoroutine);
+			fadeCallback.Invoke();
+			fadeCallback.RemoveAllListeners();
+		}
+		fadeCoroutine = StartCoroutine(fadeTo(1,timeToFadeGameOverScreen));
 	}
 
 	private void showGameOverText(){
@@ -321,13 +329,17 @@ public class scr_HUDController : MonoBehaviour {
 	/// </summary>
 	/// <param name="callback">Método a ser chamado quando acabar o fade in</param>
 	public void fadeIn(UnityAction callback) {
-		if(!isFading){
-			isFading = true;
-			//fadeImg.color = new Color(0,0,0,0);
-			if(callback != null && fadeCallback != null)
-				fadeCallback.AddListener(callback);
-			StartCoroutine(fadeTo(1,fadeDuration));
+		isFading = true;
+		//fadeImg.color = new Color(0,0,0,0);
+		if(fadeCoroutine != null)
+		{
+			StopCoroutine(fadeCoroutine);
+			fadeCallback.Invoke();
+			fadeCallback.RemoveAllListeners();
 		}
+		if(callback != null && fadeCallback != null)
+			fadeCallback.AddListener(callback);
+		fadeCoroutine = StartCoroutine(fadeTo(1,fadeDuration));
 	}
 
 	/// <summary>
@@ -335,12 +347,17 @@ public class scr_HUDController : MonoBehaviour {
 	/// </summary>
 	/// <param name="callback">Método a ser chamado quando acabar o fade out</param>
 	public void fadeOut(UnityAction callback) {
-		if(!isFading) {
-			isFading = true;
-			if(callback != null && fadeCallback != null)
-				fadeCallback.AddListener(callback);
-			StartCoroutine(fadeTo(0,fadeDuration));
+		isFading = true;
+		// Changed to stop current fade
+		if(fadeCoroutine != null)
+		{
+			StopCoroutine(fadeCoroutine);
+			fadeCallback.Invoke();
+			fadeCallback.RemoveAllListeners();
 		}
+		if(callback != null && fadeCallback != null)
+			fadeCallback.AddListener(callback);
+		fadeCoroutine = StartCoroutine(fadeTo(0,fadeDuration));
 	}
 
 	/// <summary>
@@ -348,13 +365,19 @@ public class scr_HUDController : MonoBehaviour {
 	/// </summary>
 	/// <param name="callback">Método a ser chamado quando acabar o fade out</param>
 	public void forceFadeOut(UnityAction callback) {
-		if(!isFading) {
-			isFading = true;
-			fadeImg.color = new Color(0,0,0,1);
-			if(callback != null && fadeCallback != null)
-				fadeCallback.AddListener(callback);
-			StartCoroutine(fadeTo(0,fadeDuration));
+		isFading = true;
+		fadeImg.color = new Color(0,0,0,1);
+
+		if(fadeCoroutine != null)
+		{
+			StopCoroutine(fadeCoroutine);
+			fadeCallback.Invoke();
+			fadeCallback.RemoveAllListeners();
 		}
+		
+		if(callback != null && fadeCallback != null)
+			fadeCallback.AddListener(callback);
+		fadeCoroutine = StartCoroutine(fadeTo(0,fadeDuration));
 	}
 
 	public void onLoadLevel(){
@@ -414,10 +437,13 @@ public class scr_HUDController : MonoBehaviour {
 	}
 
 	private IEnumerator fadeTo(float finalAlpha, float duration) {
-		float deltaFade = (finalAlpha - fadeImg.color.a)/duration;
+		float alphaDiference = finalAlpha - fadeImg.color.a;
+		float ajustedDuration = duration * Mathf.Abs(alphaDiference);
+		
+		float deltaFade = (finalAlpha - fadeImg.color.a)/ajustedDuration;
 		Color color = fadeImg.color;
 		float counter = 0, delta;
-		while(counter < duration){
+		while(counter < ajustedDuration){
 			delta = Time.unscaledDeltaTime;
 			color.a += delta * deltaFade;
 			counter += delta;

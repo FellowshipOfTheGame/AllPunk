@@ -27,7 +27,7 @@ public class scr_Camera_Follow_Mouse : MonoBehaviour {
 		lastMousePosition = Input.mousePosition;
 	}
 
-	private void Update() {
+	private void LateUpdate() {
 		if(Time.timeScale != 0 && player != null){
 			lastMousePosition = Vector3.Lerp(lastMousePosition, Input.mousePosition, Time.deltaTime * smoothMouse);
 			Vector3 mouseOffset = myCamera.ScreenToWorldPoint(lastMousePosition) - player.position;
