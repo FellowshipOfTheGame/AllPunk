@@ -107,7 +107,7 @@ public class scr_EP_JetJump : scr_EP {
 	// Update is called once per frame
 	void Update () {
 
-		if (Input.GetButtonDown ("Jump") && !playerController.isGrounded && currNumberOfJumps > 0) {
+		if (Input.GetButtonDown ("Jump") && !playerController.isGrounded && !playerController.IsJumping && currNumberOfJumps > 0) {
 			///Kills Y velocity before applying Impulse to make jumping uniform, without it, the
 			///height of the jump became erratic, eg. doublejumping from the ground gave the most height.
 			playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, 0);

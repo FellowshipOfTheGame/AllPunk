@@ -19,8 +19,6 @@ public class scr_PlayerController : MonoBehaviour {
 
     #region variables
 
-    //Número máximo de saltos
-    public int maxNumberJumps = 1;
     //Atual número de pulos
     private int currentNumberJumps = 0;
 
@@ -60,9 +58,22 @@ public class scr_PlayerController : MonoBehaviour {
     [Range(0,1)]
     public float airControl = 1f;
 
+	// Raio para detecção de chão
+
+	public float checkGroundRadius = 0.01f;
+
+	// Coyote time: Tempo que o usuário ainda está "no chão" após sair de plataforma
+	public float coyoteTime = 0.1f;
+
+	private float coyoteCounter = 0;
+
 	//booleano se determina se o jogador esta no chão
 
-	public bool isGrounded;
+	public bool isGrounded
+	{
+		get {return coyoteCounter > 0;}
+		set {coyoteCounter = (value) ? coyoteTime : 0;}
+	}
 
 	//booleano se determina se o jogador esta pulando
 
@@ -88,8 +99,12 @@ public class scr_PlayerController : MonoBehaviour {
 	//Tempo atual de salto alto
 	private float currHighJumpTime;
 
-    //Verifica se o botão estava sendo segurado
+	//Verifica se o botão estava sendo segurado
     private bool isHoldingJump = false;
+	public bool IsJumping
+	{
+		get {return isHoldingJump;}
+	}
 
     //Verifica se o jogador está recebendo ataque
     private bool underKnockback = false;
@@ -156,11 +171,10 @@ public class scr_PlayerController : MonoBehaviour {
 
 		//Verifica contato com o chão
 
-		isGrounded = touchesGround (playerFeetPosition.position);
-
-        if (isGrounded)
-            currentNumberJumps = maxNumberJumps;
-
+		if(touchesGround (playerFeetPosition.position))
+		{
+			isGrounded = true;
+		}
 
 		playerHorizontalMove ();
 
@@ -175,23 +189,24 @@ public class scr_PlayerController : MonoBehaviour {
 			lowJump();*/
 
 
-        if (Input.GetButtonDown("Jump") && currentNumberJumps > 0 && !isHoldingJump)
+        if (Input.GetButtonDown("Jump") && isGrounded && !isHoldingJump)
         {
             Jump();
             isHoldingJump = true;
             currHighJumpTime = maxHighJumpTime;
+			isGrounded = false; //Not
         }
 
         if (Input.GetButtonUp("Jump"))
         {
             isHoldingJump = false;
-            currentNumberJumps--;
         }
 
 
 		if (isHoldingJump && !isGrounded && rb.velocity.y > 0)
 			highJump();
 
+		coyoteCounter -= Time.deltaTime;
 
 		//Change arm orientation
 
@@ -268,29 +283,27 @@ public class scr_PlayerController : MonoBehaviour {
 
 		/*Array de todos os colliders que colidem com os pés do jogador.
 		 * recebe de argumento um Vector2, raio do círculo*/
-		bool isGrounded = false;
+		bool checkGrounded = false;
 
-		Collider2D [] array = Physics2D.OverlapCircleAll (pos, 0.01f);
+		Collider2D [] array = Physics2D.OverlapCircleAll (pos, checkGroundRadius);
 
 		foreach (Collider2D obj in array) {
 			// Debug.Log("Estou tocando: "+ obj.gameObject.name);
 			//Verificação manual da layer
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
-				isGrounded = true;
+				checkGrounded = true;
 				currHighJumpTime = maxHighJumpTime;
 				break;
-			} else {
-
-				isGrounded = false;
-			}	
+			}
 		}
-		return isGrounded;
+		return checkGrounded;
 	}
 		
 	//Método para Salto, adiciona velocidade no eixo Y
 
 	void Jump (){
-		rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+		// rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+		rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
 	}
 
 
@@ -397,6 +410,11 @@ public class scr_PlayerController : MonoBehaviour {
         }
     }
 
+	private void OnDrawGizmos()
+	{
+		playerFeetPosition = this.transform.Find("playerFeetPosition").GetComponent<Transform>(); //PEGAR O COLLIDER CIRCULAR NOS PÉS;
+		Gizmos.DrawWireSphere(playerFeetPosition.position, checkGroundRadius);
+	}
 
 }
 
