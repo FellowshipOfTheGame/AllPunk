@@ -43,8 +43,8 @@ public class scr_EP_Boiler : scr_EP {
 	/// <returns><c>true</c>, if coal was burned, <c>false</c> otherwise.</returns>
 	/// <param name="energyInc">Energy increment</param>
 	public bool burnCoal(float energyInc){
-		if (playerEnergy.currPrimEnergy < boilerEnergy) {
-			playerEnergy.currPrimEnergy = Mathf.Clamp (playerEnergy.currPrimEnergy + energyInc, 0, boilerEnergy);
+		if (playerEnergy.getCurrentPrimEnergy() < boilerEnergy) {
+			playerEnergy.setCurrentPrimEnergy(playerEnergy.getCurrentPrimEnergy() + energyInc);
 			return true;
 		} else
 			return false;

@@ -30,6 +30,8 @@ public class scr_SaveStation : scr_Interactable
     private Text text;
     private bool hasUpdated = false;
     private bool paused = false;
+    // Variable added to avoid dropdown change value events being called
+    private bool canChangeEquipment = false;
 
     private List<string> equipArm;
     private List<string> equipHead;
@@ -59,6 +61,7 @@ public class scr_SaveStation : scr_Interactable
         if (interactor.gameObject.tag != "Player")
             return false;
 
+        canChangeEquipment = false;
         messageDisplayCanvas.enabled = false;
         menuCanvas.enabled = true;
         animator.SetTrigger("Close");
@@ -77,6 +80,8 @@ public class scr_SaveStation : scr_Interactable
             hasUpdated = true;
             //showButtons();
         }
+
+        canChangeEquipment = true;
 
 
         return true;
@@ -293,7 +298,7 @@ public class scr_SaveStation : scr_Interactable
         {
             scr_PlayerEnergyController energy = interactor.GetComponent<scr_PlayerEnergyController>();
 			energy.setCurrentResEnergy(energy.getMaxResEnergy());
-            energy.currPrimEnergy = (energy.getMaxPrimEnergy());
+            energy.setCurrentPrimEnergy(energy.getMaxPrimEnergy());
         }
     }
 
@@ -340,6 +345,9 @@ public class scr_SaveStation : scr_Interactable
 
     public void onClickEquipButtons(int origin)
     {
+        // Avoid changing equipment
+        if(!canChangeEquipment) return;
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         //scr_Player_Stats playerStats = player.GetComponent<scr_PA_Manager>().playerStats;

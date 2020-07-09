@@ -21,7 +21,7 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 	/// <summary>
 	/// The current primary energy. Public to allow Torso EPs to recharge it
 	/// </summary>
-	public float currPrimEnergy;
+	private float currPrimEnergy;
 	[SerializeField] float maxPrimEnergy;
 		
 
@@ -69,6 +69,11 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 			currResEnergy = maxResEnergy;
 		if(currResEnergy < 0)
 			currResEnergy = 0;
+	}
+
+	public void setCurrentPrimEnergy(float newEnergy)
+	{
+		currPrimEnergy = Mathf.Clamp(newEnergy, 0, maxPrimEnergy);
 	}
 
 	public void setMaxResEnergy(float max){
@@ -150,6 +155,8 @@ public class scr_PlayerEnergyController : MonoBehaviour {
 			if(reserveRechargeCoroutine != null)
 				StopCoroutine(reserveRechargeCoroutine);
 			reserveRechargeCoroutine = StartCoroutine (reserveRechargeWarmUp ());
+			if(energyChangeCallback != null)
+				energyChangeCallback.Invoke ();
 			return true;
 		} else
 			return false;
