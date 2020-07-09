@@ -40,6 +40,10 @@ public class scr_Smash : FSM.State {
 			stateMachine.transitionToState(nextState);
 		}
 
+		//Stay in place while hitting and avoid player pushup
+		boilerMaestro.horizontalMove(0);
+
+
 
 		/*foreach (Collider2D hitCollider in attackColliders)
 		{
