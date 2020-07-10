@@ -11,6 +11,11 @@ public class scr_Wander : FSM.State {
 
 	[SerializeField]
 	float wanderSpeed;
+	
+	[SerializeField]
+	float wanderJump;
+
+	bool jumping;
 
 	#endregion
 
@@ -23,7 +28,7 @@ public class scr_Wander : FSM.State {
 
 	public override void Enter ()
 	{
-
+		jumping = false;
 	}
 
 	public override void Execute ()
@@ -34,12 +39,20 @@ public class scr_Wander : FSM.State {
 			stateMachine.transitionToState (huntState);
 		}
 
+		bool grounded = boilerMaestro.isGrounded();
+		if(grounded) jumping = false;
+		bool hasStep = boilerMaestro.hasStep();
 
 		//ObstacleCheck
-		if (boilerMaestro.isGrounded() && (!boilerMaestro.hasFloor() || boilerMaestro.hasObstacle()))
+		if (grounded && (!boilerMaestro.hasFloor() || (!hasStep && boilerMaestro.hasObstacle())))
 			boilerMaestro.Flip ();
 
-		boilerMaestro.horizontalMove (wanderSpeed);
+		if(grounded && hasStep && !jumping)
+			jumping = boilerMaestro.jump(wanderJump, wanderSpeed);
+		else if (!grounded && jumping)
+			boilerMaestro.jump(wanderJump,wanderSpeed);
+		else if (grounded)
+			boilerMaestro.horizontalMove (wanderSpeed);
 
 
 	}

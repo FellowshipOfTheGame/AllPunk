@@ -12,6 +12,10 @@ public class scr_Hunt : FSM.State{
 	[SerializeField]
 	float huntSpeed;
 	[SerializeField]
+	float huntJump;
+
+	bool jumping;
+	[SerializeField]
 	float smashRange;
 	[Tooltip("Maximum distance to begin Charging")]
 	[SerializeField]
@@ -55,9 +59,19 @@ public class scr_Hunt : FSM.State{
 			stateMachine.transitionToState (nexState);
 		}
 
-		if (!boilerMaestro.hasFloor () || boilerMaestro.hasObstacle ())
-			boilerMaestro.horizontalMove (0f);
-		else
+		bool grounded = boilerMaestro.isGrounded();
+		if(grounded) jumping = false;
+		bool hasStep = boilerMaestro.hasStep();
+
+		//ObstacleCheck
+		if (grounded && (!boilerMaestro.hasFloor() || (!hasStep && boilerMaestro.hasObstacle())))
+			boilerMaestro.Flip ();
+
+		if(grounded && hasStep && !jumping)
+			jumping = boilerMaestro.jump(huntJump, huntSpeed);
+		else if (!grounded && jumping)
+			boilerMaestro.jump(huntJump,huntSpeed);
+		else if (grounded)
 			boilerMaestro.horizontalMove (huntSpeed);
 
 

@@ -24,6 +24,9 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	private RaycastHit2D groundHit;
 	//Used in the obstacle check
 	private RaycastHit2D obstacleHit;
+	//User in the step check
+	private RaycastHit2D stepHit;
+
 	//Used in the collision check with player
 	private bool playerColliding = false;
 	//Reference do player found is collision
@@ -151,7 +154,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			//groundHit = Physics2D.Raycast (transform.position + Vector3.right*height + Vector3.down, Vector2.down, height*2,
 			//	LayerMask.GetMask("Ground"));
 		groundHit = Physics2D.Raycast (groundCheckOrigin.position, Vector2.down, height * 1.0f, LayerMask.GetMask ("Ground"));
-		Debug.DrawLine (groundCheckOrigin.position, groundCheckOrigin.position + new Vector3 (0, -height*1.0f, 0), Color.green);
+		// Debug.DrawLine (groundCheckOrigin.position, groundCheckOrigin.position + new Vector3 (0, -height*1.0f, 0), Color.green);
 
 		if (groundHit.collider != null) {
 			groundHitPoint = groundHit.point;
@@ -159,6 +162,28 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		}
 		else
 			return false;
+	}
+
+	//If there's a small step that the enemy could jump
+	public bool hasStep() {
+		float stepMin = (1 - 0.4f);
+		float stepMax = (1 - 0.1f);
+
+
+		//Check if above there's not a wall
+		Vector3 topPosition = groundCheckOrigin.position + new Vector3(0,height * 0.5f);
+		Debug.DrawLine (topPosition + Vector3.down * stepMin * height, topPosition + Vector3.down * stepMax * height, Color.red);
+		stepHit = Physics2D.Raycast (topPosition, Vector2.down, height, LayerMask.GetMask ("Ground"));
+
+		// Above is empty
+		if (stepHit.collider != null) {
+			Vector3 hitPos = new Vector3(stepHit.point.x,stepHit.point.y,topPosition.z);
+			float distance = (topPosition - hitPos).magnitude;
+			distance /= height;
+			return distance > stepMin && distance < stepMax;
+		}
+
+		return false;
 	}
 
 
@@ -172,7 +197,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	public bool hasObstacle(){
 		//Raises the point a bit to avoid colliding with the floor
 		groundHitPoint += Vector2.up * 0.1f;
-		Debug.DrawLine (groundHitPoint, groundHitPoint + Vector2.up * height, Color.cyan);
+		// Debug.DrawLine (groundHitPoint, groundHitPoint + Vector2.up * height, Color.cyan);
 
 		//Ignore all collisions not on the Default or Ground Layers
 		//int layerMask = (1 << LayerMask.NameToLayer ("Default") | 1 << LayerMask.NameToLayer ("Ground"));
@@ -275,6 +300,24 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		animator.SetBool ("IsGrounded", grounded);
 		animator.SetFloat ("HorizontalSpeed", Mathf.Abs (rb2D.velocity.x));
 		animator.SetFloat ("VerticalSpeed", rb2D.velocity.y);
+	}
+
+	/// <summary>
+	/// Jump with the given jump velocity. Only if not under knockback and grounded. If suceed, will return true
+	/// </summary>
+	public bool jump(float jumpSpeed, float horizontalSpeed){
+		bool grounded = isGrounded();
+		float xVelocity = (IsFacingRight) ? horizontalSpeed : -1 * horizontalSpeed;
+		if(!underKnockback && grounded)
+		{
+			rb2D.velocity = new Vector2(xVelocity, jumpSpeed);
+			return true;
+		}
+		else if (!underKnockback)
+		{
+			rb2D.velocity = new Vector2(xVelocity, rb2D.velocity.y);
+		}
+		return false;
 	}
 
 	public void playParticle(){
