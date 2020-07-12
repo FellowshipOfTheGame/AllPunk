@@ -15,8 +15,9 @@ public class SceneAttribute : PropertyAttribute { }
 [Serializable]
 public class MapInfo : ScriptableObject
 {
-    const float transitionDefaultSize = 200;
+    const float transitionDefaultSize = 50;
     public SceneRoomDictionary rooms = new SceneRoomDictionary();
+    public List<UniqueTransition> uniqueTransitions = new List<UniqueTransition>();
 
     [ContextMenu("Get all scenes from build")]
     void GetScenesFromBuild()
@@ -116,12 +117,17 @@ public class MapInfo : ScriptableObject
                 pair.Value.savePoints.Add(savePoint);
             }
         }
+
+        //Generate unique transitions
+        MakeUniqueTransitions();
     }
+
+    
 
     private string RemoveExtension(string path)
     {
         string[] parts = path.Split('.');
-        return parts[0].Remove(0,14);
+        return parts[0].Remove(0,14); //Remove initial part, to be equal to what we use on the scripts
     }
 
     private Vector2 positionToPorcentage(Bounds bounds, Vector3 position)
@@ -139,6 +145,62 @@ public class MapInfo : ScriptableObject
         Vector2 dir = (isRight) ? Vector2.right : Vector2.up;
 
         return dir * signal * transitionDefaultSize;
+    }
+
+    /// <summary>
+    /// Will summarize the transitions
+    /// </summary>
+    [ContextMenu("Make unique transitions")]
+    private void MakeUniqueTransitions()
+    {
+        foreach(var pair in rooms)
+        {
+            foreach(var exit in pair.Value.exits)
+            {
+                int foundTransition = FindTransition(exit.Value.originScene,exit.Value.targetScene);
+                //Didn't found this one, we should create
+                if(foundTransition == -1)
+                {
+                    UniqueTransition unique = new UniqueTransition(exit.Value);
+                    unique.percentPositionScene2 = rooms[exit.Value.targetScene].entries[exit.Value.originScene].positionPercent;
+                    uniqueTransitions.Add(unique);
+                }
+                else
+                {
+                    if(exit.Value.originScene == uniqueTransitions[foundTransition].scene2)
+                    {
+                        uniqueTransitions[foundTransition].AddInformationFromScene2(exit.Value);
+                    }
+                }
+            }
+        }
+    }
+
+    private int FindTransition(string scene1, string scene2)
+    {
+        for (int i = 0; i < uniqueTransitions.Count; i++)
+        {
+            bool correctOrder = (scene1 == uniqueTransitions[i].scene1 && scene2 == uniqueTransitions[i].scene2);
+            bool reverseOrder = (scene2 == uniqueTransitions[i].scene1 && scene1 == uniqueTransitions[i].scene2);
+            if(correctOrder || reverseOrder)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public List<UniqueTransition> GetTransitionsFromScene(string scene)
+    {
+        List<UniqueTransition> result = new List<UniqueTransition>();
+
+        for (int i = 0; i < uniqueTransitions.Count; i++)
+        {
+            if(uniqueTransitions[i].scene1 == scene || uniqueTransitions[i].scene2 == scene)
+                result.Add(uniqueTransitions[i]);
+        }
+
+        return result;
     }
 }
 
@@ -171,4 +233,38 @@ public class SavePointInfo
     public Vector2 positionPercent;
     public bool recoverHealth;
     public bool recoverEnergy;
+}
+
+[Serializable]
+public class UniqueTransition
+{
+    public string scene1;
+    public string scene2;
+    public Vector2 percentPositionScene1;
+    public Vector2 percentPositionScene2;
+    public bool canGoFrom1To2;
+    public bool canGoFrom2To1;
+    public Vector2 defaultOffset;
+
+    public UniqueTransition(Transition exitTransition)
+    {
+        scene1 = exitTransition.originScene;
+        scene2 = exitTransition.targetScene;
+        percentPositionScene1 = exitTransition.positionPercent;
+        canGoFrom1To2 = true;
+        defaultOffset = exitTransition.offset;
+
+        canGoFrom2To1 = false;
+    }
+
+    public void AddInformationFromScene2(Transition otherTransition)
+    {
+        percentPositionScene2 = otherTransition.positionPercent;
+        canGoFrom2To1 = true;
+    }
+
+    public override string ToString()
+    {
+        return scene1 + " | " + scene2;
+    }
 }

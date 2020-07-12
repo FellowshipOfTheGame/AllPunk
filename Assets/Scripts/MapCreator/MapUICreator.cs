@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class MapUICreator : MonoBehaviour
 {
+    public float pathMultiplier = 1;
+    public float lineWidth = 5;
+    public float doorSize = 10;
     public Transform parent;
     public GameObject roomPrefab;
     public GameObject pathPrefab;
+    public GameObject doorPrefab;
+
+
 
     public MapInfo mapInfo;
 
     private Dictionary<string,GameObject> roomDict = new Dictionary<string, GameObject>();
+    private Dictionary<UniqueTransition, bool> transitionsDone = new Dictionary<UniqueTransition, bool>();
 
     private class RoomGenOrder
     {
@@ -39,6 +46,7 @@ public class MapUICreator : MonoBehaviour
 
     public void Generate()
     {
+        Debug.Log("Generated");
         //Clean previous generation
         for (int i = parent.childCount-1; i > -1; i--)
         {
@@ -47,55 +55,106 @@ public class MapUICreator : MonoBehaviour
             Destroy(child.gameObject);
         }
         roomDict.Clear();
+        transitionsDone.Clear();
 
-        Stack<RoomGenOrder> stackRoom = new Stack<RoomGenOrder>();
+        Queue<RoomGenOrder> roomQueue = new Queue<RoomGenOrder>();
         //Get first
         Room first = null;
         foreach(var pair in mapInfo.rooms) 
         { first = pair.Value; break; }
 
-        stackRoom.Push(new RoomGenOrder(first,Vector3.zero));
+        roomQueue.Enqueue(new RoomGenOrder(first,Vector3.zero));
 
-        while(stackRoom.Count > 0)
+        while(roomQueue.Count > 0)
         {
-            RoomGenOrder currentRoom = stackRoom.Pop();
+            RoomGenOrder currentRoom = roomQueue.Dequeue();
 
             if(!roomDict.ContainsKey(currentRoom.room.scene))
             {
+                Debug.Log("Created " + currentRoom.room.scene);
                 //Creates object in the correct position
                 GameObject roomObject = GameObject.Instantiate(roomPrefab, currentRoom.position, Quaternion.identity, parent);
                 roomObject.name = currentRoom.room.scene;
-                roomObject.transform.localScale = currentRoom.room.bounds.extents;
+                roomObject.transform.localScale = currentRoom.room.bounds.size;
                 SpriteRenderer renderer = roomObject.GetComponent<SpriteRenderer>();
                 if(renderer) renderer.color = currentRoom.room.color;
 
-                //Instantiate all paths and add to the list the next room
-                foreach (var transition in currentRoom.room.exits)
+                List<UniqueTransition> transitions = mapInfo.GetTransitionsFromScene(currentRoom.room.scene);
+
+                for (int i = 0; i < transitions.Count; i++)
                 {
-                    //Create path
-                    Vector3 initialPosition = cornerOfRoom(currentRoom.position,currentRoom.room.bounds) + Vector3.Scale(V2ToV3(transition.Value.positionPercent), currentRoom.room.bounds.size);
-                    Vector3 exitPosition = CreatePath(transition.Value, initialPosition, roomObject.transform);
+                    //Avoid doing double transition
+                    if(transitionsDone.ContainsKey(transitions[i])) continue;
 
-                    GameObject door = GameObject.Instantiate(roomPrefab, initialPosition, Quaternion.identity);
-                    door.name = "Door " + transition.Value.targetScene;
-                    door.transform.SetParent(roomObject.transform);
+                    bool isScene1 = (transitions[i].scene1 == currentRoom.room.scene);
+                    string otherScene = (isScene1) ? transitions[i].scene2 : transitions[i].scene1;
+                    Room otherRoom = mapInfo.rooms[otherScene];
 
-                    GameObject doorEnd = GameObject.Instantiate(roomPrefab, exitPosition, Quaternion.identity);
-                    doorEnd.name = "DoorEnd " + transition.Value.targetScene;
-                    doorEnd.transform.SetParent(roomObject.transform);
+                    if(QueueContainsScene(roomQueue,otherScene)) continue;
 
-                    //Create order for next room
-                    Room roomToTransition = mapInfo.rooms[transition.Value.targetScene];
-                    Transition entryTransition = roomToTransition.entries[currentRoom.room.scene];
-                    Vector3 roomCenter = exitPosition + roomToTransition.bounds.extents - Vector3.Scale(V2ToV3(entryTransition.positionPercent), roomToTransition.bounds.size);
-                    stackRoom.Push(new RoomGenOrder(roomToTransition, roomCenter));
+
+                    Vector2 thisPercentPos = (isScene1) ? transitions[i].percentPositionScene1 : transitions[i].percentPositionScene2;
+                    Vector2 otherPercentPos = (isScene1) ? transitions[i].percentPositionScene2 : transitions[i].percentPositionScene1;
+
+                    //Get start and end position
+                    Vector3 startPosition, endPosition;
+
+                    startPosition = currentRoom.position - currentRoom.room.bounds.extents + Vector3.Scale(V2ToV3(thisPercentPos), currentRoom.room.bounds.size);
+                    
+                    GameObject otherRoomGO = (roomDict.ContainsKey(otherScene)) ? roomDict[otherScene] : null;
+                    if(otherRoomGO != null)
+                    {
+                        endPosition = otherRoomGO.transform.position - otherRoom.bounds.extents + Vector3.Scale(V2ToV3(otherPercentPos), otherRoom.bounds.size);
+                    }
+                    else
+                    {
+                        endPosition = startPosition + V2ToV3(transitions[i].defaultOffset) * pathMultiplier;
+                        Vector3 roomCenter = endPosition + otherRoom.bounds.extents - Vector3.Scale(V2ToV3(otherPercentPos), otherRoom.bounds.size);
+                        roomQueue.Enqueue(new RoomGenOrder(otherRoom, roomCenter));
+                    }
+
+                    CreatePath(transitions[i], isScene1, startPosition, endPosition, roomObject.transform);
+                    transitionsDone.Add(transitions[i],true);
                 }
 
                 //Add itself to dictionary to avoid duplicate
                 roomDict.Add(currentRoom.room.scene, roomObject);
+
+                // //Instantiate all paths and add to the list the next room
+                // foreach (var transition in currentRoom.room.exits)
+                // {
+                //     //Create path
+                //     Vector3 initialPosition = currentRoom.position - currentRoom.room.bounds.extents + Vector3.Scale(V2ToV3(transition.Value.positionPercent), currentRoom.room.bounds.size);
+                //     Vector3 exitPosition = CreatePath(transition.Value, initialPosition, roomObject.transform);
+
+                //     GameObject door = GameObject.Instantiate(roomPrefab, initialPosition, Quaternion.identity);
+                //     door.name = "Door " + transition.Value.targetScene;
+                //     door.transform.SetParent(roomObject.transform);
+
+                //     GameObject doorEnd = GameObject.Instantiate(roomPrefab, exitPosition, Quaternion.identity);
+                //     doorEnd.name = "DoorEnd " + transition.Value.targetScene;
+                //     doorEnd.transform.SetParent(roomObject.transform);
+
+                //     //Create order for next room
+                //     Room roomToTransition = mapInfo.rooms[transition.Value.targetScene];
+                //     Transition entryTransition = roomToTransition.entries[currentRoom.room.scene];
+                //     Vector3 roomCenter = exitPosition + roomToTransition.bounds.extents - Vector3.Scale(V2ToV3(entryTransition.positionPercent), roomToTransition.bounds.size);
+                //     stackRoom.Push(new RoomGenOrder(roomToTransition, roomCenter));
+                // }
+
             }
         }
 
+    }
+
+    bool QueueContainsScene(Queue<RoomGenOrder> queue, string scene)
+    {
+        foreach (var item in queue)
+        {
+            if(item.room.scene == scene)
+                return true;
+        }
+        return false;
     }
 
     Vector3 cornerOfRoom(Vector3 position, Bounds bounds)
@@ -107,42 +166,54 @@ public class MapUICreator : MonoBehaviour
     /// Returns the end of the path position
     /// </summary>
     /// <returns></returns>
-    Vector3 CreatePath(Transition transition, Vector3 startPosition, Transform roomTransform)
+    void CreatePath(UniqueTransition transition, bool isScene1, Vector3 startPosition, Vector3 endPosition, Transform roomTransform)
     {
-        Vector3 endPosition = startPosition + new Vector3(transition.offset.x,transition.offset.y,0);
-        GameObject pathX = null, pathY = null;
+        int numSteps = 3;
+        Vector3 delta = endPosition - startPosition;
+        
+        Vector3 currentStart;
+        bool isHorizontal = Mathf.Abs(delta.x) > Mathf.Abs(delta.y);
+        Vector3 divider = (isHorizontal) ? new Vector3(1.0f/2.0f,1.0f,1f) : new Vector3(1.0f,1.0f/2.0f,1f);
+        delta = Vector3.Scale(delta,divider);
+        currentStart = startPosition;
 
-        if(transition.offset.x != 0)
-            pathX = GameObject.Instantiate(pathPrefab);
-        if(transition.offset.y != 0)
-            pathY = GameObject.Instantiate(pathPrefab);
-
-        Vector3 scale;
-        if(pathX)
+        for (int i = 0; i < numSteps; i++)
         {
-            if(transition.offset.x > transition.offset.y)
-                pathX.transform.position = startPosition + Vector3.right * transition.offset.x * 0.5f;
+            GameObject path = GameObject.Instantiate(pathPrefab);
+            if(isHorizontal)
+            {
+                path.transform.position = currentStart + Vector3.right * delta.x * 0.5f;
+                currentStart += Vector3.right * delta.x;
+                Vector3 scale = path.transform.localScale;
+                scale.x *= delta.x;
+                scale.y *= lineWidth;
+                path.transform.localScale = scale;
+            }
             else
-                pathX.transform.position = startPosition + Vector3.up * transition.offset.y + Vector3.right * transition.offset.x * 0.5f;
-            scale = pathX.transform.localScale;
-            scale.x *= transition.offset.x * 0.5f;
-            pathX.transform.localScale = scale;
-            pathX.transform.SetParent(roomTransform);
+            {
+                path.transform.position = currentStart + Vector3.up * delta.y * 0.5f;
+                currentStart += Vector3.up * delta.y;
+                Vector3 scale = path.transform.localScale;
+                scale.y *= delta.y;
+                scale.x *= lineWidth;
+                path.transform.localScale = scale;
+            }
+            path.transform.SetParent(roomTransform);
+            isHorizontal = !isHorizontal;
         }
-        if(pathY)
+
+        if( (!isScene1 && transition.canGoFrom2To1) || (isScene1 && transition.canGoFrom1To2) )
         {
-            if(transition.offset.x > transition.offset.y)
-                pathY.transform.position = startPosition + Vector3.right * transition.offset.x + Vector3.up * transition.offset.y * 0.5f;
-            else
-                pathY.transform.position = startPosition + Vector3.up * transition.offset.y * 0.5f;
-            scale = pathY.transform.localScale;
-            scale.y *= transition.offset.y * 0.5f;
-            pathY.transform.localScale = scale;
-            pathY.transform.SetParent(roomTransform);
+            GameObject door = GameObject.Instantiate(doorPrefab, startPosition, Quaternion.identity);
+            door.transform.localScale = door.transform.localScale * doorSize;
+            door.transform.SetParent(roomTransform);
         }
-
-
-        return endPosition;
+        if( (isScene1 && transition.canGoFrom2To1) || (!isScene1 && transition.canGoFrom1To2) )
+        {
+            GameObject door = GameObject.Instantiate(doorPrefab, endPosition, Quaternion.identity);
+            door.transform.localScale = door.transform.localScale * doorSize;
+            door.transform.SetParent(roomTransform);
+        }
     }
 
     Vector3 V2ToV3(Vector2 v2)
