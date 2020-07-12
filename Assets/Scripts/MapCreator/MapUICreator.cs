@@ -7,10 +7,12 @@ public class MapUICreator : MonoBehaviour
     public float pathMultiplier = 1;
     public float lineWidth = 5;
     public float doorSize = 10;
+    public float savePrefabSize = 10;
     public Transform parent;
     public GameObject roomPrefab;
     public GameObject pathPrefab;
     public GameObject doorPrefab;
+    public GameObject savePrefab;
 
 
 
@@ -78,6 +80,17 @@ public class MapUICreator : MonoBehaviour
                 roomObject.transform.localScale = currentRoom.room.bounds.size;
                 SpriteRenderer renderer = roomObject.GetComponent<SpriteRenderer>();
                 if(renderer) renderer.color = currentRoom.room.color;
+
+                //Create save
+                for (int i = 0; i < currentRoom.room.savePoints.Count; i++)
+                {
+                    GameObject save = GameObject.Instantiate(savePrefab);
+                    save.transform.position = currentRoom.position - currentRoom.room.bounds.extents 
+                    + Vector3.Scale(V2ToV3(currentRoom.room.savePoints[i].positionPercent), currentRoom.room.bounds.size);
+
+                    save.transform.localScale = save.transform.localScale * savePrefabSize;
+                    save.transform.SetParent(roomObject.transform);
+                }
 
                 List<UniqueTransition> transitions = mapInfo.GetTransitionsFromScene(currentRoom.room.scene);
 
