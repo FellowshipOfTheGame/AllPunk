@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapUICreator : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class MapUICreator : MonoBehaviour
     public GameObject pathPrefab;
     public GameObject doorPrefab;
     public GameObject savePrefab;
+    public GameObject emptyPrefab;
+
+    public Transform ui;
 
 
 
@@ -76,20 +80,22 @@ public class MapUICreator : MonoBehaviour
                 Debug.Log("Created " + currentRoom.room.scene);
                 //Creates object in the correct position
                 GameObject roomObject = GameObject.Instantiate(roomPrefab, currentRoom.position, Quaternion.identity, parent);
+                roomObject.SetActive(true);
                 roomObject.name = currentRoom.room.scene;
                 roomObject.transform.localScale = currentRoom.room.bounds.size;
-                SpriteRenderer renderer = roomObject.GetComponent<SpriteRenderer>();
+                Image renderer = roomObject.GetComponent<Image>();
                 if(renderer) renderer.color = currentRoom.room.color;
 
                 //Create save
                 for (int i = 0; i < currentRoom.room.savePoints.Count; i++)
                 {
                     GameObject save = GameObject.Instantiate(savePrefab);
+                    save.SetActive(true);
                     save.transform.position = currentRoom.position - currentRoom.room.bounds.extents 
                     + Vector3.Scale(V2ToV3(currentRoom.room.savePoints[i].positionPercent), currentRoom.room.bounds.size);
 
                     save.transform.localScale = save.transform.localScale * savePrefabSize;
-                    save.transform.SetParent(roomObject.transform);
+                    save.transform.SetParent(parent);
                 }
 
                 List<UniqueTransition> transitions = mapInfo.GetTransitionsFromScene(currentRoom.room.scene);
@@ -126,38 +132,104 @@ public class MapUICreator : MonoBehaviour
                         roomQueue.Enqueue(new RoomGenOrder(otherRoom, roomCenter));
                     }
 
-                    CreatePath(transitions[i], isScene1, startPosition, endPosition, roomObject.transform);
+                    CreatePath(transitions[i], isScene1, startPosition, endPosition, parent);
                     transitionsDone.Add(transitions[i],true);
                 }
 
                 //Add itself to dictionary to avoid duplicate
                 roomDict.Add(currentRoom.room.scene, roomObject);
-
-                // //Instantiate all paths and add to the list the next room
-                // foreach (var transition in currentRoom.room.exits)
-                // {
-                //     //Create path
-                //     Vector3 initialPosition = currentRoom.position - currentRoom.room.bounds.extents + Vector3.Scale(V2ToV3(transition.Value.positionPercent), currentRoom.room.bounds.size);
-                //     Vector3 exitPosition = CreatePath(transition.Value, initialPosition, roomObject.transform);
-
-                //     GameObject door = GameObject.Instantiate(roomPrefab, initialPosition, Quaternion.identity);
-                //     door.name = "Door " + transition.Value.targetScene;
-                //     door.transform.SetParent(roomObject.transform);
-
-                //     GameObject doorEnd = GameObject.Instantiate(roomPrefab, exitPosition, Quaternion.identity);
-                //     doorEnd.name = "DoorEnd " + transition.Value.targetScene;
-                //     doorEnd.transform.SetParent(roomObject.transform);
-
-                //     //Create order for next room
-                //     Room roomToTransition = mapInfo.rooms[transition.Value.targetScene];
-                //     Transition entryTransition = roomToTransition.entries[currentRoom.room.scene];
-                //     Vector3 roomCenter = exitPosition + roomToTransition.bounds.extents - Vector3.Scale(V2ToV3(entryTransition.positionPercent), roomToTransition.bounds.size);
-                //     stackRoom.Push(new RoomGenOrder(roomToTransition, roomCenter));
-                // }
-
             }
         }
 
+        FixUIScale();
+    }
+
+    void FixUIScale()
+    {
+        Bounds bounds = GetBounds();
+        RectTransform parentTransform = parent as RectTransform;
+        float parentAspectRatio = parentTransform.rect.height / parentTransform.rect.width;
+        float boundsAspectRatio = bounds.size.y / bounds.size.x;
+        float correctedRation = boundsAspectRatio / parentAspectRatio;
+
+
+        parentTransform.anchorMax = new Vector2(1, 0.5f + correctedRation*0.5f);
+        parentTransform.anchorMin = new Vector2(0, 0.5f - correctedRation*0.5f);
+        parentTransform.offsetMax = Vector2.zero;
+        parentTransform.offsetMin = Vector2.zero;
+
+        DebugBounds(bounds);
+        Debug.Log("Teste " + positionToPorcentage(bounds, bounds.center));
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            RectTransform child = parent.GetChild(i) as RectTransform;
+            if(child == null) continue;
+
+            Vector3 childCenter = child.position;
+            Vector3 childExtent = AbsVector3(child.localScale) * 0.5f;
+
+            Vector2 childRelativePos = positionToPorcentage(bounds, childCenter);
+            Vector2 childRelativeExtent = Divide(childExtent, bounds.size);
+            // childRelativePos.y *= aspectRatio;
+            // childRelativeExtent.y *= aspectRatio;
+
+            child.anchorMin = childRelativePos - childRelativeExtent;
+            child.anchorMax = childRelativePos + childRelativeExtent;
+            child.offsetMax = Vector2.zero;
+            child.offsetMin = Vector2.zero;
+            child.localScale = Vector3.one;
+        }
+    }
+
+    void DebugBounds(Bounds bounds)
+    {
+        Debug.Log("Bounds are: " + bounds);
+        Vector2 topRight = positionToPorcentage(bounds,bounds.max);
+        Vector2 bottomLeft = positionToPorcentage(bounds,bounds.min);
+        RectTransform tr = GameObject.Instantiate(roomPrefab).transform as RectTransform;
+        tr.gameObject.SetActive(true);
+        tr.SetParent(parent);
+        tr.name = "Top Right";
+
+        tr.anchorMax = topRight + new Vector2(0.1f,0.1f);
+        tr.anchorMin = topRight - new Vector2(0.1f,0.1f);
+        tr.offsetMax = Vector2.zero;
+        tr.offsetMin = Vector2.zero;
+        tr.ForceUpdateRectTransforms();
+        
+        
+        RectTransform bl = GameObject.Instantiate(roomPrefab).transform as RectTransform;
+        bl.gameObject.SetActive(true);
+        bl.name = "Bottom Left";
+        bl.SetParent(parent);
+        bl.anchorMax = bottomLeft + new Vector2(0.1f,0.1f);
+        bl.anchorMin = bottomLeft - new Vector2(0.1f,0.1f);
+        bl.offsetMax = Vector2.zero;
+        bl.offsetMin = Vector2.zero;
+        bl.ForceUpdateRectTransforms();
+
+    }
+
+    private Vector3 Divide(Vector3 a, Vector3 b)
+    {
+        Vector3 dividend = new Vector3(1f/b.x,1f/b.y,1f/b.z);
+        return Vector3.Scale(a,dividend);
+    }
+
+    private Vector3 AbsVector3(Vector3 a)
+    {
+        Vector3 result = new Vector3();
+        result.x = Mathf.Abs(a.x);
+        result.y = Mathf.Abs(a.y);
+        result.z = Mathf.Abs(a.z);
+
+        return result;
+    }
+
+    private Vector2 positionToPorcentage(Bounds bounds, Vector3 position)
+    {
+        Vector3 dif = position - bounds.min;
+        return new Vector2(dif.x / bounds.size.x, dif.y / bounds.size.y);
     }
 
     bool QueueContainsScene(Queue<RoomGenOrder> queue, string scene)
@@ -193,6 +265,7 @@ public class MapUICreator : MonoBehaviour
         for (int i = 0; i < numSteps; i++)
         {
             GameObject path = GameObject.Instantiate(pathPrefab);
+            path.SetActive(true);
             if(isHorizontal)
             {
                 path.transform.position = currentStart + Vector3.right * delta.x * 0.5f;
@@ -218,12 +291,14 @@ public class MapUICreator : MonoBehaviour
         if( (!isScene1 && transition.canGoFrom2To1) || (isScene1 && transition.canGoFrom1To2) )
         {
             GameObject door = GameObject.Instantiate(doorPrefab, startPosition, Quaternion.identity);
+            door.SetActive(true);
             door.transform.localScale = door.transform.localScale * doorSize;
             door.transform.SetParent(roomTransform);
         }
         if( (isScene1 && transition.canGoFrom2To1) || (!isScene1 && transition.canGoFrom1To2) )
         {
             GameObject door = GameObject.Instantiate(doorPrefab, endPosition, Quaternion.identity);
+            door.SetActive(true);
             door.transform.localScale = door.transform.localScale * doorSize;
             door.transform.SetParent(roomTransform);
         }
@@ -232,5 +307,41 @@ public class MapUICreator : MonoBehaviour
     Vector3 V2ToV3(Vector2 v2)
     {
         return new Vector3(v2.x,v2.y,0);
+    }
+
+    Bounds GetBounds()
+    {
+        Vector3 min = Vector3.zero; 
+        Vector3 max = Vector3.zero;
+        Vector3 lowerCorner = new Vector3(-0.5f,-0.5f,0);
+        Vector3 upperCorner = new Vector3(0.5f,0.5f,0);
+
+        Queue<Transform> mapParts = new Queue<Transform>();
+
+        mapParts.Enqueue(parent);
+
+        while(mapParts.Count > 0)
+        {
+            Transform current = mapParts.Dequeue();
+
+            Vector3 currentLower = current.TransformPoint(lowerCorner);
+            Vector3 currentUpper = current.TransformPoint(upperCorner);
+            min.x = Mathf.Min(min.x,currentLower.x);
+            min.y = Mathf.Min(min.y,currentLower.y);
+            max.x = Mathf.Max(max.x,currentUpper.x);
+            max.y = Mathf.Max(max.y,currentUpper.y);
+
+            Debug.Log("On " + current.name + " Current low was " + currentLower);
+            for (int i = 0; i < current.childCount; i++)
+            {
+                mapParts.Enqueue(current.GetChild(i));
+            }
+
+        }
+
+        Vector3 center = (max + min) * 0.5f;
+        Vector3 size = (max - min);
+
+        return new Bounds(center, size);
     }
 }
