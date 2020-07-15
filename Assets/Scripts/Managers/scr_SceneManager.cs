@@ -13,6 +13,8 @@ public class scr_SceneManager : MonoBehaviour {
 	/// </summary>
 	public Transform[] neighboorScenesDestination;
 	public GameObject playerPrefab;
+
+	public bool showMap = true;
 	
 
 	public enum MusicMode

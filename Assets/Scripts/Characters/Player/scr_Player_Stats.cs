@@ -40,6 +40,9 @@ public class scr_Player_Stats {
 	[Header("Pickups unicos")]
 	public StringBoleanDictionary takenPickups;
 
+	[Header("Cenas conhecidas")]
+	public StringBoleanDictionary scenesDiscovered;
+
 	[Header("Propriedades de save")]
 	[Tooltip("Nome da cena onde o jogador salvou pela última vez")]
 	public string savePointScene = "null";
@@ -48,5 +51,6 @@ public class scr_Player_Stats {
 
 	public scr_Player_Stats() {
 		unlockedEPs = new StringBoleanDictionary();
+		scenesDiscovered = new StringBoleanDictionary();
 	}
 }

@@ -264,6 +264,16 @@ public class scr_GameManager : MonoBehaviour {
 		setHudVisible(true);
 		scr_HUDController.hudController.onLoadLevel();
 
+		//Update know maps
+		string mapName = SceneToMapName(scene2.path);
+		playerStats.scenesDiscovered[mapName] = true;
+		//Startminimap if allowed by scene script
+		if(sceneScript != null && sceneScript.showMap)
+		{
+			generateMap(playerStats.scenesDiscovered, mapName);
+			activateMiniMap(player.transform,mapName);
+		}
+
 		if(fadeOutOnLoad){
 			setPauseGame(false);
 			scr_HUDController.hudController.canPause = false;
@@ -371,6 +381,38 @@ public class scr_GameManager : MonoBehaviour {
 		if(find != null)
 			find.gameObject.SetActive(visible);
 	}
+
+	public void generateMap(StringBoleanDictionary discoveredScenes, string currentScene)
+	{
+		MapUICreator mapCreator = GameObject.FindObjectOfType<MapUICreator>();
+		if(mapCreator)
+			mapCreator.Generate(discoveredScenes, currentScene);
+	}
+
+	public void activateMiniMap(Transform playerTarget, string currentScene)
+	{
+		Minimap minimap = GameObject.FindObjectOfType<Minimap>();
+		if(minimap)
+			minimap.StartMinimap(playerTarget,currentScene);
+	}
+
+	public void HideMaps()
+	{
+		MapUICreator mapCreator = GameObject.FindObjectOfType<MapUICreator>();
+		if(mapCreator)
+			mapCreator.PanelActive = false;
+
+		Minimap minimap = GameObject.FindObjectOfType<Minimap>();
+		if(minimap)
+			minimap.StopMinimap();
+	}
+
+	private string SceneToMapName(string path)
+    {
+        string[] parts = path.Split('.');
+        return parts[0].Remove(0,14); //Remove initial part, to be equal to what we use on the scripts
+    }
+
 
 	#endregion
 

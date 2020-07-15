@@ -9,21 +9,33 @@ public class MapUICreator : MonoBehaviour
     public float lineWidth = 5;
     public float doorSize = 10;
     public float savePrefabSize = 10;
+
+    public GameObject mapPanel;
     public Transform parent;
+    public GameObject currentRoomPrefab;
     public GameObject roomPrefab;
     public GameObject pathPrefab;
     public GameObject doorPrefab;
     public GameObject savePrefab;
-    public GameObject emptyPrefab;
-
-    public Transform ui;
-
-
 
     public MapInfo mapInfo;
 
     private Dictionary<string,GameObject> roomDict = new Dictionary<string, GameObject>();
     private Dictionary<UniqueTransition, bool> transitionsDone = new Dictionary<UniqueTransition, bool>();
+
+    public bool PanelActive
+    {
+        get
+        {
+            return panelOpen;
+        }
+        set
+        {
+            SetPanelActive(value);
+        }
+    }
+    private bool panelOpen = false;
+    private bool createdMap = false;
 
     private class RoomGenOrder
     {
@@ -39,18 +51,49 @@ public class MapUICreator : MonoBehaviour
 
     void Start()
     {
-        Generate();
+        mapPanel.SetActive(false);
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(createdMap && Input.GetButtonDown("Map"))
         {
-            Generate();
+            SetPanelActive(!panelOpen);
         }
     }
 
-    public void Generate()
+    public void SetPanelActive(bool active)
+    {
+        if(panelOpen != active)
+        {
+            if(active)
+                OpenPanel();
+            else
+                ClosePanel();
+        }
+    }
+
+    private void OpenPanel()
+    {
+        if(!scr_HUDController.hudController.canPause) return;
+
+        scr_GameManager.instance.setPauseGame(true);
+        scr_HUDController.hudController.canPause = false;
+        scr_HUDController.hudController.fadeIn(null);
+        mapPanel.SetActive(true);
+        panelOpen = true;
+    }
+
+    private void ClosePanel()
+    {
+        scr_GameManager.instance.setPauseGame(false);
+        scr_HUDController.hudController.canPause = true;
+        scr_HUDController.hudController.fadeOut(null);
+        mapPanel.SetActive(false);
+        panelOpen = false;
+    }
+
+    public void Generate(StringBoleanDictionary discoveredScenes, string playerRoom = "")
     {
         Debug.Log("Generated");
         //Clean previous generation
@@ -62,12 +105,26 @@ public class MapUICreator : MonoBehaviour
         }
         roomDict.Clear();
         transitionsDone.Clear();
+        RectTransform rectParent = parent as RectTransform;
+        if(rectParent)
+        {
+            rectParent.anchorMax = Vector2.one;
+            rectParent.anchorMin = Vector2.zero;
+            rectParent.offsetMax = Vector2.zero;
+            rectParent.offsetMin = Vector2.zero;
+        }
 
         Queue<RoomGenOrder> roomQueue = new Queue<RoomGenOrder>();
         //Get first
         Room first = null;
         foreach(var pair in mapInfo.rooms) 
-        { first = pair.Value; break; }
+        { 
+            if( discoveredScenes.ContainsKey(pair.Value.scene) )
+            {
+                first = pair.Value; 
+                break; 
+            }
+        }
 
         roomQueue.Enqueue(new RoomGenOrder(first,Vector3.zero));
 
@@ -75,11 +132,15 @@ public class MapUICreator : MonoBehaviour
         {
             RoomGenOrder currentRoom = roomQueue.Dequeue();
 
-            if(!roomDict.ContainsKey(currentRoom.room.scene))
+            if(!roomDict.ContainsKey(currentRoom.room.scene) && discoveredScenes.ContainsKey(currentRoom.room.scene))
             {
                 Debug.Log("Created " + currentRoom.room.scene);
                 //Creates object in the correct position
-                GameObject roomObject = GameObject.Instantiate(roomPrefab, currentRoom.position, Quaternion.identity, parent);
+                GameObject roomObject;
+                if(playerRoom == currentRoom.room.scene)
+                    roomObject = GameObject.Instantiate(currentRoomPrefab, currentRoom.position, Quaternion.identity, parent);
+                else
+                    roomObject = GameObject.Instantiate(roomPrefab, currentRoom.position, Quaternion.identity, parent);
                 roomObject.SetActive(true);
                 roomObject.name = currentRoom.room.scene;
                 roomObject.transform.localScale = currentRoom.room.bounds.size;
@@ -110,6 +171,7 @@ public class MapUICreator : MonoBehaviour
                     Room otherRoom = mapInfo.rooms[otherScene];
 
                     if(QueueContainsScene(roomQueue,otherScene)) continue;
+                    if(!discoveredScenes.ContainsKey(otherScene)) continue;
 
 
                     Vector2 thisPercentPos = (isScene1) ? transitions[i].percentPositionScene1 : transitions[i].percentPositionScene2;
@@ -142,6 +204,8 @@ public class MapUICreator : MonoBehaviour
         }
 
         FixUIScale();
+
+        createdMap = true;
     }
 
     void FixUIScale()
@@ -153,8 +217,8 @@ public class MapUICreator : MonoBehaviour
         float correctedRation = boundsAspectRatio / parentAspectRatio;
 
 
-        parentTransform.anchorMax = new Vector2(1, 0.5f + correctedRation*0.5f);
-        parentTransform.anchorMin = new Vector2(0, 0.5f - correctedRation*0.5f);
+        parentTransform.anchorMax = new Vector2(1, Mathf.Clamp01(0.5f + correctedRation*0.5f));
+        parentTransform.anchorMin = new Vector2(0, Mathf.Clamp01(0.5f - correctedRation*0.5f));
         parentTransform.offsetMax = Vector2.zero;
         parentTransform.offsetMin = Vector2.zero;
 
