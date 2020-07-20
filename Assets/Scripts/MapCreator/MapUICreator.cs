@@ -93,9 +93,12 @@ public class MapUICreator : MonoBehaviour
         panelOpen = false;
     }
 
+    public string playerRoom;
+
     public void Generate(StringBoleanDictionary discoveredScenes, string playerRoom = "")
     {
-        Debug.Log("Generated");
+        Debug.Log("Generating room for pr " + playerRoom);
+        this.playerRoom = playerRoom;
         //Clean previous generation
         for (int i = parent.childCount-1; i > -1; i--)
         {
@@ -134,9 +137,10 @@ public class MapUICreator : MonoBehaviour
 
             if(!roomDict.ContainsKey(currentRoom.room.scene) && discoveredScenes.ContainsKey(currentRoom.room.scene))
             {
-                Debug.Log("Created " + currentRoom.room.scene);
+                // Debug.Log("Created " + currentRoom.room.scene);
                 //Creates object in the correct position
                 GameObject roomObject;
+                currentRoom.position.z = currentRoomPrefab.transform.localPosition.z;
                 if(playerRoom == currentRoom.room.scene)
                     roomObject = GameObject.Instantiate(currentRoomPrefab, currentRoom.position, Quaternion.identity, parent);
                 else
@@ -144,6 +148,7 @@ public class MapUICreator : MonoBehaviour
                 roomObject.SetActive(true);
                 roomObject.name = currentRoom.room.scene;
                 roomObject.transform.localScale = currentRoom.room.bounds.size;
+                roomObject.transform.SetAsFirstSibling();
                 Image renderer = roomObject.GetComponent<Image>();
                 if(renderer) renderer.color = currentRoom.room.color;
 
@@ -170,18 +175,20 @@ public class MapUICreator : MonoBehaviour
                     string otherScene = (isScene1) ? transitions[i].scene2 : transitions[i].scene1;
                     Room otherRoom = mapInfo.rooms[otherScene];
 
-                    if(QueueContainsScene(roomQueue,otherScene)) continue;
-                    if(!discoveredScenes.ContainsKey(otherScene)) continue;
-
-
-                    Vector2 thisPercentPos = (isScene1) ? transitions[i].percentPositionScene1 : transitions[i].percentPositionScene2;
-                    Vector2 otherPercentPos = (isScene1) ? transitions[i].percentPositionScene2 : transitions[i].percentPositionScene1;
-
                     //Get start and end position
                     Vector3 startPosition, endPosition;
+                    Vector2 thisPercentPos = (isScene1) ? transitions[i].percentPositionScene1 : transitions[i].percentPositionScene2;
 
                     startPosition = currentRoom.position - currentRoom.room.bounds.extents + Vector3.Scale(V2ToV3(thisPercentPos), currentRoom.room.bounds.size);
-                    
+
+                    // If should skip this transition, at least make the door
+                    if(QueueContainsScene(roomQueue,otherScene) || !discoveredScenes.ContainsKey(otherScene))
+                    {
+                        CreateDoor(startPosition,parent);
+                        continue;
+                    }
+
+                    Vector2 otherPercentPos = (isScene1) ? transitions[i].percentPositionScene2 : transitions[i].percentPositionScene1;
                     GameObject otherRoomGO = (roomDict.ContainsKey(otherScene)) ? roomDict[otherScene] : null;
                     if(otherRoomGO != null)
                     {
@@ -195,6 +202,7 @@ public class MapUICreator : MonoBehaviour
                     }
 
                     CreatePath(transitions[i], isScene1, startPosition, endPosition, parent);
+                    CreateDoor(endPosition,parent);
                     transitionsDone.Add(transitions[i],true);
                 }
 
@@ -222,8 +230,7 @@ public class MapUICreator : MonoBehaviour
         parentTransform.offsetMax = Vector2.zero;
         parentTransform.offsetMin = Vector2.zero;
 
-        DebugBounds(bounds);
-        Debug.Log("Teste " + positionToPorcentage(bounds, bounds.center));
+        // DebugBounds(bounds);
         for (int i = 0; i < parent.childCount; i++)
         {
             RectTransform child = parent.GetChild(i) as RectTransform;
@@ -319,7 +326,9 @@ public class MapUICreator : MonoBehaviour
     {
         int numSteps = 3;
         Vector3 delta = endPosition - startPosition;
-        
+        startPosition.z = pathPrefab.transform.localPosition.z;
+        endPosition.z = pathPrefab.transform.localPosition.z;
+
         Vector3 currentStart;
         bool isHorizontal = Mathf.Abs(delta.x) > Mathf.Abs(delta.y);
         Vector3 divider = (isHorizontal) ? new Vector3(1.0f/2.0f,1.0f,1f) : new Vector3(1.0f,1.0f/2.0f,1f);
@@ -351,21 +360,15 @@ public class MapUICreator : MonoBehaviour
             path.transform.SetParent(roomTransform);
             isHorizontal = !isHorizontal;
         }
+    }
 
-        if( (!isScene1 && transition.canGoFrom2To1) || (isScene1 && transition.canGoFrom1To2) )
-        {
-            GameObject door = GameObject.Instantiate(doorPrefab, startPosition, Quaternion.identity);
-            door.SetActive(true);
-            door.transform.localScale = door.transform.localScale * doorSize;
-            door.transform.SetParent(roomTransform);
-        }
-        if( (isScene1 && transition.canGoFrom2To1) || (!isScene1 && transition.canGoFrom1To2) )
-        {
-            GameObject door = GameObject.Instantiate(doorPrefab, endPosition, Quaternion.identity);
-            door.SetActive(true);
-            door.transform.localScale = door.transform.localScale * doorSize;
-            door.transform.SetParent(roomTransform);
-        }
+    private void CreateDoor(Vector3 position, Transform parent)
+    {
+        position.z = doorPrefab.transform.localPosition.z;
+        GameObject door = GameObject.Instantiate(doorPrefab, position, Quaternion.identity);
+        door.SetActive(true);
+        door.transform.localScale = door.transform.localScale * doorSize;
+        door.transform.SetParent(parent);
     }
 
     Vector3 V2ToV3(Vector2 v2)
@@ -395,7 +398,7 @@ public class MapUICreator : MonoBehaviour
             max.x = Mathf.Max(max.x,currentUpper.x);
             max.y = Mathf.Max(max.y,currentUpper.y);
 
-            Debug.Log("On " + current.name + " Current low was " + currentLower);
+            // Debug.Log("On " + current.name + " Current low was " + currentLower);
             for (int i = 0; i < current.childCount; i++)
             {
                 mapParts.Enqueue(current.GetChild(i));

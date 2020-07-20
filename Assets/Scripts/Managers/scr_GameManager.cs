@@ -32,6 +32,10 @@ public class scr_GameManager : MonoBehaviour {
 	//Variaveis salvadas
 	[SerializeField]
 	public scr_Player_Stats playerStats;
+
+	//Referencias
+	private MapUICreator mapUICreator;
+	private Minimap minimap;
 	#endregion
 		
 	void Awake(){
@@ -40,7 +44,10 @@ public class scr_GameManager : MonoBehaviour {
 			instance = this;
 		}
 		else if(instance != this)
+		{
 			Destroy(gameObject);
+			return;
+		}
 		
 		DontDestroyOnLoad(gameObject);
 
@@ -65,6 +72,10 @@ public class scr_GameManager : MonoBehaviour {
 		SceneManager.activeSceneChanged += OnSceneLoaded;
 		//SceneManager.sceneLoaded += OnSceneLoaded;
 
+		//
+		minimap = GetComponentInChildren<Minimap>();
+		mapUICreator = GetComponentInChildren<MapUICreator>();
+		updateMap(SceneManager.GetActiveScene());
 	}
 
 	// Update is called once per frame
@@ -265,14 +276,7 @@ public class scr_GameManager : MonoBehaviour {
 		scr_HUDController.hudController.onLoadLevel();
 
 		//Update know maps
-		string mapName = SceneToMapName(scene2.path);
-		playerStats.scenesDiscovered[mapName] = true;
-		//Startminimap if allowed by scene script
-		if(sceneScript != null && sceneScript.showMap)
-		{
-			generateMap(playerStats.scenesDiscovered, mapName);
-			activateMiniMap(player.transform,mapName);
-		}
+		updateMap(scene2);
 
 		if(fadeOutOnLoad){
 			setPauseGame(false);
@@ -382,27 +386,49 @@ public class scr_GameManager : MonoBehaviour {
 			find.gameObject.SetActive(visible);
 	}
 
+	private void updateMap(Scene newScene)
+	{
+		string mapName = SceneToMapName(newScene.path);
+		playerStats.scenesDiscovered[mapName] = true;
+
+		Debug.Log("Updated map to " + newScene.name);
+
+		GameObject sceneManager = GameObject.Find("SceneManager");
+		scr_SceneManager sceneScript = null;
+		if(sceneManager != null){
+            sceneScript = sceneManager.GetComponent<scr_SceneManager>();
+		}
+
+		//Startminimap if allowed by scene script		
+		if(sceneScript != null && sceneScript.showMap)
+		{
+			generateMap(playerStats.scenesDiscovered, mapName);
+			activateMiniMap(player.transform,mapName);
+		}
+		//Otherwise, hide minimap
+		else
+		{
+			HideMaps();
+		}
+	}
+
 	public void generateMap(StringBoleanDictionary discoveredScenes, string currentScene)
 	{
-		MapUICreator mapCreator = GameObject.FindObjectOfType<MapUICreator>();
-		if(mapCreator)
-			mapCreator.Generate(discoveredScenes, currentScene);
+		if(mapUICreator)
+			mapUICreator.Generate(discoveredScenes, currentScene);
 	}
 
 	public void activateMiniMap(Transform playerTarget, string currentScene)
 	{
-		Minimap minimap = GameObject.FindObjectOfType<Minimap>();
 		if(minimap)
 			minimap.StartMinimap(playerTarget,currentScene);
 	}
 
 	public void HideMaps()
 	{
-		MapUICreator mapCreator = GameObject.FindObjectOfType<MapUICreator>();
-		if(mapCreator)
-			mapCreator.PanelActive = false;
+		if(mapUICreator)
+			mapUICreator.PanelActive = false;
 
-		Minimap minimap = GameObject.FindObjectOfType<Minimap>();
 		if(minimap)
 			minimap.StopMinimap();
 	}

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Minimap : MonoBehaviour
 {
     public float playerSize = 2f;
+    public float playerCursorPercent = 0.1f;
 
     public RectTransform parent;
     public RectTransform roomRef;
@@ -23,6 +24,7 @@ public class Minimap : MonoBehaviour
     private Bounds roomBounds;
 
     private Vector2 playerExtent;
+    private Vector2 cursorExtent;
 
     public void StartMinimap(Transform target, string currentScene)
     {
@@ -82,6 +84,8 @@ public class Minimap : MonoBehaviour
             parent.anchorMin = new Vector2(0.5f - realAspect * 0.5f, 0f);
         }
 
+        roomRef.anchorMax = Vector2.one;
+        roomRef.anchorMin = Vector2.zero;
         roomRef.offsetMax = Vector2.zero;
         roomRef.offsetMin = Vector2.zero;
 
@@ -91,6 +95,8 @@ public class Minimap : MonoBehaviour
 
         cursor = GameObject.Instantiate(cursorPrefab).transform as RectTransform;
         cursor.SetParent(roomRef);
+        cursor.gameObject.SetActive(true);
+        cursorExtent = new Vector2(playerCursorPercent,playerCursorPercent);
 
         foreach (var exit in mapInfo.rooms[currentScene].exits)
         {
@@ -123,8 +129,8 @@ public class Minimap : MonoBehaviour
         {
             Vector2 percentPos = positionToPorcentage(roomBounds,target.position);
 
-            cursor.anchorMax = percentPos + playerExtent;
-            cursor.anchorMax = percentPos - playerExtent;
+            cursor.anchorMax = percentPos + cursorExtent;
+            cursor.anchorMin = percentPos - cursorExtent;
             cursor.offsetMax = Vector2.zero;
             cursor.offsetMin = Vector2.zero;
         }
