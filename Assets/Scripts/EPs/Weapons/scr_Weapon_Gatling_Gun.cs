@@ -27,6 +27,9 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
     [Tooltip("Tempo que leva para a linha desaparecer após o tiro")]
     public float fadeOfTime = 0.1f;
 
+    [Header("References")]
+    public ParticleSystem bulletParticles;
+
     private bool shouldFire = false;
     private float fireCounter = 0f;
     private bool animationIsShooting = false;
@@ -42,12 +45,17 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
             line.enabled = false;
         cooldownTime = 0f;
         gunAnimator = GetComponent<Animator>();
+
+        //Remove so it can move freely without scaling effects
+        bulletParticles.transform.SetParent(null);
     }
 
 
 	public override bool Unequip ()
 	{
 		Debug.Log("Removed: "+ epName);
+        //Return back to weapon
+        bulletParticles.transform.SetParent(transform);
 		return base.Unequip();
 	}
 
@@ -69,6 +77,7 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
                 if(!hasBegunShootingSound){
                     audioClient.playLoopClip("Firing", scr_AudioClient.sources.local);
                     hasBegunShootingSound = true;
+                    bulletParticles.Play();
                 }
                 //Drena energia
                 useEnergy();
@@ -142,6 +151,7 @@ public class scr_Weapon_Gatling_Gun : scr_Weapon {
                 gunAnimator.SetBool("Shooting", false);
                 audioClient.stoplocalClip();
                 hasBegunShootingSound = false;
+                bulletParticles.Stop();
             }
         }
 	}
