@@ -148,6 +148,9 @@ public class scr_Gustav_Battle_Manager : MonoBehaviour {
 		for(int i = 0; i < quantity; i++) {
 			float range = Random.Range(-1,1);
 			Vector3 positionToSpawn = new Vector3(spawnOffset.x*range,spawnOffset.y,0);
+			Vector2 randomDirection = Random.insideUnitCircle * 10f;
+			positionToSpawn.x += randomDirection.x;
+			positionToSpawn.y += randomDirection.y;
 			toSpawn = GameObject.Instantiate(batpipperPrefab, player.transform.position + positionToSpawn, Quaternion.identity);
 		}
 	}

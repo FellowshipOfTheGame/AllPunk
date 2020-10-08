@@ -14,6 +14,7 @@ public class scr_SceneManager : MonoBehaviour {
 	public Transform[] neighboorScenesDestination;
 	public GameObject playerPrefab;
 
+	public string forceSceneMap = "";
 	public bool showMap = true;
 	
 

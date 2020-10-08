@@ -388,21 +388,25 @@ public class scr_GameManager : MonoBehaviour {
 
 	private void updateMap(Scene newScene)
 	{
-		string mapName = SceneToMapName(newScene.path);
-		playerStats.scenesDiscovered[mapName] = true;
-
-		Debug.Log("Updated map to " + newScene.name);
-
 		GameObject sceneManager = GameObject.Find("SceneManager");
 		scr_SceneManager sceneScript = null;
 		if(sceneManager != null){
             sceneScript = sceneManager.GetComponent<scr_SceneManager>();
 		}
 
+		string mapName;
+		if(sceneScript != null && !string.IsNullOrEmpty(sceneScript.forceSceneMap))
+			mapName = sceneScript.forceSceneMap;
+		else
+			mapName = SceneToMapName(newScene.path);
+		playerStats.scenesDiscovered[mapName] = true;
+
+		Debug.Log("Updated map to " + newScene.name);
+
 		//Startminimap if allowed by scene script		
+		generateMap(playerStats.scenesDiscovered, mapName);
 		if(sceneScript != null && sceneScript.showMap)
 		{
-			generateMap(playerStats.scenesDiscovered, mapName);
 			activateMiniMap(player.transform,mapName);
 		}
 		//Otherwise, hide minimap
@@ -426,8 +430,8 @@ public class scr_GameManager : MonoBehaviour {
 
 	public void HideMaps()
 	{
-		if(mapUICreator)
-			mapUICreator.PanelActive = false;
+		// if(mapUICreator)
+		// 	mapUICreator.PanelActive = false;
 
 		if(minimap)
 			minimap.StopMinimap();

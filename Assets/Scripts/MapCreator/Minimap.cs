@@ -61,6 +61,7 @@ public class Minimap : MonoBehaviour
         roomRef.SetParent(parent);
         
         UnityEngine.UI.Image image = roomRef.GetComponent<UnityEngine.UI.Image>();
+        Debug.Log("Scene " + currentScene);
         if(image) image.color = mapInfo.rooms[currentScene].color;
         
         roomBounds = mapInfo.rooms[currentScene].bounds;

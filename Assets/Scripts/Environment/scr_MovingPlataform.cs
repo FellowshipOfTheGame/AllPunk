@@ -28,6 +28,7 @@ public class scr_MovingPlataform : MonoBehaviour {
 
     private List<Vector3> movingPoints;
     private Dictionary<Transform, Transform> previousParent;
+    private LineRenderer lineRenderer;
 
     private Transform myTransform;
     private Vector3 direction;
@@ -48,9 +49,12 @@ public class scr_MovingPlataform : MonoBehaviour {
             if(movingPoints != null)
             movingPoints.Add(targetPoints[i].transform.position);
         }
+
+        lineRenderer = GetComponent<LineRenderer>();
     }
 
-    private void Start() {
+    public void Start() {
+        SetupLineRenderer();
         if(!startOnTouch)
             hasStartedMoving = true;
         if(startingIndex > 0) {
@@ -74,6 +78,15 @@ public class scr_MovingPlataform : MonoBehaviour {
                 
             }
         }
+    }
+
+    protected void SetupLineRenderer()
+    {
+        lineRenderer = GetComponent<LineRenderer>();
+        if(lineRenderer == null) return;
+        lineRenderer.enabled = true;
+        lineRenderer.positionCount = movingPoints.Count;
+        lineRenderer.SetPositions(movingPoints.ToArray());
     }
 
     private void OnCollisionEnter2D(Collision2D other) {

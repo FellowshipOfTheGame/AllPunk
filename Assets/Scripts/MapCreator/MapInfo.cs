@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
-using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
+
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
 
 /// <summary>
 /// Converts a string property into a Scene property in the inspector
 /// </summary>
 public class SceneAttribute : PropertyAttribute { }
+
+#endif
 
 [CreateAssetMenu(fileName = "Map", menuName = "Allpunk/Map", order = 1)]
 [Serializable]
@@ -44,7 +48,9 @@ public class MapInfo : ScriptableObject
     {
         foreach(var pair in rooms)
         {
+            #if UNITY_EDITOR
             EditorSceneManager.OpenScene("Assets/Scenes/" + pair.Key + ".unity");
+            #endif
 
             //Get room extension
             //Get all tile maps with collider (floor and wall tiles). Choses biggest dimension
