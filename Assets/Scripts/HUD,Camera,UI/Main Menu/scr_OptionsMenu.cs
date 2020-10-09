@@ -51,6 +51,19 @@ public class scr_OptionsMenu : MonoBehaviour {
 		audioMixer.SetFloat (musicVolume, volume);
 	}
 
+	public void setMasterVolume(Slider slider){
+		setMasterVolume(slider.value);
+	}
+	public void setSfxVolume(Slider slider){
+		setSfxVolume(slider.value);
+	}
+	public void setVoiceVolume(Slider slider){
+		setVoiceVolume(slider.value);
+	}
+	public void setMusicVolume(Slider slider){
+		setMusicVolume(slider.value);
+	}
+
 	/// <summary>
 	/// Loads the current audio volume. Used to set each of the sliders to the correct value
 	/// </summary>
@@ -81,12 +94,22 @@ public class scr_OptionsMenu : MonoBehaviour {
 		setResolution (currResolutionIndex);
 	}
 
+	public void setFullscreen(Toggle toggle)
+	{
+		setFullscreen(toggle.isOn);
+	}
+
 	/// <summary>
 	/// Sets the overall graphics quality based on the default presets
 	/// </summary>
 	/// <param name="qualityIndex">Quality index.</param>
 	public void setQuality(int qualityIndex){
 		QualitySettings.SetQualityLevel (qualityIndex);
+	}
+
+	public void setQuality(Dropdown dropdown)
+	{
+		setQuality(dropdown.value);
 	}
 
 	/// <summary>
@@ -103,6 +126,11 @@ public class scr_OptionsMenu : MonoBehaviour {
 	/// <param name="resolutionIndex">Resolution index.</param>
 	public void setResolution(int resolutionIndex){
 		Screen.SetResolution (resolutions [resolutionIndex].width, resolutions [resolutionIndex].width, isFullscreen);
+	}
+
+	public void setResolution(Dropdown dropdown)
+	{
+		setResolution(dropdown.value);
 	}
 
 	/// <summary>

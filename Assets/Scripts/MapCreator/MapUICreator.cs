@@ -128,6 +128,7 @@ public class MapUICreator : MonoBehaviour
                 break; 
             }
         }
+        if(first == null) return;
 
         roomQueue.Enqueue(new RoomGenOrder(first,Vector3.zero));
 
