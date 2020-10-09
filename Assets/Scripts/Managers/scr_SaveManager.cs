@@ -15,21 +15,37 @@ public class scr_SaveManager {
     public scr_Player_Stats playerStats = null;
     public bool hasLoaded = false;
 
+    private DataSaver<scr_Player_Stats> dataSaver;
+
+    private string savePath = "PlayerStatus.dat";
+
+    public scr_SaveManager()
+    {
+        dataSaver = new DataSaver<scr_Player_Stats>(savePath,true,false);
+    }
+
     /// <summary>
     /// Apaga arquivos atuais na memória
     /// </summary>
     /// <returns>Foi possivel apagar ou não</returns>
     public bool Delete()
     {
-        if (File.Exists(Application.persistentDataPath + "/PlayerStatus.dat"))
+        if(dataSaver.SaveExists(0))
         {
-            File.Delete(Application.persistentDataPath + "/PlayerStatus.dat");
-            playerStats = new scr_Player_Stats();
-            Save(playerStats);
+            dataSaver.DeleteSave(0);
             return true;
         }
-        else
-            return false;
+        return false;
+
+        // if (File.Exists(Application.persistentDataPath + "/PlayerStatus.dat"))
+        // {
+        //     File.Delete(Application.persistentDataPath + "/PlayerStatus.dat");
+        //     playerStats = new scr_Player_Stats();
+        //     Save(playerStats);
+        //     return true;
+        // }
+        // else
+        //     return false;
     }
 
     /// <summary>
@@ -40,19 +56,22 @@ public class scr_SaveManager {
     public bool Save(scr_Player_Stats newStats)
     {
         playerStats = newStats;
-        //BinaryFormatter bf = new BinaryFormatter();
-        //FileStream file = File.Create(Application.persistentDataPath + "/PlayerStatus.dat");
-
-
-        //bf.Serialize(file, playerStats);
-
-        //file.Close();
-
-        string dataAsJason = JsonUtility.ToJson(playerStats);
-
-        File.WriteAllText(Application.persistentDataPath + "/PlayerStatus.dat", dataAsJason);
-
+        dataSaver.SaveData(playerStats, 0);
         return true;
+        // playerStats = newStats;
+        // //BinaryFormatter bf = new BinaryFormatter();
+        // //FileStream file = File.Create(Application.persistentDataPath + "/PlayerStatus.dat");
+
+
+        // //bf.Serialize(file, playerStats);
+
+        // //file.Close();
+
+        // string dataAsJason = JsonUtility.ToJson(playerStats);
+
+        // File.WriteAllText(Application.persistentDataPath + "/PlayerStatus.dat", dataAsJason);
+
+        // return true;
     }
 
     /// <summary>
@@ -61,23 +80,36 @@ public class scr_SaveManager {
     /// <returns>O perfil do jogador. Se não houver, retorna null.</returns>
     public scr_Player_Stats Load()
     {
-        //Verifica se o arquivo existe
-        if (File.Exists(Application.persistentDataPath + "/PlayerStatus.dat"))
+        try
         {
-
-            //BinaryFormatter bf = new BinaryFormatter();
-            //FileStream file = File.Open(Application.persistentDataPath + "/PlayerStatus.dat", FileMode.Open);
-            string dataAsJason = File.ReadAllText(Application.persistentDataPath + "/PlayerStatus.dat");
-            playerStats =  JsonUtility.FromJson<scr_Player_Stats>(dataAsJason);
-
-
-            //playerStats = (scr_Player_Stats)bf.Deserialize(file);
-            //file.Close();
-            hasLoaded = true;
-            return playerStats;
+            if(dataSaver.SaveExists(0))
+                playerStats = dataSaver.LoadData(0);
+            else
+                playerStats = null;
         }
-        else
-            return null;
+        catch
+        {
+            playerStats = null;
+        }
+        return playerStats;
+
+        // //Verifica se o arquivo existe
+        // if (File.Exists(Application.persistentDataPath + "/PlayerStatus.dat"))
+        // {
+
+        //     //BinaryFormatter bf = new BinaryFormatter();
+        //     //FileStream file = File.Open(Application.persistentDataPath + "/PlayerStatus.dat", FileMode.Open);
+        //     string dataAsJason = File.ReadAllText(Application.persistentDataPath + "/PlayerStatus.dat");
+        //     playerStats =  JsonUtility.FromJson<scr_Player_Stats>(dataAsJason);
+
+
+        //     //playerStats = (scr_Player_Stats)bf.Deserialize(file);
+        //     //file.Close();
+        //     hasLoaded = true;
+        //     return playerStats;
+        // }
+        // else
+        //     return null;
     }
 
     /// <summary>
