@@ -48,7 +48,7 @@ public class DataSaver<T> where T : new()
             #if UNITY_WEBGL
             this.prePath = System.IO.Path.Combine(System.IO.Path.Combine("/idbfs", Application.productName) , fileName);
             Directory.CreateDirectory(System.IO.Path.Combine(System.IO.Path.Combine("/idbfs", Application.productName), fileName));
-            this.config = System.IO.Path.Combine(System.IO.Path.Combine("/idbfs", Application.productName), fileName, this.config);
+            this.config = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine("/idbfs", Application.productName), fileName), this.config);
             #else
             
             this.prePath = System.IO.Path.Combine(Application.persistentDataPath, fileName);
