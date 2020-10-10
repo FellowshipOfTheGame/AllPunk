@@ -125,7 +125,8 @@ public class scr_OptionsMenu : MonoBehaviour {
 	/// </summary>
 	/// <param name="resolutionIndex">Resolution index.</param>
 	public void setResolution(int resolutionIndex){
-		Screen.SetResolution (resolutions [resolutionIndex].width, resolutions [resolutionIndex].width, isFullscreen);
+		if(resolutions != null)
+			Screen.SetResolution (resolutions [resolutionIndex].width, resolutions [resolutionIndex].width, isFullscreen);
 	}
 
 	public void setResolution(Dropdown dropdown)

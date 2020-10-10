@@ -67,6 +67,8 @@ public class scr_SaveStation : scr_Interactable
         animator.SetTrigger("Close");
         updateDropdown(interactor);
         heal(interactor);
+        onSaveButtonClick();
+    
         if (!paused)
         {
             paused = true;
@@ -338,6 +340,7 @@ public class scr_SaveStation : scr_Interactable
             animator.SetTrigger("Open");
 
         }
+        onSaveButtonClick();
 
         //Show correct HUD
         //menuCanvas.enabled = false;

@@ -129,7 +129,7 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 	/// </summary>
 	/// <returns><c>true</c>, if grounded, <c>false</c> otherwise.</returns>
 	public bool isGrounded(){
-
+		bool valueToReturn;
 
 		///With the bitwise shift left of the layerMask, any object NOT IN THE GROUND layer will be filtered OUT
 		//groundHit = Physics2D.Raycast (transform.position + height, Vector2.down, height, 1 << LayerMask.NameToLayer("Ground"));
@@ -137,10 +137,13 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 		Debug.DrawLine (transform.position, transform.position + new Vector3 (0, -height*1.0f, 0), Color.yellow);
 
 		if (groundHit.collider != null) {
-			return true;
+			valueToReturn = true;
 		}
 		else
-			return false;
+			valueToReturn = false;
+		
+		updateAnimator(valueToReturn);
+		return valueToReturn;
 	}
 
 
@@ -297,7 +300,11 @@ public class scr_EnemyBoilerMaestro : MonoBehaviour {
 			else
 				rb2D.velocity = new Vector2 (-1 * speed, rb2D.velocity.y);
 		}
-		animator.SetBool ("IsGrounded", grounded);
+	}
+
+	protected void updateAnimator(bool isGrounded)
+	{
+		animator.SetBool ("IsGrounded", isGrounded);
 		animator.SetFloat ("HorizontalSpeed", Mathf.Abs (rb2D.velocity.x));
 		animator.SetFloat ("VerticalSpeed", rb2D.velocity.y);
 	}

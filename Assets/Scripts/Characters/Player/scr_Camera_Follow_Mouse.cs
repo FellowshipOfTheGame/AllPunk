@@ -6,7 +6,7 @@ public class scr_Camera_Follow_Mouse : MonoBehaviour {
 
 	public Transform player;
 	
-	[Range(0,2)]
+	[Range(0,4)]
 	public float smoothMouse = 2f;
 	
 	public Vector3 offset = new Vector3(0,0,-10);
