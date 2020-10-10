@@ -10,7 +10,7 @@ public class scr_EP_JetJump : scr_EP {
 	[SerializeField] Rigidbody2D playerRigidbody;
 	[SerializeField] scr_PlayerEnergyController playerEnergy;
 
-	[SerializeField] float impulseMagnitude;
+	[SerializeField] float jumpVelocity;
 	[SerializeField] int numberOfJumps;	
 	[SerializeField] scr_EPManager epMan;
 
@@ -106,12 +106,11 @@ public class scr_EP_JetJump : scr_EP {
 	
 	// Update is called once per frame
 	void Update () {
-
 		if (Input.GetButtonDown ("Jump") && !playerController.isGrounded && !playerController.IsJumping && currNumberOfJumps > 0) {
 			///Kills Y velocity before applying Impulse to make jumping uniform, without it, the
 			///height of the jump became erratic, eg. doublejumping from the ground gave the most height.
-			playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, 0);
-			playerRigidbody.AddForce (Vector2.up * impulseMagnitude, ForceMode2D.Impulse);
+			playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, jumpVelocity);
+			// playerRigidbody.AddForce (Vector2.up * impulseMagnitude, ForceMode2D.Impulse);
 			currNumberOfJumps--;
 			playerEnergy.drainEnergy (energyDrain);
 			audioClient.playRandomClip (scr_AudioClient.sources.sfx);

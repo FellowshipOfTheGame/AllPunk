@@ -383,6 +383,10 @@ public class scr_HUDController : MonoBehaviour {
 	public void onLoadLevel(){
 		recoverPlayerReference();
 		playerInSteam = false;
+		//Remove steam
+		Color c = condensationImg.color;
+		c.a = 0;
+		condensationImg.color = c;
 	}
 
 	#region ButtonFunctions

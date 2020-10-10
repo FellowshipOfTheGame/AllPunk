@@ -19,14 +19,7 @@ public class scr_PlayerController : MonoBehaviour {
 
     #region variables
 
-    //Atual número de pulos
-    private int currentNumberJumps = 0;
-
-	//Tempo maximo para salto alto
-	public float maxHighJumpTime = 0.25f;
-
 	//Velocidade da caminhada do personagem
-
 	public float speed = 4.0f;
 
     //Velocidade da caminhada do personagem de costas
@@ -96,14 +89,9 @@ public class scr_PlayerController : MonoBehaviour {
 
 	private Rigidbody2D rb;
 
-	//Tempo atual de salto alto
-	private float currHighJumpTime;
-
-	//Verifica se o botão estava sendo segurado
-    private bool isHoldingJump = false;
 	public bool IsJumping
 	{
-		get {return isHoldingJump;}
+		get {return isJumping;}
 	}
 
     //Verifica se o jogador está recebendo ataque
@@ -139,8 +127,6 @@ public class scr_PlayerController : MonoBehaviour {
     protected void Awake()
 
 	{
-		currHighJumpTime = maxHighJumpTime; //1s
-
 		isFacingRight = true;
 
 		rb = (Rigidbody2D)GetComponent(typeof(Rigidbody2D));
@@ -163,48 +149,23 @@ public class scr_PlayerController : MonoBehaviour {
 			health.addDeathCallback(onDeath);
         }
     }
-		
-
+	
     private void Update()
 
     {
+		//Update input
+		pressedJump = Input.GetButtonDown("Jump") && !underKnockback;
+		isPressingJump = Input.GetButton("Jump") && !underKnockback;
 
 		//Verifica contato com o chão
-
 		if(touchesGround (playerFeetPosition.position))
 		{
 			isGrounded = true;
+			isJumping = false;
 		}
 
 		playerHorizontalMove ();
-
-
-        /*if (Input.GetButtonDown ("Jump") && isGrounded)
-			Jump ();
-
-		if (rb.velocity.y < 0 && !isGrounded)
-			Fall ();
-
-		if (rb.velocity.y > 0 && !Input.GetButton("Jump") && !isGrounded)
-			lowJump();*/
-
-
-        if (Input.GetButtonDown("Jump") && isGrounded && !isHoldingJump)
-        {
-            Jump();
-            isHoldingJump = true;
-            currHighJumpTime = maxHighJumpTime;
-			isGrounded = false; //Not
-        }
-
-        if (Input.GetButtonUp("Jump"))
-        {
-            isHoldingJump = false;
-        }
-
-
-		if (isHoldingJump && !isGrounded && rb.velocity.y > 0)
-			highJump();
+		Jump();
 
 		coyoteCounter -= Time.deltaTime;
 
@@ -292,7 +253,6 @@ public class scr_PlayerController : MonoBehaviour {
 			//Verificação manual da layer
 			if (obj.gameObject.layer == LayerMask.NameToLayer ("Ground")) {
 				checkGrounded = true;
-				currHighJumpTime = maxHighJumpTime;
 				break;
 			}
 		}
@@ -301,9 +261,30 @@ public class scr_PlayerController : MonoBehaviour {
 		
 	//Método para Salto, adiciona velocidade no eixo Y
 
+	private bool pressedJump;
+	private bool isPressingJump;
+
 	void Jump (){
 		// rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-		rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
+		if(isGrounded && pressedJump)
+		{
+			rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
+			isGrounded = false;
+			isJumping = true;
+			pressedJump = false;
+		}
+		
+		if(!isGrounded && !isPressingJump && rb.velocity.y > 0)
+		{
+			isJumping = false;
+			rb.velocity += Vector2.up *  Physics2D.gravity.y * (lowJumpMultiplier) * Time.deltaTime;
+		}
+		else if(rb.velocity.y < 0)
+		{
+			isJumping = false;
+			rb.velocity += Vector2.up *  Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime;
+		}
+
 	}
 
 
@@ -326,18 +307,6 @@ public class scr_PlayerController : MonoBehaviour {
 		print ("fall");
 		rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime;
 	}*/
-
-
-
-	/**
-	 * Mantém a velocidade em Y constante enquanto o botão estiver pressionado
-	 */
-	void highJump(){
-		if (currHighJumpTime > 0) {
-			rb.velocity = new Vector2  (rb.velocity.x, jumpSpeed);
-			currHighJumpTime-= Time.deltaTime;
-		}
-	}
 
 
 	#endregion Control methods
