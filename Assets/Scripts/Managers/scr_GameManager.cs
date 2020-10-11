@@ -345,7 +345,6 @@ public class scr_GameManager : MonoBehaviour {
 		playerStats.headEquiped = epman.getCurrentPart(scr_EP.EpType.Head);
 		playerStats.torsoEquiped = epman.getCurrentPart(scr_EP.EpType.Torso);
 		playerStats.legsEquiped = epman.getCurrentPart(scr_EP.EpType.Legs);
-		
 	}
 
 
