@@ -87,6 +87,10 @@ public class scr_MovingPlataform : MonoBehaviour {
         lineRenderer.enabled = true;
         lineRenderer.positionCount = movingPoints.Count;
         lineRenderer.SetPositions(movingPoints.ToArray());
+        if(loop && movingPoints.Count > 2)
+        {
+            lineRenderer.loop = true;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
