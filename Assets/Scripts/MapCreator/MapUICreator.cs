@@ -20,6 +20,9 @@ public class MapUICreator : MonoBehaviour
 
     public MapInfo mapInfo;
 
+    public bool debug_StartWithAllScenes = false;
+    public bool debug_ApplyChangesToMapInfo = false;
+
     private Dictionary<string,GameObject> roomDict = new Dictionary<string, GameObject>();
     private Dictionary<UniqueTransition, bool> transitionsDone = new Dictionary<UniqueTransition, bool>();
 
@@ -52,6 +55,14 @@ public class MapUICreator : MonoBehaviour
     void Start()
     {
         mapPanel.SetActive(false);
+        if(debug_StartWithAllScenes)
+        {
+            mapPanel.SetActive(true);
+            StringBoleanDictionary scenes = new StringBoleanDictionary();
+            foreach(var room in mapInfo.rooms)
+                scenes.Add(room.Value.scene,true);
+            Generate(scenes);
+        }
     }
 
     void Update()
@@ -97,7 +108,7 @@ public class MapUICreator : MonoBehaviour
 
     public void Generate(StringBoleanDictionary discoveredScenes, string playerRoom = "")
     {
-        Debug.Log("Generating room for pr " + playerRoom);
+        Debug.Log("Generating room for pr " + playerRoom + " (" + discoveredScenes.Count + ")");
         this.playerRoom = playerRoom;
         //Clean previous generation
         for (int i = parent.childCount-1; i > -1; i--)
@@ -138,7 +149,7 @@ public class MapUICreator : MonoBehaviour
 
             if(!roomDict.ContainsKey(currentRoom.room.scene) && discoveredScenes.ContainsKey(currentRoom.room.scene))
             {
-                // Debug.Log("Created " + currentRoom.room.scene);
+                Debug.Log("Created " + currentRoom.room.scene);
                 //Creates object in the correct position
                 GameObject roomObject;
                 currentRoom.position.z = currentRoomPrefab.transform.localPosition.z;
@@ -147,11 +158,13 @@ public class MapUICreator : MonoBehaviour
                 else
                     roomObject = GameObject.Instantiate(roomPrefab, currentRoom.position, Quaternion.identity, parent);
                 roomObject.SetActive(true);
-                roomObject.name = currentRoom.room.scene;
+                roomObject.name = "r_"+currentRoom.room.scene;
                 roomObject.transform.localScale = currentRoom.room.bounds.size;
                 roomObject.transform.SetAsFirstSibling();
                 Image renderer = roomObject.GetComponent<Image>();
+                SpriteRenderer sprite = roomObject.GetComponent<SpriteRenderer>();
                 if(renderer) renderer.color = currentRoom.room.color;
+                if(sprite) sprite.color = currentRoom.room.color;
 
                 //Create save
                 for (int i = 0; i < currentRoom.room.savePoints.Count; i++)
@@ -185,7 +198,7 @@ public class MapUICreator : MonoBehaviour
                     // If should skip this transition, at least make the door
                     if(QueueContainsScene(roomQueue,otherScene) || !discoveredScenes.ContainsKey(otherScene))
                     {
-                        CreateDoor(startPosition,parent);
+                        CreateDoor(startPosition,parent, "d_"+currentRoom.room.scene+"_"+otherScene);
                         continue;
                     }
 
@@ -197,13 +210,19 @@ public class MapUICreator : MonoBehaviour
                     }
                     else
                     {
-                        endPosition = startPosition + V2ToV3(transitions[i].defaultOffset) * pathMultiplier;
+                        float sign = (isScene1) ? 1 : -1;
+                        endPosition = startPosition + V2ToV3(transitions[i].defaultOffset) * sign * pathMultiplier;
                         Vector3 roomCenter = endPosition + otherRoom.bounds.extents - Vector3.Scale(V2ToV3(otherPercentPos), otherRoom.bounds.size);
                         roomQueue.Enqueue(new RoomGenOrder(otherRoom, roomCenter));
+                        
+                        // if(otherRoomGO == null)
+                        //     roomQueue.Enqueue(new RoomGenOrder(otherRoom, roomCenter));
                     }
 
                     CreatePath(transitions[i], isScene1, startPosition, endPosition, parent);
-                    CreateDoor(endPosition,parent);
+                    CreateDoor(endPosition,parent,"d_"+otherScene+"_"+currentRoom.room.scene);
+                    CreateDoor(startPosition,parent, "d_"+currentRoom.room.scene+"_"+otherScene);
+
                     transitionsDone.Add(transitions[i],true);
                 }
 
@@ -212,7 +231,11 @@ public class MapUICreator : MonoBehaviour
             }
         }
 
-        FixUIScale();
+        // if(debug_ApplyChangesToMapInfo)
+        //     RecalculateMapInfo();
+        
+        if(!debug_StartWithAllScenes)
+            FixUIScale();
 
         createdMap = true;
     }
@@ -252,6 +275,66 @@ public class MapUICreator : MonoBehaviour
             child.localScale = Vector3.one;
         }
     }
+
+    void RecalculateMapInfo()
+    {
+        Debug.Log("Reached here");
+        foreach (var room in mapInfo.rooms.Values)
+        {
+            List<UniqueTransition> transitions = mapInfo.GetTransitionsFromScene(room.scene);
+
+            foreach (var transition in transitions)
+            {
+                bool isScene1 = (transition.scene1 == room.scene);
+                string destiny = (isScene1) ? transition.scene2 : transition.scene1;
+                Transform roomTransform = FindTransformWithName(parent,"r_"+room.scene);
+                Transform startDoor = FindTransformWithName(parent,"d_"+room.scene+"_"+destiny);
+                Transform endDoor = FindTransformWithName(parent,"d_"+destiny+"_"+room.scene);
+
+                
+                if(startDoor == null || endDoor == null || roomTransform == null)
+                {
+                    Debug.Log("Source: " + room.scene + " target: " + destiny +  " Room: " + (roomTransform != null) + " SDoor: " + (startDoor != null) + " EDoor: " + (endDoor != null));
+    
+                    continue;
+                }
+
+                Vector2 offset = endDoor.position - startDoor.position;
+                offset *= 1f/pathMultiplier;
+
+                transition.defaultOffset = (isScene1) ? offset : -offset;
+
+                // Transition toModify;
+                // if(room.exits.ContainsKey(destiny))
+                // {
+                //     toModify = room.exits[destiny];
+
+                //     toModify.offset = offset;
+                //     toModify.positionPercent = percent;
+                // }
+                // if(room.entries.ContainsKey(destiny))
+                // {
+                //     toModify = room.entries[destiny];
+
+                //     toModify.offset = offset;
+                //     toModify.positionPercent = percent;
+                // }
+
+            }
+        }
+        UnityEditor.EditorUtility.SetDirty(mapInfo);
+    }
+
+    Transform FindTransformWithName(Transform parentTransform, string name)
+    {
+        for (int i = 0; i < parentTransform.childCount; i++)
+        {
+            Transform child = parentTransform.GetChild(i);
+            if(child.name == name) return child;
+        }
+        return null;
+    }
+
 
     void DebugBounds(Bounds bounds)
     {
@@ -363,10 +446,11 @@ public class MapUICreator : MonoBehaviour
         }
     }
 
-    private void CreateDoor(Vector3 position, Transform parent)
+    private void CreateDoor(Vector3 position, Transform parent, string doorName = "Door")
     {
         position.z = doorPrefab.transform.localPosition.z;
         GameObject door = GameObject.Instantiate(doorPrefab, position, Quaternion.identity);
+        door.name = doorName;
         door.SetActive(true);
         door.transform.localScale = door.transform.localScale * doorSize;
         door.transform.SetParent(parent);

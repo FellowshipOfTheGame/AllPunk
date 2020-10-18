@@ -19,7 +19,7 @@ public class SceneAttribute : PropertyAttribute { }
 [Serializable]
 public class MapInfo : ScriptableObject
 {
-    const float transitionDefaultSize = 50;
+    public const float transitionDefaultSize = 50;
     public SceneRoomDictionary rooms = new SceneRoomDictionary();
     public List<UniqueTransition> uniqueTransitions = new List<UniqueTransition>();
 
@@ -136,7 +136,7 @@ public class MapInfo : ScriptableObject
         return parts[0].Remove(0,14); //Remove initial part, to be equal to what we use on the scripts
     }
 
-    private Vector2 positionToPorcentage(Bounds bounds, Vector3 position)
+    public static Vector2 positionToPorcentage(Bounds bounds, Vector3 position)
     {
         Vector3 dif = position - bounds.min;
         return new Vector2(dif.x / bounds.size.x, dif.y / bounds.size.y);
@@ -208,6 +208,27 @@ public class MapInfo : ScriptableObject
 
         return result;
     }
+
+    [ContextMenu("Fix offset simetries")]
+    public void SimmetrizeOffsets()
+    {
+        foreach (var room in rooms)
+        {
+            foreach (var exit in room.Value.exits)
+            {
+                try
+                {
+                    Room otherRoom = rooms[exit.Value.targetScene];
+                    if(otherRoom != null)
+                    {
+                        Transition otherTransition = otherRoom.entries[room.Value.scene];
+                        otherTransition.offset = exit.Value.offset * -1;
+                    }
+                }
+                catch{}
+            }
+        }
+    }
 }
 
 [Serializable]
@@ -267,6 +288,14 @@ public class UniqueTransition
     {
         percentPositionScene2 = otherTransition.positionPercent;
         canGoFrom2To1 = true;
+
+        // //Who' more different from default value
+        // float currentDistance = Mathf.Abs(defaultOffset.magnitude - MapInfo.transitionDefaultSize);
+        // float chalengeDistance = Mathf.Abs(otherTransition.offset.magnitude - MapInfo.transitionDefaultSize);
+        // if(chalengeDistance > currentDistance)
+        // {
+        //     defaultOffset = otherTransition.offset;
+        // }
     }
 
     public override string ToString()
