@@ -322,7 +322,6 @@ public class MapUICreator : MonoBehaviour
 
             }
         }
-        UnityEditor.EditorUtility.SetDirty(mapInfo);
     }
 
     Transform FindTransformWithName(Transform parentTransform, string name)
